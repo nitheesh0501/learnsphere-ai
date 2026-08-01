@@ -19,6 +19,7 @@ import {
   FileText
 } from 'lucide-react';
 import { generateStudentPDFReport } from '../utils/pdfExport';
+import { calculateReadiness, notifyMarksUpdated } from '../utils/readiness';
 
 // OFFICIAL SEMESTER 3 PREDEFINED SUBJECT DATASET (STRICTLY 7 COURSES - LOCKED STRUCTURE)
 const DEFAULT_SUBJECTS = [
@@ -34,7 +35,7 @@ const DEFAULT_SUBJECTS = [
 export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadinessScore, addToast }) {
   // Initialize subjects state from localStorage or fall back to 7 predefined Semester 3 courses
   const [subjects, setSubjects] = useState(() => {
-    const saved = localStorage.getItem('learnsphere_subjects');
+    const saved = localStorage.getItem('studentMarks') || localStorage.getItem('learnsphere_subjects');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -48,6 +49,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
 
   // Auto-save subjects state to localStorage whenever it changes
   useEffect(() => {
+    localStorage.setItem('studentMarks', JSON.stringify(subjects));
     localStorage.setItem('learnsphere_subjects', JSON.stringify(subjects));
   }, [subjects]);
 
@@ -98,51 +100,24 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
     }
   };
 
-  // Dynamically compute overall readiness score and sync to parent if all 7 marks are valid & completed
+  // Dynamically compute overall readiness score using shared utility
   const updateOverallReadiness = (subjectList) => {
-    if (!subjectList || subjectList.length < 7 || hasInvalidMarks) return 0;
-    const allValid = subjectList.every(
-      (sub) =>
-        sub.internalMarks !== '' &&
-        sub.internalMarks !== null &&
-        !isNaN(Number(sub.internalMarks)) &&
-        Number(sub.internalMarks) >= 0 &&
-        Number(sub.internalMarks) <= (sub.maxMarks || 50)
-    );
-    if (!allValid) return 0;
-
-    const totalPct = subjectList.reduce((acc, sub) => {
-      return acc + ((Number(sub.internalMarks) || 0) / (Number(sub.maxMarks) || 50)) * 100;
-    }, 0);
-    const avgScore = Number((totalPct / subjectList.length).toFixed(1));
-    setReadinessScore(avgScore);
-    return avgScore;
+    const avgScore = calculateReadiness(subjectList);
+    if (avgScore !== null) {
+      setReadinessScore(avgScore);
+      return avgScore;
+    }
+    return 0;
   };
 
   const handleUpdateSubjectMark = (id, rawValue) => {
     const updated = subjects.map((s) => (s.id === id ? { ...s, internalMarks: rawValue } : s));
     setSubjects(updated);
+    notifyMarksUpdated(updated);
 
-    const invalidExists = updated.some(
-      (sub) =>
-        sub.internalMarks !== '' &&
-        sub.internalMarks !== null &&
-        !isNaN(Number(sub.internalMarks)) &&
-        (Number(sub.internalMarks) > (sub.maxMarks || 50) || Number(sub.internalMarks) < 0)
-    );
-
-    if (!invalidExists) {
-      const allFilled = updated.every(
-        (s) =>
-          s.internalMarks !== '' &&
-          s.internalMarks !== null &&
-          !isNaN(Number(s.internalMarks)) &&
-          Number(s.internalMarks) >= 0 &&
-          Number(s.internalMarks) <= (s.maxMarks || 50)
-      );
-      if (allFilled) {
-        updateOverallReadiness(updated);
-      }
+    const calculated = calculateReadiness(updated);
+    if (calculated !== null) {
+      setReadinessScore(calculated);
     }
   };
 

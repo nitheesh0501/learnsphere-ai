@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Users, AlertCircle, CheckCircle2, Search, Shield, Activity, FileText, Zap } from 'lucide-react';
 import { generateStudentPDFReport } from '../utils/pdfExport';
+import { calculateReadiness, getWeakSubject } from '../utils/readiness';
 
 // HARDCODED VALID FACULTY ROSTER DATA (8 DISTINCT STUDENTS INCLUDING NITHEESH)
 const facultyRosterData = [
@@ -275,27 +276,43 @@ export default function FacultyAnalytics({ addToast, nitheeshReadiness }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('All Students');
 
-  // DYNAMICALLY FETCH NITHEESH'S CURRENT READINESS SCORE FROM LOCALSTORAGE OR PROP
-  const getDynamicNitheeshReadinessScore = () => {
-    if (nitheeshReadiness !== undefined && nitheeshReadiness !== null && !isNaN(Number(nitheeshReadiness))) {
-      return Math.round(Number(nitheeshReadiness));
-    }
-    const savedReadiness = localStorage.getItem('learnsphere_readiness');
-    if (savedReadiness && !isNaN(Number(savedReadiness))) {
-      return Math.round(Number(savedReadiness));
-    }
-    const savedSubjects = localStorage.getItem('learnsphere_subjects');
-    if (savedSubjects) {
+  // REAL-TIME LOCALSTORAGE + EVENT LISTENER SYNC FOR NITHEESH READINESS SCORE
+  const [nitheeshReadinessVal, setNitheeshReadinessVal] = useState(() => {
+    const savedMarks = localStorage.getItem('studentMarks') || localStorage.getItem('learnsphere_subjects');
+    if (savedMarks) {
       try {
-        const parsed = JSON.parse(savedSubjects);
-        if (Array.isArray(parsed) && parsed.length === 7) {
-          const totalPct = parsed.reduce((acc, sub) => acc + ((Number(sub.internalMarks) || 0) / (Number(sub.maxMarks) || 50)) * 100, 0);
-          return Math.round(totalPct / 7);
-        }
+        const parsed = JSON.parse(savedMarks);
+        const score = calculateReadiness(parsed);
+        if (score !== null) return score;
       } catch (e) {}
     }
-    return 51;
-  };
+    return nitheeshReadiness !== undefined ? Math.round(Number(nitheeshReadiness)) : 51;
+  });
+
+  useEffect(() => {
+    const syncStudentData = () => {
+      const savedMarks = localStorage.getItem('studentMarks') || localStorage.getItem('learnsphere_subjects');
+      if (savedMarks) {
+        try {
+          const parsed = JSON.parse(savedMarks);
+          const recalculatedReadiness = calculateReadiness(parsed);
+          setNitheeshReadinessVal(recalculatedReadiness);
+        } catch (e) {}
+      } else {
+        const savedReadiness = localStorage.getItem('learnsphere_readiness');
+        if (savedReadiness && !isNaN(Number(savedReadiness))) {
+          setNitheeshReadinessVal(Math.round(Number(savedReadiness)));
+        }
+      }
+    };
+    
+    window.addEventListener('storage', syncStudentData);
+    window.addEventListener('learnsphere-marks-updated', syncStudentData);
+    return () => {
+      window.removeEventListener('storage', syncStudentData);
+      window.removeEventListener('learnsphere-marks-updated', syncStudentData);
+    };
+  }, []);
 
   // DIRECT ACTION 1: INSTANT ASSIGN REMEDIAL ROADMAP (NO POPUPS / NO MODALS)
   const handleAssignRemedialDirect = (stu) => {
@@ -328,14 +345,15 @@ export default function FacultyAnalytics({ addToast, nitheeshReadiness }) {
       : (stu.readiness_score || 51.0);
 
     let stuSubjects = stu.subjects;
+    let weakSub = stu.weakSubject || stu.weak_subject;
 
     // DYNAMIC SYNC FOR NITHEESH: Read live subject marks and readiness score from localStorage
     if (stu.id === "NI_H" || stu.name === "Nitheesh") {
-      numScore = getDynamicNitheeshReadinessScore();
-      const savedSubjects = localStorage.getItem('learnsphere_subjects');
-      if (savedSubjects) {
+      numScore = nitheeshReadinessVal !== null ? nitheeshReadinessVal : 51;
+      const savedMarks = localStorage.getItem('studentMarks') || localStorage.getItem('learnsphere_subjects');
+      if (savedMarks) {
         try {
-          const parsed = JSON.parse(savedSubjects);
+          const parsed = JSON.parse(savedMarks);
           if (Array.isArray(parsed) && parsed.length === 7) {
             stuSubjects = parsed.map(s => ({
               code: s.code,
@@ -344,6 +362,7 @@ export default function FacultyAnalytics({ addToast, nitheeshReadiness }) {
               max: Number(s.maxMarks) || 50,
               status: Number(s.internalMarks) > 40 ? 'Strong' : Number(s.internalMarks) >= 35 ? 'Average' : 'Weak'
             }));
+            weakSub = getWeakSubject(parsed);
           }
         } catch (e) {}
       }
@@ -359,7 +378,7 @@ export default function FacultyAnalytics({ addToast, nitheeshReadiness }) {
       riskLevel: stu.riskStatus || stu.risk_level,
       subjects: stuSubjects,
       recommendations: stu.recommendations || [
-        `Targeted intervention for weak subject: ${stu.weakSubject || stu.weak_subject}`,
+        `Targeted intervention for weak subject: ${weakSub}`,
         "Complete 6-Week Adaptive Recovery Roadmap drills in Focus Mode."
       ]
     });
@@ -401,7 +420,7 @@ export default function FacultyAnalytics({ addToast, nitheeshReadiness }) {
   // SAFE CLASS AVERAGE READINESS CALCULATION (DYNAMIC FOR NITHEESH)
   const validReadinesses = students.map(s => {
     if (s.id === "NI_H" || s.name === "Nitheesh") {
-      return getDynamicNitheeshReadinessScore();
+      return nitheeshReadinessVal !== null ? nitheeshReadinessVal : 0;
     }
     if (typeof s.readinessScore === 'string') return parseFloat(s.readinessScore) || 0;
     return Number(s.readiness_score) || 0;
@@ -550,7 +569,7 @@ export default function FacultyAnalytics({ addToast, nitheeshReadiness }) {
           </div>
         </div>
 
-        {/* Roster Table (8 DISTINCT STUDENTS HARDCODED, NITHEESH READINESS DYNAMIC FROM LOCALSTORAGE) */}
+        {/* Roster Table (8 DISTINCT STUDENTS HARDCODED, NITHEESH READINESS REAL-TIME EVENT SYNC) */}
         <div className="overflow-x-auto no-scrollbar border border-slate-100 rounded-xl">
           <table className="w-full text-left text-xs min-w-[780px]">
             <thead>
@@ -571,15 +590,20 @@ export default function FacultyAnalytics({ addToast, nitheeshReadiness }) {
                 const sWeak = stu.weakSubject || stu.weak_subject;
                 const sGaps = stu.subTopics || stu.concept_gaps || [];
                 
-                // Nitheesh's readiness score dynamically fetches from localStorage/state
-                const rScore = isNitheesh 
-                  ? `${getDynamicNitheeshReadinessScore()}%` 
-                  : (stu.readinessScore || `${stu.readiness_score}%`);
-                
-                const rRisk = isNitheesh 
-                  ? (getDynamicNitheeshReadinessScore() >= 75 ? 'Low Risk' : getDynamicNitheeshReadinessScore() >= 60 ? 'Needs Review' : 'Needs Review')
-                  : (stu.riskStatus || stu.risk_level);
-                  
+                // Nitheesh's readiness score dynamically fetches via real-time event listener
+                let rScoreStr = stu.readinessScore || `${stu.readiness_score}%`;
+                let rRisk = stu.riskStatus || stu.risk_level;
+
+                if (isNitheesh) {
+                  if (nitheeshReadinessVal === null) {
+                    rScoreStr = "Invalid Marks (>50)";
+                    rRisk = "Fix Invalid Marks";
+                  } else {
+                    rScoreStr = `${nitheeshReadinessVal}%`;
+                    rRisk = nitheeshReadinessVal >= 75 ? 'Low Risk' : nitheeshReadinessVal >= 60 ? 'Needs Review' : 'Needs Review';
+                  }
+                }
+
                 const iStatus = stu.interventionStatus || stu.status;
                 const sAvatar = stu.avatar || sName.substring(0, 2).toUpperCase();
 
@@ -597,7 +621,7 @@ export default function FacultyAnalytics({ addToast, nitheeshReadiness }) {
                             <span>{sName}</span>
                             {isNitheesh && (
                               <span className="text-[9px] font-extrabold bg-rose-100 text-[#701C34] px-1 py-0.2 rounded border border-rose-200">
-                                Live Sync
+                                Live Event Sync
                               </span>
                             )}
                           </p>
@@ -618,15 +642,17 @@ export default function FacultyAnalytics({ addToast, nitheeshReadiness }) {
                       </div>
                     </td>
 
-                    {/* Readiness Score Cell (Dynamically synced for Nitheesh) */}
+                    {/* Readiness Score Cell (Real-time synced for Nitheesh) */}
                     <td className="py-3.5 px-3">
-                      <span className="font-bold text-slate-800 text-sm">{rScore}</span>
+                      <span className={`font-bold text-sm ${nitheeshReadinessVal === null && isNitheesh ? 'text-rose-600 text-xs' : 'text-slate-800'}`}>
+                        {rScoreStr}
+                      </span>
                     </td>
 
                     {/* Risk Level Badge */}
                     <td className="py-3.5 px-3">
                       <span className={`px-2.5 py-0.5 rounded-md text-[10px] font-black border ${
-                        rRisk === 'High Risk'
+                        rRisk === 'High Risk' || rRisk === 'Fix Invalid Marks'
                           ? 'bg-rose-100 text-[#701C34] border-rose-200'
                           : rRisk === 'Needs Review' || rRisk === 'Moderate Risk'
                           ? 'bg-amber-50 text-amber-800 border-amber-200'
