@@ -1,60 +1,96 @@
 import React, { useState, useEffect } from 'react';
 import { Users, AlertCircle, CheckCircle2, Search, Shield, Activity, FileText, Zap } from 'lucide-react';
-import { teacherAPI } from '../services/api';
 import { generateStudentPDFReport } from '../utils/pdfExport';
 
-// 7 DISTINCT FACULTY ROSTER STUDENTS STRICTLY MAPPED TO OFFICIAL SEMESTER 3 COURSES
-const DEFAULT_ROSTER = [
+// HARDCODED VALID FACULTY ROSTER DATA (8 DISTINCT STUDENTS INCLUDING NITHEESH)
+const facultyRosterData = [
   {
-    id: 1,
-    student_name: 'Santhosh',
-    student_code: 'CSE-2026-042',
-    weak_subject: '2321CSC301T — Computer Networks (CN)',
-    weak_code: '2321CSC301T',
-    concept_gaps: ['OSI Routing', 'Subnet Masking', 'Packet Forwarding'],
-    internal_score: 32.0,
-    max_score: 50,
-    percentage: 82.0,
-    readiness_score: 82.0,
-    risk_level: 'Low Risk',
-    status: 'Flagged',
-    avatar: 'SA',
+    id: "NI_H",
+    name: "Nitheesh",
+    student_name: "Nitheesh",
+    rollNo: "CSE-2026-018",
+    student_code: "CSE-2026-018",
+    weakSubject: "2321CSS301J — Embedded System Design (ESD)",
+    weak_subject: "2321CSS301J — Embedded System Design (ESD)",
+    subTopics: ["GPIO Timers", "PWM Generation"],
+    concept_gaps: ["GPIO Timers", "PWM Generation"],
+    readinessScore: "78%",
+    readiness_score: 78.0,
+    riskStatus: "Low Risk",
+    risk_level: "Low Risk",
+    interventionStatus: "On Track",
+    status: "On Track",
+    avatar: "NI",
     subjects: [
-      { code: '2321MAB301T', name: 'Discrete Mathematics (DM)', score: 45, max: 50 },
-      { code: '2321CSC301T', name: 'Computer Networks (CN)', score: 32, max: 50 },
-      { code: '2321CSC302J', name: 'Advanced Data Structures & Algorithms (ADSA)', score: 41, max: 50 },
-      { code: '2321CSC303J', name: 'Fundamentals of AI & ML (FAIML)', score: 44, max: 50 },
-      { code: '2321CSS301J', name: 'Embedded System Design (ESD)', score: 42, max: 50 },
-      { code: '2321CSC304R', name: 'Object Oriented Programming using Java (OOPJ)', score: 39, max: 50 },
-      { code: '2321SDA301L', name: 'Career Skill Development III (CSD)', score: 44, max: 50 }
+      { code: '2321MAB301T', name: 'Discrete Mathematics (DM)', score: 42, max: 50, status: 'Strong' },
+      { code: '2321CSC301T', name: 'Computer Networks (CN)', score: 34, max: 50, status: 'Average' },
+      { code: '2321CSC302J', name: 'Advanced Data Structures & Algorithms (ADSA)', score: 31, max: 50, status: 'Weak' },
+      { code: '2321CSC303J', name: 'Fundamentals of AI & Machine Learning (FAIML)', score: 38, max: 50, status: 'Average' },
+      { code: '2321CSS301J', name: 'Embedded System Design (ESD)', score: 28, max: 50, status: 'Weak' },
+      { code: '2321CSC304R', name: 'Object Oriented Programming using Java (OOPJ)', score: 22.5, max: 50, status: 'Weak' },
+      { code: '2321SDA301L', name: 'Career Skill Development III (CSD)', score: 46, max: 50, status: 'Strong' }
     ],
     recommendations: [
-      "Targeted revision on Computer Networks OSI routing protocols.",
+      "Targeted revision on Embedded System Design GPIO Timers & PWM generation.",
+      "Complete 2 LeetCode Medium challenges on Advanced DSA (Red-Black Trees & DP)."
+    ]
+  },
+  {
+    id: "SA",
+    name: "Santhosh",
+    student_name: "Santhosh",
+    rollNo: "CSE-2026-042",
+    student_code: "CSE-2026-042",
+    weakSubject: "2321CSC301T — Computer Networks (CN)",
+    weak_subject: "2321CSC301T — Computer Networks (CN)",
+    subTopics: ["TCP Handshake", "Subnetting"],
+    concept_gaps: ["TCP Handshake", "Subnetting"],
+    readinessScore: "82%",
+    readiness_score: 82.0,
+    riskStatus: "Low Risk",
+    risk_level: "Low Risk",
+    interventionStatus: "Resolved",
+    status: "Resolved",
+    avatar: "SA",
+    subjects: [
+      { code: '2321MAB301T', name: 'Discrete Mathematics (DM)', score: 45, max: 50, status: 'Strong' },
+      { code: '2321CSC301T', name: 'Computer Networks (CN)', score: 32, max: 50, status: 'Average' },
+      { code: '2321CSC302J', name: 'Advanced Data Structures & Algorithms (ADSA)', score: 41, max: 50, status: 'Strong' },
+      { code: '2321CSC303J', name: 'Fundamentals of AI & ML (FAIML)', score: 44, max: 50, status: 'Strong' },
+      { code: '2321CSS301J', name: 'Embedded System Design (ESD)', score: 42, max: 50, status: 'Strong' },
+      { code: '2321CSC304R', name: 'Object Oriented Programming using Java (OOPJ)', score: 39, max: 50, status: 'Average' },
+      { code: '2321SDA301L', name: 'Career Skill Development III (CSD)', score: 44, max: 50, status: 'Strong' }
+    ],
+    recommendations: [
+      "Targeted revision on Computer Networks OSI routing protocols & TCP Handshake.",
       "Maintain high accuracy across Discrete Math & AI/ML modules."
     ]
   },
   {
-    id: 2,
-    student_name: 'Nidhish',
-    student_code: 'CSE-2026-089',
-    weak_subject: '2321MAB301T — DM & 2321CSS301J — ESD',
-    weak_code: '2321MAB301T',
-    concept_gaps: ['Set Theory Logic', 'Graph Induction', 'GPIO Timers'],
-    internal_score: 22.0,
-    max_score: 50,
-    percentage: 58.0,
+    id: "NI",
+    name: "Nidhish",
+    student_name: "Nidhish",
+    rollNo: "CSE-2026-089",
+    student_code: "CSE-2026-089",
+    weakSubject: "2321MAB301T — Discrete Mathematics (DM)",
+    weak_subject: "2321MAB301T — Discrete Mathematics (DM)",
+    subTopics: ["Logic & Set Theory", "Recurrence Relations"],
+    concept_gaps: ["Logic & Set Theory", "Recurrence Relations"],
+    readinessScore: "58%",
     readiness_score: 58.0,
-    risk_level: 'Moderate Risk',
-    status: 'Remedial Assigned',
-    avatar: 'NI',
+    riskStatus: "Needs Review",
+    risk_level: "Needs Review",
+    interventionStatus: "Remedial Assigned",
+    status: "Remedial Assigned",
+    avatar: "NI",
     subjects: [
-      { code: '2321MAB301T', name: 'Discrete Mathematics (DM)', score: 22, max: 50 },
-      { code: '2321CSC301T', name: 'Computer Networks (CN)', score: 34, max: 50 },
-      { code: '2321CSC302J', name: 'Advanced Data Structures & Algorithms (ADSA)', score: 31, max: 50 },
-      { code: '2321CSC303J', name: 'Fundamentals of AI & ML (FAIML)', score: 35, max: 50 },
-      { code: '2321CSS301J', name: 'Embedded System Design (ESD)', score: 24, max: 50 },
-      { code: '2321CSC304R', name: 'Object Oriented Programming using Java (OOPJ)', score: 28, max: 50 },
-      { code: '2321SDA301L', name: 'Career Skill Development III (CSD)', score: 29, max: 50 }
+      { code: '2321MAB301T', name: 'Discrete Mathematics (DM)', score: 22, max: 50, status: 'Weak' },
+      { code: '2321CSC301T', name: 'Computer Networks (CN)', score: 34, max: 50, status: 'Average' },
+      { code: '2321CSC302J', name: 'Advanced Data Structures & Algorithms (ADSA)', score: 31, max: 50, status: 'Weak' },
+      { code: '2321CSC303J', name: 'Fundamentals of AI & ML (FAIML)', score: 35, max: 50, status: 'Average' },
+      { code: '2321CSS301J', name: 'Embedded System Design (ESD)', score: 24, max: 50, status: 'Weak' },
+      { code: '2321CSC304R', name: 'Object Oriented Programming using Java (OOPJ)', score: 28, max: 50, status: 'Weak' },
+      { code: '2321SDA301L', name: 'Career Skill Development III (CSD)', score: 29, max: 50, status: 'Weak' }
     ],
     recommendations: [
       "Practice set theory and graph logic in Discrete Mathematics.",
@@ -62,27 +98,30 @@ const DEFAULT_ROSTER = [
     ]
   },
   {
-    id: 3,
-    student_name: 'Salih',
-    student_code: 'CSE-2026-112',
-    weak_subject: '2321CSC302J — Advanced Data Structures & Algorithms (ADSA)',
-    weak_code: '2321CSC302J',
-    concept_gaps: ['Red-Black Trees', 'DP Memoization', 'TCP Handshake'],
-    internal_score: 18.0,
-    max_score: 50,
-    percentage: 44.0,
+    id: "SL",
+    name: "Salih",
+    student_name: "Salih",
+    rollNo: "CSE-2026-112",
+    student_code: "CSE-2026-112",
+    weakSubject: "2321CSC302J — Advanced Data Structures & Algorithms (ADSA)",
+    weak_subject: "2321CSC302J — Advanced Data Structures & Algorithms (ADSA)",
+    subTopics: ["Red-Black Trees", "DP Memoization"],
+    concept_gaps: ["Red-Black Trees", "DP Memoization"],
+    readinessScore: "44%",
     readiness_score: 44.0,
-    risk_level: 'High Risk',
-    status: 'Flagged',
-    avatar: 'SL',
+    riskStatus: "High Risk",
+    risk_level: "High Risk",
+    interventionStatus: "Remedial Assigned",
+    status: "Remedial Assigned",
+    avatar: "SL",
     subjects: [
-      { code: '2321MAB301T', name: 'Discrete Mathematics (DM)', score: 19, max: 50 },
-      { code: '2321CSC301T', name: 'Computer Networks (CN)', score: 20, max: 50 },
-      { code: '2321CSC302J', name: 'Advanced Data Structures & Algorithms (ADSA)', score: 18, max: 50 },
-      { code: '2321CSC303J', name: 'Fundamentals of AI & ML (FAIML)', score: 25, max: 50 },
-      { code: '2321CSS301J', name: 'Embedded System Design (ESD)', score: 24, max: 50 },
-      { code: '2321CSC304R', name: 'Object Oriented Programming using Java (OOPJ)', score: 22, max: 50 },
-      { code: '2321SDA301L', name: 'Career Skill Development III (CSD)', score: 26, max: 50 }
+      { code: '2321MAB301T', name: 'Discrete Mathematics (DM)', score: 19, max: 50, status: 'Weak' },
+      { code: '2321CSC301T', name: 'Computer Networks (CN)', score: 20, max: 50, status: 'Weak' },
+      { code: '2321CSC302J', name: 'Advanced Data Structures & Algorithms (ADSA)', score: 18, max: 50, status: 'Weak' },
+      { code: '2321CSC303J', name: 'Fundamentals of AI & ML (FAIML)', score: 25, max: 50, status: 'Weak' },
+      { code: '2321CSS301J', name: 'Embedded System Design (ESD)', score: 24, max: 50, status: 'Weak' },
+      { code: '2321CSC304R', name: 'Object Oriented Programming using Java (OOPJ)', score: 22, max: 50, status: 'Weak' },
+      { code: '2321SDA301L', name: 'Career Skill Development III (CSD)', score: 26, max: 50, status: 'Weak' }
     ],
     recommendations: [
       "Urgent 1-on-1 tutoring required for ADSA Red-Black trees & DP.",
@@ -90,27 +129,30 @@ const DEFAULT_ROSTER = [
     ]
   },
   {
-    id: 4,
-    student_name: 'Nadya',
-    student_code: 'CSE-2026-145',
-    weak_subject: '2321CSS301J — Embedded System Design (ESD)',
-    weak_code: '2321CSS301J',
-    concept_gaps: ['RTOS Task Pacing', 'Interrupt Vectors', 'UART Comms'],
-    internal_score: 38.0,
-    max_score: 50,
-    percentage: 91.0,
+    id: "NA",
+    name: "Nadya",
+    student_name: "Nadya",
+    rollNo: "CSE-2026-145",
+    student_code: "CSE-2026-145",
+    weakSubject: "2321CSS301J — Embedded System Design (ESD)",
+    weak_subject: "2321CSS301J — Embedded System Design (ESD)",
+    subTopics: ["GPIO Timers", "SPI Protocols"],
+    concept_gaps: ["GPIO Timers", "SPI Protocols"],
+    readinessScore: "91%",
     readiness_score: 91.0,
-    risk_level: 'Dean Honor / Low Risk',
-    status: 'Performance Improved',
-    avatar: 'NA',
+    riskStatus: "Low Risk",
+    risk_level: "Low Risk",
+    interventionStatus: "Resolved",
+    status: "Resolved",
+    avatar: "NA",
     subjects: [
-      { code: '2321MAB301T', name: 'Discrete Mathematics (DM)', score: 48, max: 50 },
-      { code: '2321CSC301T', name: 'Computer Networks (CN)', score: 46, max: 50 },
-      { code: '2321CSC302J', name: 'Advanced Data Structures & Algorithms (ADSA)', score: 45, max: 50 },
-      { code: '2321CSC303J', name: 'Fundamentals of AI & ML (FAIML)', score: 47, max: 50 },
-      { code: '2321CSS301J', name: 'Embedded System Design (ESD)', score: 38, max: 50 },
-      { code: '2321CSC304R', name: 'Object Oriented Programming using Java (OOPJ)', score: 46, max: 50 },
-      { code: '2321SDA301L', name: 'Career Skill Development III (CSD)', score: 48, max: 50 }
+      { code: '2321MAB301T', name: 'Discrete Mathematics (DM)', score: 48, max: 50, status: 'Strong' },
+      { code: '2321CSC301T', name: 'Computer Networks (CN)', score: 46, max: 50, status: 'Strong' },
+      { code: '2321CSC302J', name: 'Advanced Data Structures & Algorithms (ADSA)', score: 45, max: 50, status: 'Strong' },
+      { code: '2321CSC303J', name: 'Fundamentals of AI & ML (FAIML)', score: 47, max: 50, status: 'Strong' },
+      { code: '2321CSS301J', name: 'Embedded System Design (ESD)', score: 38, max: 50, status: 'Average' },
+      { code: '2321CSC304R', name: 'Object Oriented Programming using Java (OOPJ)', score: 46, max: 50, status: 'Strong' },
+      { code: '2321SDA301L', name: 'Career Skill Development III (CSD)', score: 48, max: 50, status: 'Strong' }
     ],
     recommendations: [
       "Maintain excellence across all Semester 3 modules.",
@@ -118,27 +160,30 @@ const DEFAULT_ROSTER = [
     ]
   },
   {
-    id: 5,
-    student_name: 'Meghan',
-    student_code: 'CSE-2026-018',
-    weak_subject: '2321CSC303J — Fundamentals of AI & Machine Learning (FAIML)',
-    weak_code: '2321CSC303J',
-    concept_gaps: ['Supervised Loss', 'Dijkstra Path', 'Feature Scaling'],
-    internal_score: 26.0,
-    max_score: 50,
-    percentage: 68.0,
+    id: "ME",
+    name: "Meghan",
+    student_name: "Meghan",
+    rollNo: "CSE-2026-018",
+    student_code: "CSE-2026-018",
+    weakSubject: "2321CSC303J — Fundamentals of AI & ML (FAIML)",
+    weak_subject: "2321CSC303J — Fundamentals of AI & ML (FAIML)",
+    subTopics: ["Supervised Learning", "Loss Functions"],
+    concept_gaps: ["Supervised Learning", "Loss Functions"],
+    readinessScore: "68%",
     readiness_score: 68.0,
-    risk_level: 'Moderate Risk',
-    status: 'Remedial Assigned',
-    avatar: 'ME',
+    riskStatus: "Needs Review",
+    risk_level: "Needs Review",
+    interventionStatus: "Resolved",
+    status: "Resolved",
+    avatar: "ME",
     subjects: [
-      { code: '2321MAB301T', name: 'Discrete Mathematics (DM)', score: 39, max: 50 },
-      { code: '2321CSC301T', name: 'Computer Networks (CN)', score: 38, max: 50 },
-      { code: '2321CSC302J', name: 'Advanced Data Structures & Algorithms (ADSA)', score: 28, max: 50 },
-      { code: '2321CSC303J', name: 'Fundamentals of AI & ML (FAIML)', score: 26, max: 50 },
-      { code: '2321CSS301J', name: 'Embedded System Design (ESD)', score: 34, max: 50 },
-      { code: '2321CSC304R', name: 'Object Oriented Programming using Java (OOPJ)', score: 36, max: 50 },
-      { code: '2321SDA301L', name: 'Career Skill Development III (CSD)', score: 37, max: 50 }
+      { code: '2321MAB301T', name: 'Discrete Mathematics (DM)', score: 39, max: 50, status: 'Average' },
+      { code: '2321CSC301T', name: 'Computer Networks (CN)', score: 38, max: 50, status: 'Average' },
+      { code: '2321CSC302J', name: 'Advanced Data Structures & Algorithms (ADSA)', score: 28, max: 50, status: 'Weak' },
+      { code: '2321CSC303J', name: 'Fundamentals of AI & ML (FAIML)', score: 26, max: 50, status: 'Weak' },
+      { code: '2321CSS301J', name: 'Embedded System Design (ESD)', score: 34, max: 50, status: 'Average' },
+      { code: '2321CSC304R', name: 'Object Oriented Programming using Java (OOPJ)', score: 36, max: 50, status: 'Average' },
+      { code: '2321SDA301L', name: 'Career Skill Development III (CSD)', score: 37, max: 50, status: 'Average' }
     ],
     recommendations: [
       "Focus on Supervised Machine Learning algorithms & Loss functions.",
@@ -146,55 +191,61 @@ const DEFAULT_ROSTER = [
     ]
   },
   {
-    id: 6,
-    student_name: 'Nitish',
-    student_code: 'CSE-2026-056',
-    weak_subject: '2321CSC304R — Object Oriented Programming Java (OOPJ)',
-    weak_code: '2321CSC304R',
-    concept_gaps: ['Polymorphism', 'Stack Memory', 'Recurrence Relations'],
-    internal_score: 21.0,
-    max_score: 50,
-    percentage: 52.0,
+    id: "NT",
+    name: "Nitish",
+    student_name: "Nitish",
+    rollNo: "CSE-2026-056",
+    student_code: "CSE-2026-056",
+    weakSubject: "2321CSC304R — OOP using Java (OOPJ)",
+    weak_subject: "2321CSC304R — OOP using Java (OOPJ)",
+    subTopics: ["Inheritance", "Multithreading"],
+    concept_gaps: ["Inheritance", "Multithreading"],
+    readinessScore: "52%",
     readiness_score: 52.0,
-    risk_level: 'High Risk',
-    status: 'Flagged',
-    avatar: 'NT',
+    riskStatus: "Needs Review",
+    risk_level: "Needs Review",
+    interventionStatus: "Flagged",
+    status: "Flagged",
+    avatar: "NT",
     subjects: [
-      { code: '2321MAB301T', name: 'Discrete Mathematics (DM)', score: 23, max: 50 },
-      { code: '2321CSC301T', name: 'Computer Networks (CN)', score: 30, max: 50 },
-      { code: '2321CSC302J', name: 'Advanced Data Structures & Algorithms (ADSA)', score: 27, max: 50 },
-      { code: '2321CSC303J', name: 'Fundamentals of AI & ML (FAIML)', score: 29, max: 50 },
-      { code: '2321CSS301J', name: 'Embedded System Design (ESD)', score: 28, max: 50 },
-      { code: '2321CSC304R', name: 'Object Oriented Programming using Java (OOPJ)', score: 21, max: 50 },
-      { code: '2321SDA301L', name: 'Career Skill Development III (CSD)', score: 25, max: 50 }
+      { code: '2321MAB301T', name: 'Discrete Mathematics (DM)', score: 23, max: 50, status: 'Weak' },
+      { code: '2321CSC301T', name: 'Computer Networks (CN)', score: 30, max: 50, status: 'Weak' },
+      { code: '2321CSC302J', name: 'Advanced Data Structures & Algorithms (ADSA)', score: 27, max: 50, status: 'Weak' },
+      { code: '2321CSC303J', name: 'Fundamentals of AI & ML (FAIML)', score: 29, max: 50, status: 'Weak' },
+      { code: '2321CSS301J', name: 'Embedded System Design (ESD)', score: 28, max: 50, status: 'Weak' },
+      { code: '2321CSC304R', name: 'Object Oriented Programming using Java (OOPJ)', score: 21, max: 50, status: 'Weak' },
+      { code: '2321SDA301L', name: 'Career Skill Development III (CSD)', score: 25, max: 50, status: 'Weak' }
     ],
     recommendations: [
-      "Practice Java OOP inheritance, polymorphism, and memory stack/heap.",
+      "Practice Java OOP inheritance, polymorphism, and multithreading.",
       "Review discrete mathematical logic & recurrence relations."
     ]
   },
   {
-    id: 7,
-    student_name: 'Prajwant',
-    student_code: 'CSE-2026-074',
-    weak_subject: '2321SDA301L — Career Skill Development III (CSD)',
-    weak_code: '2321SDA301L',
-    concept_gaps: ['Speed Conversions', 'Logical Aptitude', 'Verbal Reasoning'],
-    internal_score: 31.0,
-    max_score: 50,
-    percentage: 76.0,
+    id: "PR",
+    name: "Prajwant",
+    student_name: "Prajwant",
+    rollNo: "CSE-2026-074",
+    student_code: "CSE-2026-074",
+    weakSubject: "2321SDA301L — Career Skill Development III (CSD)",
+    weak_subject: "2321SDA301L — Career Skill Development III (CSD)",
+    subTopics: ["Quantitative Aptitude", "Reasoning"],
+    concept_gaps: ["Quantitative Aptitude", "Reasoning"],
+    readinessScore: "76%",
     readiness_score: 76.0,
-    risk_level: 'Low Risk',
-    status: 'Flagged',
-    avatar: 'PR',
+    riskStatus: "Low Risk",
+    risk_level: "Low Risk",
+    interventionStatus: "Flagged",
+    status: "Flagged",
+    avatar: "PR",
     subjects: [
-      { code: '2321MAB301T', name: 'Discrete Mathematics (DM)', score: 40, max: 50 },
-      { code: '2321CSC301T', name: 'Computer Networks (CN)', score: 39, max: 50 },
-      { code: '2321CSC302J', name: 'Advanced Data Structures & Algorithms (ADSA)', score: 38, max: 50 },
-      { code: '2321CSC303J', name: 'Fundamentals of AI & ML (FAIML)', score: 41, max: 50 },
-      { code: '2321CSS301J', name: 'Embedded System Design (ESD)', score: 38, max: 50 },
-      { code: '2321CSC304R', name: 'Object Oriented Programming using Java (OOPJ)', score: 39, max: 50 },
-      { code: '2321SDA301L', name: 'Career Skill Development III (CSD)', score: 31, max: 50 }
+      { code: '2321MAB301T', name: 'Discrete Mathematics (DM)', score: 40, max: 50, status: 'Average' },
+      { code: '2321CSC301T', name: 'Computer Networks (CN)', score: 39, max: 50, status: 'Average' },
+      { code: '2321CSC302J', name: 'Advanced Data Structures & Algorithms (ADSA)', score: 38, max: 50, status: 'Average' },
+      { code: '2321CSC303J', name: 'Fundamentals of AI & ML (FAIML)', score: 41, max: 50, status: 'Strong' },
+      { code: '2321CSS301J', name: 'Embedded System Design (ESD)', score: 38, max: 50, status: 'Average' },
+      { code: '2321CSC304R', name: 'Object Oriented Programming using Java (OOPJ)', score: 39, max: 50, status: 'Average' },
+      { code: '2321SDA301L', name: 'Career Skill Development III (CSD)', score: 31, max: 50, status: 'Weak' }
     ],
     recommendations: [
       "Practice quantitative speed conversions and logical aptitude problem sets.",
@@ -209,12 +260,12 @@ export default function FacultyAnalytics({ addToast }) {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length === 7) return parsed;
+        if (Array.isArray(parsed) && parsed.length === 8) return parsed;
       } catch (e) {
         console.warn('Error parsing saved roster:', e);
       }
     }
-    return DEFAULT_ROSTER;
+    return facultyRosterData;
   });
 
   useEffect(() => {
@@ -224,23 +275,13 @@ export default function FacultyAnalytics({ addToast }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('All Students');
 
-  useEffect(() => {
-    const saved = localStorage.getItem('learnsphere_roster');
-    if (!saved) {
-      teacherAPI.getDashboard().then((res) => {
-        if (res && res.roster) {
-          setStudents(res.roster);
-        }
-      }).catch(() => null);
-    }
-  }, []);
-
   // DIRECT ACTION 1: INSTANT ASSIGN REMEDIAL ROADMAP (NO POPUPS / NO MODALS)
   const handleAssignRemedialDirect = (stu) => {
     const updated = students.map((s) => {
       if (s.id === stu.id) {
         return {
           ...s,
+          interventionStatus: 'Remedial Assigned',
           status: 'Remedial Assigned'
         };
       }
@@ -252,7 +293,7 @@ export default function FacultyAnalytics({ addToast }) {
     if (addToast) {
       addToast(
         'Remedial Roadmap Assigned',
-        `Remedial learning roadmap assigned to ${stu.student_name}.`,
+        `Remedial learning roadmap assigned to ${stu.name || stu.student_name}.`,
         'success'
       );
     }
@@ -260,54 +301,67 @@ export default function FacultyAnalytics({ addToast }) {
 
   // DIRECT ACTION 2: FACULTY INDIVIDUAL STUDENT PDF REPORT DOWNLOAD HANDLER
   const handleDownloadStudentPDF = (stu) => {
+    const numScore = typeof stu.readinessScore === 'string' 
+      ? parseFloat(stu.readinessScore) 
+      : (stu.readiness_score || 78.0);
+
     generateStudentPDFReport({
-      name: stu.student_name,
-      studentCode: stu.student_code,
+      name: stu.name || stu.student_name,
+      studentCode: stu.rollNo || stu.student_code,
       institution: "Easwari Engineering College",
       department: "Department of Computer Science & Engineering",
       semester: "Semester 3 (CSE)",
-      readinessScore: Number(stu.readiness_score) || 0,
-      riskLevel: stu.risk_level,
+      readinessScore: numScore,
+      riskLevel: stu.riskStatus || stu.risk_level,
       subjects: stu.subjects,
       recommendations: stu.recommendations || [
-        `Targeted intervention for weak subject: ${stu.weak_subject}`,
+        `Targeted intervention for weak subject: ${stu.weakSubject || stu.weak_subject}`,
         "Complete 6-Week Adaptive Recovery Roadmap drills in Focus Mode."
       ]
     });
 
     if (addToast) {
-      addToast('PDF Generated', `Official Semester 3 PDF Report generated for ${stu.student_name}.`, 'success');
+      addToast('PDF Generated', `Official Semester 3 PDF Report generated for ${stu.name || stu.student_name}.`, 'success');
     }
   };
 
   // FILTERING LOGIC
   const filteredStudents = students.filter((s) => {
-    const matchesSearch = s.student_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          s.student_code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          s.weak_subject.toLowerCase().includes(searchTerm.toLowerCase());
+    const sName = s.name || s.student_name || '';
+    const sRoll = s.rollNo || s.student_code || '';
+    const sWeak = s.weakSubject || s.weak_subject || '';
+
+    const matchesSearch = sName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          sRoll.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          sWeak.toLowerCase().includes(searchTerm.toLowerCase());
     
     let matchesFilter = true;
+    const currentStatus = s.interventionStatus || s.status || '';
+
     if (filterStatus === 'Flagged / At-Risk') {
-      matchesFilter = s.status === 'Flagged';
+      matchesFilter = currentStatus === 'Flagged' || s.riskStatus === 'High Risk';
     } else if (filterStatus === 'Remedial Assigned') {
-      matchesFilter = s.status === 'Remedial Assigned';
-    } else if (filterStatus === 'Performance Improved') {
-      matchesFilter = s.status === 'Performance Improved' || s.status === 'Resolved';
+      matchesFilter = currentStatus === 'Remedial Assigned';
+    } else if (filterStatus === 'Performance Improved / Resolved') {
+      matchesFilter = currentStatus === 'Resolved' || currentStatus === 'On Track';
     }
 
     return matchesSearch && matchesFilter;
   });
 
   const totalEnrolled = 128;
-  const atRiskCount = students.filter((s) => s.status === 'Flagged').length;
-  const remedialAssignedCount = students.filter((s) => s.status === 'Remedial Assigned').length;
-  const resolvedCount = students.filter((s) => s.status === 'Performance Improved' || s.status === 'Resolved').length;
+  const atRiskCount = students.filter((s) => (s.interventionStatus || s.status) === 'Flagged' || s.riskStatus === 'High Risk').length;
+  const remedialAssignedCount = students.filter((s) => (s.interventionStatus || s.status) === 'Remedial Assigned').length;
+  const resolvedCount = students.filter((s) => (s.interventionStatus || s.status) === 'Resolved' || (s.interventionStatus || s.status) === 'On Track').length;
 
   // SAFE CLASS AVERAGE READINESS CALCULATION
-  const validReadinesses = students.map(s => Number(s.readiness_score) || Number(s.percentage) || 0);
+  const validReadinesses = students.map(s => {
+    if (typeof s.readinessScore === 'string') return parseFloat(s.readinessScore) || 0;
+    return Number(s.readiness_score) || 0;
+  });
   const classAvgPct = students.length > 0 
     ? (validReadinesses.reduce((acc, val) => acc + val, 0) / students.length).toFixed(1) 
-    : '67.3';
+    : '68.6';
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto px-2 sm:px-4">
@@ -360,7 +414,7 @@ export default function FacultyAnalytics({ addToast }) {
           <div>
             <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Remedial Active / Improved</p>
             <p className="text-3xl font-black text-emerald-600 mt-1">{remedialAssignedCount + resolvedCount}</p>
-            <p className="text-[11px] text-emerald-700 font-bold mt-1">{remedialAssignedCount} Assigned • {resolvedCount} Improved</p>
+            <p className="text-[11px] text-emerald-700 font-bold mt-1">{remedialAssignedCount} Assigned • {resolvedCount} Resolved/Track</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 shrink-0">
             <CheckCircle2 className="w-6 h-6" />
@@ -416,7 +470,7 @@ export default function FacultyAnalytics({ addToast }) {
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-slate-100">
           <div>
             <h2 className="text-base sm:text-lg font-black text-slate-900">Priority Intervention Roster</h2>
-            <p className="text-xs text-slate-500">7 Distinct Semester 3 Students (Santhosh, Nidhish, Salih, Nadya, Meghan, Nitish, Prajwant)</p>
+            <p className="text-xs text-slate-500">8 Distinct Semester 3 Students (Nitheesh, Santhosh, Nidhish, Salih, Nadya, Meghan, Nitish, Prajwant)</p>
           </div>
 
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
@@ -425,7 +479,7 @@ export default function FacultyAnalytics({ addToast }) {
               <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
               <input
                 type="text"
-                placeholder="Search student, code, or course..."
+                placeholder="Search student, roll no, or course..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-1.5 text-xs text-slate-900 font-semibold focus:outline-none focus:border-[#701C34]"
@@ -434,7 +488,7 @@ export default function FacultyAnalytics({ addToast }) {
 
             {/* STATUS FILTER TABS */}
             <div className="flex items-center space-x-1 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-bold overflow-x-auto no-scrollbar">
-              {['All Students', 'Flagged / At-Risk', 'Remedial Assigned', 'Performance Improved'].map((st) => (
+              {['All Students', 'Flagged / At-Risk', 'Remedial Assigned', 'Performance Improved / Resolved'].map((st) => (
                 <button
                   key={st}
                   onClick={() => setFilterStatus(st)}
@@ -449,7 +503,7 @@ export default function FacultyAnalytics({ addToast }) {
           </div>
         </div>
 
-        {/* Roster Table (NO MODALS, NO OVERLAYS, WEAKNESSES DISPLAYED DIRECTLY IN TABLE CELL) */}
+        {/* Roster Table (8 DISTINCT STUDENTS HARDCODED, WEAKNESSES DIRECTLY IN TABLE CELL, CLEAN READINESS SCORE CELL) */}
         <div className="overflow-x-auto no-scrollbar border border-slate-100 rounded-xl">
           <table className="w-full text-left text-xs min-w-[780px]">
             <thead>
@@ -463,94 +517,105 @@ export default function FacultyAnalytics({ addToast }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {filteredStudents.map((stu) => (
-                <tr key={stu.id} className="hover:bg-slate-50/80 transition-colors">
-                  
-                  {/* Student Info */}
-                  <td className="py-3.5 px-3">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8.5 h-8.5 rounded-lg bg-rose-50 text-[#701C34] font-black flex items-center justify-center text-xs border border-rose-200 shrink-0 shadow-2xs">
-                        {stu.avatar}
+              {filteredStudents.map((stu) => {
+                const sName = stu.name || stu.student_name;
+                const sRoll = stu.rollNo || stu.student_code;
+                const sWeak = stu.weakSubject || stu.weak_subject;
+                const sGaps = stu.subTopics || stu.concept_gaps || [];
+                const rScore = stu.readinessScore || `${stu.readiness_score}%`;
+                const rRisk = stu.riskStatus || stu.risk_level;
+                const iStatus = stu.interventionStatus || stu.status;
+                const sAvatar = stu.avatar || sName.substring(0, 2).toUpperCase();
+
+                return (
+                  <tr key={stu.id} className="hover:bg-slate-50/80 transition-colors">
+                    
+                    {/* Student Info */}
+                    <td className="py-3.5 px-3">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8.5 h-8.5 rounded-lg bg-rose-50 text-[#701C34] font-black flex items-center justify-center text-xs border border-rose-200 shrink-0 shadow-2xs">
+                          {sAvatar}
+                        </div>
+                        <div>
+                          <p className="font-bold text-slate-900">{sName}</p>
+                          <p className="text-[10px] text-slate-500 font-medium">{sRoll}</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-bold text-slate-900">{stu.student_name}</p>
-                        <p className="text-[10px] text-slate-500 font-medium">{stu.student_code}</p>
+                    </td>
+
+                    {/* Weak Subject & Sub-Topic Tags Rendered Directly Inline (No Click Required) */}
+                    <td className="py-3.5 px-3 max-w-[260px]">
+                      <p className="font-extrabold text-[#701C34] leading-snug">{sWeak}</p>
+                      <div className="flex flex-wrap gap-1 mt-1.5">
+                        {sGaps.map((gap) => (
+                          <span key={gap} className="text-[9px] font-extrabold bg-rose-50 text-[#701C34] px-1.5 py-0.5 rounded border border-rose-200">
+                            {gap}
+                          </span>
+                        ))}
                       </div>
-                    </div>
-                  </td>
+                    </td>
 
-                  {/* Weak Subject & Sub-Topic Tags Rendered Directly Inline (No Click Required) */}
-                  <td className="py-3.5 px-3 max-w-[260px]">
-                    <p className="font-extrabold text-[#701C34] leading-snug">{stu.weak_subject}</p>
-                    <div className="flex flex-wrap gap-1 mt-1.5">
-                      {(stu.concept_gaps || []).map((gap) => (
-                        <span key={gap} className="text-[9px] font-extrabold bg-rose-50 text-[#701C34] px-1.5 py-0.5 rounded border border-rose-200">
-                          {gap}
-                        </span>
-                      ))}
-                    </div>
-                  </td>
+                    {/* Readiness Score Cell (Direct rendering without orphaned % symbol) */}
+                    <td className="py-3.5 px-3">
+                      <span className="font-bold text-slate-800 text-sm">{rScore}</span>
+                    </td>
 
-                  {/* Readiness Score */}
-                  <td className="py-3.5 px-3">
-                    <span className="font-black text-[#701C34] text-sm">{stu.readiness_score}%</span>
-                  </td>
+                    {/* Risk Level Badge */}
+                    <td className="py-3.5 px-3">
+                      <span className={`px-2.5 py-0.5 rounded-md text-[10px] font-black border ${
+                        rRisk === 'High Risk'
+                          ? 'bg-rose-100 text-[#701C34] border-rose-200'
+                          : rRisk === 'Needs Review' || rRisk === 'Moderate Risk'
+                          ? 'bg-amber-50 text-amber-800 border-amber-200'
+                          : 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                      }`}>
+                        {rRisk}
+                      </span>
+                    </td>
 
-                  {/* Risk Level Badge */}
-                  <td className="py-3.5 px-3">
-                    <span className={`px-2.5 py-0.5 rounded-md text-[10px] font-black border ${
-                      stu.readiness_score < 60
-                        ? 'bg-rose-100 text-[#701C34] border-rose-200'
-                        : stu.readiness_score < 75
-                        ? 'bg-amber-50 text-amber-800 border-amber-200'
-                        : 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                    }`}>
-                      {stu.risk_level}
-                    </span>
-                  </td>
+                    {/* Status Tag */}
+                    <td className="py-3.5 px-3">
+                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-black border inline-flex items-center space-x-1 ${
+                        iStatus === 'Flagged'
+                          ? 'bg-rose-100 text-[#701C34] border-rose-200'
+                          : iStatus === 'Remedial Assigned'
+                          ? 'bg-amber-50 text-amber-800 border-amber-200'
+                          : 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                      }`}>
+                        <span>{iStatus}</span>
+                      </span>
+                    </td>
 
-                  {/* Status Tag */}
-                  <td className="py-3.5 px-3">
-                    <span className={`px-2.5 py-1 rounded-full text-[10px] font-black border inline-flex items-center space-x-1 ${
-                      stu.status === 'Flagged'
-                        ? 'bg-rose-100 text-[#701C34] border-rose-200'
-                        : stu.status === 'Remedial Assigned'
-                        ? 'bg-amber-50 text-amber-800 border-amber-200'
-                        : 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                    }`}>
-                      <span>{stu.status}</span>
-                    </span>
-                  </td>
+                    {/* CLEAN & SIMPLE ACTION COLUMN: 2 DIRECT ACTION BUTTONS (NO POPUPS AT ALL) */}
+                    <td className="py-3.5 px-3 text-right">
+                      <div className="flex items-center justify-end space-x-2">
+                        
+                        {/* BUTTON 1: DIRECT REMEDIAL ASSIGNMENT (INSTANT TOAST ALERT) */}
+                        <button
+                          onClick={() => handleAssignRemedialDirect(stu)}
+                          className="px-3 py-1.5 bg-[#701C34] hover:bg-[#581427] text-white rounded-lg text-xs font-bold transition-all shadow-xs flex items-center space-x-1 active:scale-95"
+                          title={`Assign Remedial Roadmap to ${sName}`}
+                        >
+                          <Zap className="w-3.5 h-3.5" />
+                          <span>Assign Remedial</span>
+                        </button>
 
-                  {/* CLEAN & SIMPLE ACTION COLUMN: 2 DIRECT ACTION BUTTONS (NO POPUPS AT ALL) */}
-                  <td className="py-3.5 px-3 text-right">
-                    <div className="flex items-center justify-end space-x-2">
-                      
-                      {/* BUTTON 1: DIRECT REMEDIAL ASSIGNMENT (INSTANT TOAST ALERT) */}
-                      <button
-                        onClick={() => handleAssignRemedialDirect(stu)}
-                        className="px-3 py-1.5 bg-[#701C34] hover:bg-[#581427] text-white rounded-lg text-xs font-bold transition-all shadow-xs flex items-center space-x-1 active:scale-95"
-                        title={`Assign Remedial Roadmap to ${stu.student_name}`}
-                      >
-                        <Zap className="w-3.5 h-3.5" />
-                        <span>Assign Remedial</span>
-                      </button>
+                        {/* BUTTON 2: DIRECT PDF REPORT DOWNLOAD */}
+                        <button
+                          onClick={() => handleDownloadStudentPDF(stu)}
+                          className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 rounded-lg text-xs font-bold transition-all flex items-center space-x-1 active:scale-95"
+                          title={`Download Printable PDF Report for ${sName}`}
+                        >
+                          <FileText className="w-3.5 h-3.5 text-[#701C34]" />
+                          <span>PDF Report</span>
+                        </button>
 
-                      {/* BUTTON 2: DIRECT PDF REPORT DOWNLOAD */}
-                      <button
-                        onClick={() => handleDownloadStudentPDF(stu)}
-                        className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 rounded-lg text-xs font-bold transition-all flex items-center space-x-1 active:scale-95"
-                        title={`Download Printable PDF Report for ${stu.student_name}`}
-                      >
-                        <FileText className="w-3.5 h-3.5 text-[#701C34]" />
-                        <span>PDF Report</span>
-                      </button>
+                      </div>
+                    </td>
 
-                    </div>
-                  </td>
-
-                </tr>
-              ))}
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
