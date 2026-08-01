@@ -25,7 +25,8 @@ export default {
           hover: '#581427',
           dark: '#4A1021',
           light: '#FDF2F4',
-          bg: '#F8FAFC',
+          bg: '#E0F2FE', // Primary Sky Blue Body Background
+          bgLight: '#F0F9FF', // Very Light Sky Blue Container Background
           card: '#FFFFFF',
           sidebar: '#0F172A',
           text: '#0F172A',

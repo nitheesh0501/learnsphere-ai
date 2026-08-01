@@ -8,9 +8,10 @@
     --primary-hover: #581427;
     --dark-accent: #4A1021;
     --light-accent: #FDF2F4;
-    --bg-main: #F8FAFC;
+    --bg-main: #E0F2FE; /* Sky Blue Body Background */
+    --bg-container: #F0F9FF; /* Light Sky Blue Container Background */
     --bg-card: #FFFFFF;
-    --border-card: #E2E8F0;
+    --border-card: #CBD5E1;
     --text-primary: #0F172A;
     --text-muted: #475569;
   }
@@ -19,6 +20,7 @@
     background-color: var(--bg-main);
     color: var(--text-primary);
     font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
   }
 
   /* Global Mouse Text Selection Styles */
@@ -47,14 +49,14 @@
 
 .white-card {
   background-color: #FFFFFF;
-  border: 1px solid #E2E8F0;
+  border: 1px solid #CBD5E1;
   border-radius: 16px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -2px rgba(0, 0, 0, 0.02);
 }
 
 .white-card-interactive {
   background-color: #FFFFFF;
-  border: 1px solid #E2E8F0;
+  border: 1px solid #CBD5E1;
   border-radius: 16px;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }

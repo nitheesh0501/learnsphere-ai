@@ -59,7 +59,7 @@ export default function App() {
 
   return (
     <AuthProvider>
-      <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col font-['Plus_Jakarta_Sans',sans-serif]">
+      <div className="min-h-screen bg-[#E0F2FE] text-slate-900 flex flex-col font-['Plus_Jakarta_Sans',sans-serif]">
         
         {/* Navigation Header Bar */}
         <Header 
@@ -68,7 +68,7 @@ export default function App() {
           readinessScore={readinessScore} 
         />
 
-        {/* Main View Area */}
+        {/* Main View Area Container: Very Light Sky Blue (#F0F9FF) for clean contrast */}
         <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
           {activeTab === 'hub' && (
             <StudentHub
@@ -92,16 +92,16 @@ export default function App() {
         </main>
 
         {/* Footer with Reset Data to Defaults Utility Button */}
-        <footer className="border-t border-slate-200 bg-white py-6 mt-12 text-xs text-slate-500 font-medium">
+        <footer className="border-t border-sky-200 bg-white/90 backdrop-blur-xs py-6 mt-12 text-xs text-slate-600 font-medium">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center space-x-2">
-              <span className="font-bold text-slate-700">LearnSphere AI • Early Academic Intervention Platform</span>
+              <span className="font-bold text-slate-800">LearnSphere AI • Early Academic Intervention Platform</span>
             </div>
             
             <div className="flex items-center space-x-4">
               <button
                 onClick={handleResetDefaults}
-                className="text-xs font-bold text-slate-500 hover:text-red-600 transition-colors flex items-center space-x-1 bg-slate-100 hover:bg-rose-50 px-2.5 py-1 rounded-lg border border-slate-200"
+                className="text-xs font-bold text-slate-600 hover:text-[#701C34] transition-colors flex items-center space-x-1 bg-sky-50 hover:bg-rose-50 px-2.5 py-1 rounded-lg border border-sky-200"
                 title="Reset all modified student marks and roster status back to original defaults"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
