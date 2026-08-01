@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Users, AlertCircle, CheckCircle2, Send, Search, Shield } from 'lucide-react';
+import { Users, AlertCircle, CheckCircle2, Send, Search, Shield, TrendingDown, Activity, AlertTriangle } from 'lucide-react';
 import { teacherAPI } from '../services/api';
 
 const DEFAULT_ROSTER = [
@@ -170,6 +170,9 @@ export default function FacultyAnalytics({ addToast }) {
   const atRiskCount = students.filter((s) => s.status !== 'Resolved').length;
   const resolvedCount = students.filter((s) => s.status === 'Resolved').length;
 
+  // Calculate class average readiness percentage across the 7 roster students
+  const classAvgPct = (students.reduce((acc, s) => acc + s.percentage, 0) / students.length).toFixed(1);
+
   return (
     <div className="space-y-8 max-w-7xl mx-auto px-2 sm:px-4">
       
@@ -230,6 +233,46 @@ export default function FacultyAnalytics({ addToast }) {
 
       </div>
 
+      {/* FEATURE 2: HIGH-LEVEL PROBLEM STATEMENT ANALYTICS SUMMARY BANNER */}
+      <div className="bg-gradient-to-r from-rose-950 via-[#701C34] to-[#581427] text-white rounded-2xl p-5 shadow-lg border border-rose-900/60 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="flex items-center space-x-3.5">
+          <div className="w-11 h-11 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0 shadow-inner">
+            <Activity className="w-6 h-6 text-rose-200" />
+          </div>
+          <div>
+            <div className="flex items-center space-x-2">
+              <span className="text-[10px] font-black uppercase tracking-wider text-rose-200 bg-white/10 px-2 py-0.5 rounded border border-white/15">
+                Problem Statement Analytics
+              </span>
+            </div>
+            <h3 className="text-base font-extrabold text-white mt-1">
+              Semester 3 System Performance Diagnostic
+            </h3>
+            <p className="text-xs text-rose-100/80 mt-0.5">
+              Aggregated early intervention metrics across all 7 core Semester 3 subject domains
+            </p>
+          </div>
+        </div>
+
+        {/* 3 Metric Pill Badges */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full md:w-auto shrink-0">
+          <div className="bg-white/10 backdrop-blur-xs border border-white/15 rounded-xl px-4 py-2.5 text-center">
+            <span className="text-[10px] text-rose-200 font-bold uppercase block">Class Avg Readiness</span>
+            <span className="text-base font-black text-white">{classAvgPct}%</span>
+          </div>
+
+          <div className="bg-white/10 backdrop-blur-xs border border-white/15 rounded-xl px-4 py-2.5 text-center">
+            <span className="text-[10px] text-rose-200 font-bold uppercase block">High-Risk Identified</span>
+            <span className="text-base font-black text-rose-300">{atRiskCount} Students ({Math.round((atRiskCount/students.length)*100)}%)</span>
+          </div>
+
+          <div className="bg-white/10 backdrop-blur-xs border border-white/15 rounded-xl px-4 py-2.5 text-center">
+            <span className="text-[10px] text-rose-200 font-bold uppercase block">Primary Bottleneck</span>
+            <span className="text-xs font-extrabold text-white">2321CSC302J (ADSA)</span>
+          </div>
+        </div>
+      </div>
+
       {/* Priority Intervention Roster Section */}
       <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm space-y-6">
         
@@ -237,7 +280,7 @@ export default function FacultyAnalytics({ addToast }) {
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-slate-100">
           <div>
             <h2 className="text-base sm:text-lg font-black text-slate-900">Priority Intervention Roster</h2>
-            <p className="text-xs text-slate-500">Semester 3 students flagged based on IA test scores out of 50</p>
+            <p className="text-xs text-slate-500">Semester 3 students (Santhosh, Nidhish, Salih, Nadya, Meghan, Nitish, Prajwant)</p>
           </div>
 
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">

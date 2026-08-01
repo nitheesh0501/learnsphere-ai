@@ -13,7 +13,9 @@ import {
   AlertCircle,
   Zap,
   Calculator,
-  Lock
+  Lock,
+  Download,
+  Info
 } from 'lucide-react';
 
 // OFFICIAL SEMESTER 3 PREDEFINED SUBJECT DATASET (STRICTLY 7 COURSES - LOCKED STRUCTURE)
@@ -119,7 +121,6 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
     const updated = subjects.map((s) => (s.id === id ? { ...s, internalMarks: rawValue } : s));
     setSubjects(updated);
 
-    // Check if any mark in the form is > 50
     const invalidExists = updated.some(
       (sub) =>
         sub.internalMarks !== '' &&
@@ -187,7 +188,46 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
     }, 1500);
   };
 
-  // REACTIVE 6-WEEK RECOVERY ROADMAP (PREVENTED FROM GENERATING ON INVALID MARKS)
+  // FEATURE 1: DOWNLOAD READINESS & PERFORMANCE REPORT
+  const handleDownloadReport = () => {
+    if (hasInvalidMarks) {
+      if (addToast) {
+        addToast('Download Error', 'Please fix invalid mark entries exceeding 50 before downloading.', 'warning');
+      }
+      return;
+    }
+
+    const reportHeader = `LEARNSPHERE AI - SEMESTER 3 READINESS & PERFORMANCE REPORT\n`;
+    const lineDivider = `=======================================================================\n`;
+    const studentInfo = `Student Name: Nitheesh\nSemester: Semester 3 (CSE)\nDate Generated: ${new Date().toLocaleDateString()}\nOverall Semester Readiness Score: ${isAllMarksEntered ? readinessScore + '%' : 'Pending Completion'}\n\n`;
+
+    const subjectsSection = `OFFICIAL SEMESTER 3 SUBJECT MARKS BREAKDOWN:\n` + lineDivider +
+      subjects.map(s => `  - [${s.code}] ${s.name}: ${s.internalMarks || '0'}/50 (${Math.round(((Number(s.internalMarks) || 0)/50)*100)}%)`).join('\n') + `\n\n`;
+
+    const prioritiesSection = `AI-SUGGESTED STUDY PRIORITIES:\n` + lineDivider +
+      (dynamicPriorities.length > 0 ? dynamicPriorities.map(p => `  - [${p.code}] ${p.name}: ${p.priority} (${p.desc})`).join('\n') : '  - Pending valid mark entries') + `\n\n`;
+
+    const roadmapSection = `6-WEEK RECOVERY ROADMAP SUMMARY:\n` + lineDivider +
+      (dynamicRoadmap.length > 0 ? dynamicRoadmap.map(r => `  - Week ${r.week} [${r.status}]: ${r.title} — ${r.desc}`).join('\n') : '  - Pending valid mark entries');
+
+    const fullContent = reportHeader + lineDivider + studentInfo + subjectsSection + prioritiesSection + roadmapSection;
+
+    const blob = new Blob([fullContent], { type: 'text/plain;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `LearnSphere_Sem3_Readiness_Report_Nitheesh.txt`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    if (addToast) {
+      addToast('Report Downloaded', 'Semester 3 Readiness & Performance Report downloaded successfully.', 'success');
+    }
+  };
+
+  // REACTIVE 6-WEEK RECOVERY ROADMAP
   const dynamicRoadmap = useMemo(() => {
     if (hasInvalidMarks) return [];
 
@@ -226,7 +266,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
     ];
   }, [subjects, hasInvalidMarks]);
 
-  // REACTIVE AI STUDY PRIORITIES QUEUE (PREVENTED FROM GENERATING ON INVALID MARKS)
+  // REACTIVE AI STUDY PRIORITIES QUEUE
   const dynamicPriorities = useMemo(() => {
     if (hasInvalidMarks) return [];
 
@@ -302,11 +342,23 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
           </p>
         </div>
 
-        <div className="flex items-center space-x-3 self-stretch md:self-auto shrink-0">
+        <div className="flex items-center space-x-2.5 self-stretch md:self-auto shrink-0 flex-wrap sm:flex-nowrap">
+          {/* Download Report Button */}
+          <button
+            onClick={handleDownloadReport}
+            disabled={hasInvalidMarks}
+            className="flex-1 sm:flex-none flex items-center justify-center space-x-2 px-4 py-2.5 bg-rose-900/60 hover:bg-rose-900 border border-rose-400/40 text-white rounded-xl font-bold text-xs transition-all shadow-md active:scale-95 disabled:opacity-50"
+            title="Download Readiness & Performance Report Summary"
+          >
+            <Download className="w-4 h-4 text-rose-200" />
+            <span>Download Report</span>
+          </button>
+
+          {/* Re-Run AI Audit Button */}
           <button
             onClick={handleReRunAudit}
             disabled={isAuditing || hasInvalidMarks || !isAllMarksEntered}
-            className="w-full md:w-auto flex items-center justify-center space-x-2 px-5 py-2.5 bg-white hover:bg-rose-50 text-[#701C34] disabled:bg-slate-800 disabled:text-slate-400 disabled:opacity-60 disabled:cursor-not-allowed rounded-xl font-extrabold text-xs transition-all shadow-lg"
+            className="flex-1 sm:flex-none flex items-center justify-center space-x-2 px-4 py-2.5 bg-white hover:bg-rose-50 text-[#701C34] disabled:bg-slate-800 disabled:text-slate-400 disabled:opacity-60 disabled:cursor-not-allowed rounded-xl font-extrabold text-xs transition-all shadow-lg"
           >
             <Zap className={`w-4 h-4 text-[#701C34] ${isAuditing ? 'animate-spin' : ''}`} />
             <span>{isAuditing ? 'Auditing...' : 'Re-Run AI Audit'}</span>
@@ -406,7 +458,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
                         </div>
 
                         <div className="flex items-center space-x-4 shrink-0">
-                          {/* Score Input with NO auto-clamping, allowing typed numbers */}
+                          {/* Score Input */}
                           <div className="flex items-center space-x-1">
                             <input
                               type="number"
@@ -447,7 +499,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
             </div>
           </div>
 
-          {/* Assessment Footer Action: Solid Maroon Primary Button */}
+          {/* Assessment Footer Action */}
           <div className="mt-5 pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
             <span className="text-xs text-slate-500 font-medium text-center sm:text-left">
               Out of 50 IA Evaluation Mode • {completedCount}/7 Completed
@@ -523,11 +575,22 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
               {/* Dynamic Semester Readiness Progress Gauge */}
               <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3">
                 <div className="flex items-center justify-between flex-wrap gap-2">
+                  
+                  {/* Title & READINESS METHODOLOGY TOOLTIP */}
                   <div className="flex items-center space-x-2">
                     <Target className="w-4 h-4 text-[#701C34]" />
                     <span className="text-xs font-black uppercase tracking-wider text-slate-700">
                       Overall Semester 3 Readiness Score
                     </span>
+                    
+                    {/* Hover Tooltip (ⓘ) */}
+                    <div className="relative group inline-flex items-center z-20">
+                      <Info className="w-3.5 h-3.5 text-slate-400 hover:text-[#701C34] cursor-pointer transition-colors" />
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block w-64 p-3 bg-slate-900 text-white text-[11px] font-medium rounded-xl shadow-xl pointer-events-none leading-relaxed border border-slate-800">
+                        Adaptive Readiness Score is calculated using a weighted formula combining Semester 3 assessment marks, Focus Mode practice accuracy, and topic weakness distribution.
+                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900" />
+                      </div>
+                    </div>
                   </div>
 
                   {hasInvalidMarks ? (
@@ -554,7 +617,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
                   )}
                 </div>
 
-                {/* Speedometer-Style Horizontal Linear Progress Bar / INVALID ERROR CALLOUT */}
+                {/* Speedometer-Style Horizontal Linear Progress Bar */}
                 {hasInvalidMarks ? (
                   <div className="p-4 bg-rose-100/90 border border-red-300 rounded-xl text-center space-y-1">
                     <AlertCircle className="w-6 h-6 text-red-600 mx-auto" />
@@ -594,7 +657,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
         </div>
       </div>
 
-      {/* CARD 3: 6-Week Adaptive Study Roadmap (PREVENTED FROM GENERATING ON INVALID MARKS) */}
+      {/* CARD 3: 6-Week Adaptive Study Roadmap */}
       <section className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-8 shadow-sm relative">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-6 border-b border-slate-100 gap-2">
           <div>
@@ -614,7 +677,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
           </div>
         </div>
 
-        {/* Stepper Roadmap Container / INVALID MARKS PLACEHOLDER */}
+        {/* Stepper Roadmap Container */}
         {hasInvalidMarks ? (
           <div className="mt-6 p-6 bg-rose-50 border border-rose-200 rounded-xl text-center space-y-2">
             <AlertCircle className="w-6 h-6 text-red-600 mx-auto" />
@@ -679,7 +742,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
         )}
       </section>
 
-      {/* CARD 4: AI SUGGESTED STUDY PRIORITIES (PREVENTED FROM GENERATING ON INVALID MARKS) */}
+      {/* CARD 4: AI SUGGESTED STUDY PRIORITIES */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
