@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Sliders,
   CheckCircle2,
@@ -17,13 +17,30 @@ import {
   Calculator
 } from 'lucide-react';
 
+const DEFAULT_SUBJECTS = [
+  { id: '1', name: 'Mathematics III', internalMarks: 44, maxMarks: 50, credits: 4 },
+  { id: '2', name: 'Physics II', internalMarks: 31, maxMarks: 50, credits: 4 },
+  { id: '3', name: 'Programming in C++', internalMarks: 22.5, maxMarks: 50, credits: 3 },
+];
+
 export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadinessScore, addToast }) {
-  // State for subjects list out of 50
-  const [subjects, setSubjects] = useState([
-    { id: '1', name: 'Mathematics III', internalMarks: 44, maxMarks: 50, credits: 4 },
-    { id: '2', name: 'Physics II', internalMarks: 31, maxMarks: 50, credits: 4 },
-    { id: '3', name: 'Programming in C++', internalMarks: 22.5, maxMarks: 50, credits: 3 },
-  ]);
+  // Initialize subjects state from localStorage or fall back to defaults
+  const [subjects, setSubjects] = useState(() => {
+    const saved = localStorage.getItem('learnsphere_subjects');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.warn('Error parsing localStorage subjects:', e);
+      }
+    }
+    return DEFAULT_SUBJECTS;
+  });
+
+  // Auto-save subjects state to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('learnsphere_subjects', JSON.stringify(subjects));
+  }, [subjects]);
 
   // Form state for adding a new subject entry
   const [newSubjectTitle, setNewSubjectTitle] = useState('');
@@ -58,7 +75,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
     }
   };
 
-  // Dynamically compute overall readiness score
+  // Dynamically compute overall readiness score and sync to parent
   const updateOverallReadiness = (subjectList) => {
     if (!subjectList || subjectList.length === 0) return 0;
     const totalPct = subjectList.reduce((acc, sub) => {
@@ -227,7 +244,6 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
 
                     <div className="flex items-center space-x-2 shrink-0">
                       <div className="flex items-center space-x-1">
-                        {/* Number Input with strict min/max and instant clamping */}
                         <input
                           type="number"
                           min="0"
@@ -285,7 +301,6 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
                     onChange={(e) => setNewSubjectTitle(e.target.value)}
                     className="sm:col-span-6 bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none focus:border-red-600"
                   />
-                  {/* New Subject IA score input with instant min/max clamping */}
                   <input
                     type="number"
                     placeholder="IA Score (/50)"
@@ -451,15 +466,11 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
 
         {/* Stepper Roadmap Container */}
         <div className="mt-8 mb-2 relative px-2">
-          
           <div className="hidden lg:block absolute top-[28px] left-[40px] right-[40px] h-[4px] bg-slate-200 z-0">
             <div className="bg-gradient-to-r from-emerald-500 via-red-600 to-slate-200 h-full w-[33%] rounded-full" />
           </div>
 
-          {/* 6 Step Nodes Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 relative z-10">
-            
-            {/* Wk 1 (Done) */}
             <div className="flex flex-col items-start lg:items-center text-left lg:text-center group bg-slate-50 lg:bg-transparent p-3 lg:p-0 rounded-xl lg:rounded-none">
               <div className="relative z-10 w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-white border-2 border-emerald-500 p-1 flex items-center justify-center shadow-md">
                 <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-slate-900 font-black text-sm">
@@ -477,7 +488,6 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
               </div>
             </div>
 
-            {/* Wk 2 (Current) */}
             <div className="flex flex-col items-start lg:items-center text-left lg:text-center group bg-rose-50/50 lg:bg-transparent p-3 lg:p-0 rounded-xl lg:rounded-none">
               <div className="relative z-10 w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-white border-2 border-red-600 p-1 flex items-center justify-center shadow-md ring-4 ring-rose-100">
                 <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-red-900 font-black text-sm">
@@ -495,7 +505,6 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
               </div>
             </div>
 
-            {/* Wk 3 */}
             <div className="flex flex-col items-start lg:items-center text-left lg:text-center group bg-slate-50 lg:bg-transparent p-3 lg:p-0 rounded-xl lg:rounded-none">
               <div className="relative z-10 w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-white border-2 border-slate-300 p-1 flex items-center justify-center shadow-xs">
                 <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-slate-900 font-bold text-sm">
@@ -513,7 +522,6 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
               </div>
             </div>
 
-            {/* Wk 4 */}
             <div className="flex flex-col items-start lg:items-center text-left lg:text-center group bg-slate-50 lg:bg-transparent p-3 lg:p-0 rounded-xl lg:rounded-none">
               <div className="relative z-10 w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-white border-2 border-slate-300 p-1 flex items-center justify-center shadow-xs">
                 <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-slate-900 font-bold text-sm">
@@ -531,7 +539,6 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
               </div>
             </div>
 
-            {/* Wk 5 */}
             <div className="flex flex-col items-start lg:items-center text-left lg:text-center group bg-slate-50 lg:bg-transparent p-3 lg:p-0 rounded-xl lg:rounded-none">
               <div className="relative z-10 w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-white border-2 border-slate-300 p-1 flex items-center justify-center shadow-xs">
                 <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-slate-900 font-bold text-sm">
@@ -549,7 +556,6 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
               </div>
             </div>
 
-            {/* Wk 6 */}
             <div className="flex flex-col items-start lg:items-center text-left lg:text-center group bg-slate-50 lg:bg-transparent p-3 lg:p-0 rounded-xl lg:rounded-none">
               <div className="relative z-10 w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-white border-2 border-slate-300 p-1 flex items-center justify-center shadow-xs">
                 <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-slate-900 font-bold text-sm">
@@ -586,8 +592,6 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          
-          {/* Card 1 */}
           <div className="bg-white border border-rose-200 hover:border-red-400 rounded-2xl p-5 flex flex-col justify-between shadow-md transition-all duration-200 hover:-translate-y-1 relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-24 h-24 bg-red-600/5 rounded-full blur-xl group-hover:bg-red-600/10 transition-all" />
             <div>
@@ -619,7 +623,6 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
             </div>
           </div>
 
-          {/* Card 2 */}
           <div className="bg-white border border-amber-200 hover:border-amber-400 rounded-2xl p-5 flex flex-col justify-between shadow-md transition-all duration-200 hover:-translate-y-1 relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-full blur-xl group-hover:bg-amber-500/10 transition-all" />
             <div>
@@ -651,7 +654,6 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
             </div>
           </div>
 
-          {/* Card 3 */}
           <div className="bg-white border border-emerald-200 hover:border-emerald-400 rounded-2xl p-5 flex flex-col justify-between shadow-md transition-all duration-200 hover:-translate-y-1 relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full blur-xl group-hover:bg-emerald-500/10 transition-all" />
             <div>

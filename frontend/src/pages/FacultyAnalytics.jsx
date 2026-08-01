@@ -2,134 +2,154 @@ import React, { useState, useEffect } from 'react';
 import { Users, AlertCircle, CheckCircle2, Send, Search, Shield } from 'lucide-react';
 import { teacherAPI } from '../services/api';
 
+const DEFAULT_ROSTER = [
+  {
+    id: 1,
+    student_name: 'Santhosh',
+    student_code: 'CSE-2026-042',
+    weak_subject: 'Programming in C++',
+    internal_score: 19.5,
+    max_score: 50,
+    percentage: 39.0,
+    risk_level: 'Weak',
+    status: 'Flagged',
+    last_action: 'Requires Intervention',
+    avatar: 'SA'
+  },
+  {
+    id: 2,
+    student_name: 'Nidhish',
+    student_code: 'CSE-2026-089',
+    weak_subject: 'Physics II',
+    internal_score: 24.0,
+    max_score: 50,
+    percentage: 48.0,
+    risk_level: 'Weak',
+    status: 'Nudge Sent',
+    last_action: 'Nudge sent yesterday',
+    avatar: 'NI'
+  },
+  {
+    id: 3,
+    student_name: 'Salih',
+    student_code: 'CSE-2026-112',
+    weak_subject: 'Mathematics III',
+    internal_score: 32.5,
+    max_score: 50,
+    percentage: 65.0,
+    risk_level: 'Medium',
+    status: 'Nudge Sent',
+    last_action: 'Revision plan assigned',
+    avatar: 'SL'
+  },
+  {
+    id: 4,
+    student_name: 'Nadya',
+    student_code: 'CSE-2026-145',
+    weak_subject: 'Programming in C++',
+    internal_score: 18.0,
+    max_score: 50,
+    percentage: 36.0,
+    risk_level: 'Weak',
+    status: 'Flagged',
+    last_action: 'Action Required',
+    avatar: 'NA'
+  },
+  {
+    id: 5,
+    student_name: 'Meghan',
+    student_code: 'CSE-2026-018',
+    weak_subject: 'Data Structures',
+    internal_score: 22.5,
+    max_score: 50,
+    percentage: 45.0,
+    risk_level: 'Weak',
+    status: 'Resolved',
+    last_action: 'Completed Wk 1 Quiz',
+    avatar: 'ME'
+  },
+  {
+    id: 6,
+    student_name: 'Nitish',
+    student_code: 'CSE-2026-056',
+    weak_subject: 'Physics II',
+    internal_score: 33.0,
+    max_score: 50,
+    percentage: 66.0,
+    risk_level: 'Medium',
+    status: 'Flagged',
+    last_action: 'Pending Quiz Review',
+    avatar: 'NT'
+  },
+  {
+    id: 7,
+    student_name: 'Prajwant',
+    student_code: 'CSE-2026-074',
+    weak_subject: 'Mathematics III',
+    internal_score: 21.0,
+    max_score: 50,
+    percentage: 42.0,
+    risk_level: 'Weak',
+    status: 'Flagged',
+    last_action: 'Scheduled Mentoring',
+    avatar: 'PR'
+  }
+];
+
 export default function FacultyAnalytics({ addToast }) {
-  // Roster strictly utilizing the 7 requested student names
-  const [students, setStudents] = useState([
-    {
-      id: 1,
-      student_name: 'Santhosh',
-      student_code: 'CSE-2026-042',
-      weak_subject: 'Programming in C++',
-      internal_score: 19.5,
-      max_score: 50,
-      percentage: 39.0,
-      risk_level: 'Weak',
-      status: 'Flagged',
-      last_action: 'Requires Intervention',
-      avatar: 'SA'
-    },
-    {
-      id: 2,
-      student_name: 'Nidhish',
-      student_code: 'CSE-2026-089',
-      weak_subject: 'Physics II',
-      internal_score: 24.0,
-      max_score: 50,
-      percentage: 48.0,
-      risk_level: 'Weak',
-      status: 'Nudge Sent',
-      last_action: 'Nudge sent yesterday',
-      avatar: 'NI'
-    },
-    {
-      id: 3,
-      student_name: 'Salih',
-      student_code: 'CSE-2026-112',
-      weak_subject: 'Mathematics III',
-      internal_score: 32.5,
-      max_score: 50,
-      percentage: 65.0,
-      risk_level: 'Medium',
-      status: 'Nudge Sent',
-      last_action: 'Revision plan assigned',
-      avatar: 'SL'
-    },
-    {
-      id: 4,
-      student_name: 'Nadya',
-      student_code: 'CSE-2026-145',
-      weak_subject: 'Programming in C++',
-      internal_score: 18.0,
-      max_score: 50,
-      percentage: 36.0,
-      risk_level: 'Weak',
-      status: 'Flagged',
-      last_action: 'Action Required',
-      avatar: 'NA'
-    },
-    {
-      id: 5,
-      student_name: 'Meghan',
-      student_code: 'CSE-2026-018',
-      weak_subject: 'Data Structures',
-      internal_score: 22.5,
-      max_score: 50,
-      percentage: 45.0,
-      risk_level: 'Weak',
-      status: 'Resolved',
-      last_action: 'Completed Wk 1 Quiz',
-      avatar: 'ME'
-    },
-    {
-      id: 6,
-      student_name: 'Nitish',
-      student_code: 'CSE-2026-056',
-      weak_subject: 'Physics II',
-      internal_score: 33.0,
-      max_score: 50,
-      percentage: 66.0,
-      risk_level: 'Medium',
-      status: 'Flagged',
-      last_action: 'Pending Quiz Review',
-      avatar: 'NT'
-    },
-    {
-      id: 7,
-      student_name: 'Prajwant',
-      student_code: 'CSE-2026-074',
-      weak_subject: 'Mathematics III',
-      internal_score: 21.0,
-      max_score: 50,
-      percentage: 42.0,
-      risk_level: 'Weak',
-      status: 'Flagged',
-      last_action: 'Scheduled Mentoring',
-      avatar: 'PR'
+  // Initialize students state from localStorage or default roster
+  const [students, setStudents] = useState(() => {
+    const saved = localStorage.getItem('learnsphere_roster');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.warn('Error parsing saved roster:', e);
+      }
     }
-  ]);
+    return DEFAULT_ROSTER;
+  });
+
+  // Auto-save roster changes to localStorage
+  useEffect(() => {
+    localStorage.setItem('learnsphere_roster', JSON.stringify(students));
+  }, [students]);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('All');
   const [loadingId, setLoadingId] = useState(null);
 
   useEffect(() => {
-    teacherAPI.getDashboard().then((res) => {
-      if (res && res.roster) {
-        setStudents(res.roster);
-      }
-    });
+    // Only fetch remote dashboard if localStorage hasn't stored customized interventions
+    const saved = localStorage.getItem('learnsphere_roster');
+    if (!saved) {
+      teacherAPI.getDashboard().then((res) => {
+        if (res && res.roster) {
+          setStudents(res.roster);
+        }
+      });
+    }
   }, []);
 
   const handleIntervention = async (studentId, action) => {
     setLoadingId(studentId);
-    await teacherAPI.interveneStudent(studentId, action);
+    await teacherAPI.interveneStudent(studentId, action).catch(() => null);
 
     const studentObj = students.find((s) => s.id === studentId);
     const studentName = studentObj ? studentObj.student_name : 'Student';
 
-    setStudents(
-      students.map((s) => {
-        if (s.id === studentId) {
-          if (action === 'nudge') {
-            return { ...s, status: 'Nudge Sent', last_action: 'Nudge notification sent' };
-          } else if (action === 'resolve') {
-            return { ...s, status: 'Resolved', last_action: 'Intervention resolved' };
-          }
+    const updated = students.map((s) => {
+      if (s.id === studentId) {
+        if (action === 'nudge') {
+          return { ...s, status: 'Nudge Sent', last_action: 'Nudge notification sent' };
+        } else if (action === 'resolve') {
+          return { ...s, status: 'Resolved', last_action: 'Intervention resolved' };
         }
-        return s;
-      })
-    );
+      }
+      return s;
+    });
 
+    setStudents(updated);
     setLoadingId(null);
 
     if (addToast) {
@@ -252,7 +272,7 @@ export default function FacultyAnalytics({ addToast }) {
           </div>
         </div>
 
-        {/* Roster Table (Displaying 7 Specific Students) */}
+        {/* Roster Table */}
         <div className="overflow-x-auto no-scrollbar border border-slate-100 rounded-xl">
           <table className="w-full text-left text-xs min-w-[640px]">
             <thead>
