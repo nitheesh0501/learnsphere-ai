@@ -63,7 +63,7 @@ export default function Header({ activeTab, setActiveTab, readinessScore = 78.0 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="h-16 flex items-center justify-between gap-2">
             
-            {/* Left Side: Brand Logo & Navigation */}
+            {/* Left Side: Clean Brand Logo without version badge */}
             <div className="flex items-center space-x-4 sm:space-x-8">
               <div 
                 className="flex items-center space-x-2.5 cursor-pointer group" 
@@ -72,14 +72,9 @@ export default function Header({ activeTab, setActiveTab, readinessScore = 78.0 
                 <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-red-600 via-red-700 to-rose-600 flex items-center justify-center shadow-lg shadow-red-600/25 group-hover:scale-105 transition-transform duration-200">
                   <GraduationCap className="w-5 h-5 text-white" />
                 </div>
-                <div className="flex items-center space-x-2">
-                  <span className="font-black text-base sm:text-lg text-slate-900 tracking-tight">
-                    LearnSphere <span className="text-red-600">AI</span>
-                  </span>
-                  <span className="hidden sm:inline-block text-[10px] uppercase font-extrabold tracking-wider bg-rose-50 text-red-700 px-2 py-0.5 rounded border border-rose-200">
-                    v2.4 Pro
-                  </span>
-                </div>
+                <span className="font-black text-base sm:text-lg text-slate-900 tracking-tight">
+                  LearnSphere <span className="text-red-600">AI</span>
+                </span>
               </div>
 
               {/* Navigation Tabs */}
