@@ -2,24 +2,24 @@ from flask import Blueprint, request, jsonify
 
 teacher_bp = Blueprint('teacher', __name__)
 
-# Memory state for interactive demo interventions
+# Memory state for interactive demo interventions (strictly using requested 7 students)
 teacher_interventions_db = [
     {
         "id": 1,
-        "student_name": "Aarav Sharma",
+        "student_name": "Santhosh",
         "student_code": "CSE-2026-042",
         "weak_subject": "Programming in C++",
-        "internal_score": 19.5, # Out of 50
+        "internal_score": 19.5,
         "max_score": 50,
         "percentage": 39.0,
         "risk_level": "Weak",
         "status": "Flagged",
         "last_action": "Requires Intervention",
-        "avatar": "AS"
+        "avatar": "SA"
     },
     {
         "id": 2,
-        "student_name": "Priya Verma",
+        "student_name": "Nidhish",
         "student_code": "CSE-2026-089",
         "weak_subject": "Physics II",
         "internal_score": 24.0,
@@ -28,11 +28,11 @@ teacher_interventions_db = [
         "risk_level": "Weak",
         "status": "Nudge Sent",
         "last_action": "Nudge sent yesterday",
-        "avatar": "PV"
+        "avatar": "NI"
     },
     {
         "id": 3,
-        "student_name": "Karan Patel",
+        "student_name": "Salih",
         "student_code": "CSE-2026-112",
         "weak_subject": "Mathematics III",
         "internal_score": 32.5,
@@ -41,11 +41,11 @@ teacher_interventions_db = [
         "risk_level": "Medium",
         "status": "Nudge Sent",
         "last_action": "Revision plan assigned",
-        "avatar": "KP"
+        "avatar": "SL"
     },
     {
         "id": 4,
-        "student_name": "Sneha Gupta",
+        "student_name": "Nadya",
         "student_code": "CSE-2026-145",
         "weak_subject": "Programming in C++",
         "internal_score": 18.0,
@@ -54,20 +54,46 @@ teacher_interventions_db = [
         "risk_level": "Weak",
         "status": "Flagged",
         "last_action": "Action Required",
-        "avatar": "SG"
+        "avatar": "NA"
     },
     {
         "id": 5,
-        "student_name": "Rohan Mehta",
+        "student_name": "Meghan",
         "student_code": "CSE-2026-018",
-        "weak_subject": "Programming in C++",
+        "weak_subject": "Data Structures",
         "internal_score": 22.5,
         "max_score": 50,
         "percentage": 45.0,
         "risk_level": "Weak",
         "status": "Resolved",
         "last_action": "Completed Wk 1 Quiz",
-        "avatar": "RM"
+        "avatar": "ME"
+    },
+    {
+        "id": 6,
+        "student_name": "Nitish",
+        "student_code": "CSE-2026-056",
+        "weak_subject": "Physics II",
+        "internal_score": 33.0,
+        "max_score": 50,
+        "percentage": 66.0,
+        "risk_level": "Medium",
+        "status": "Flagged",
+        "last_action": "Pending Quiz Review",
+        "avatar": "NT"
+    },
+    {
+        "id": 7,
+        "student_name": "Prajwant",
+        "student_code": "CSE-2026-074",
+        "weak_subject": "Mathematics III",
+        "internal_score": 21.0,
+        "max_score": 50,
+        "percentage": 42.0,
+        "risk_level": "Weak",
+        "status": "Flagged",
+        "last_action": "Scheduled Mentoring",
+        "avatar": "PR"
     }
 ]
 
@@ -97,7 +123,7 @@ def get_students():
 def intervene():
     data = request.get_json() or {}
     student_id = data.get('student_id')
-    action_type = data.get('action') # 'nudge' or 'resolve'
+    action_type = data.get('action')
 
     for student in teacher_interventions_db:
         if student['id'] == student_id:

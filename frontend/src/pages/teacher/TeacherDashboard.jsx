@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { teacherAPI } from '../../services/api';
 import { interventionsService } from '../../services/supabase';
 import { StatCard, GlassCard } from '../../components/StatCard';
-import { Users, Award, AlertTriangle, TrendingUp, Sparkles, ArrowRight, CheckCircle2, Send, ShieldAlert, Filter, UserCheck } from 'lucide-react';
+import { Users, Award, AlertTriangle, TrendingUp, Sparkles, ArrowRight, CheckCircle2, Send, ShieldAlert } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export const TeacherDashboard = () => {
@@ -22,19 +22,18 @@ export const TeacherDashboard = () => {
         if (dashRes?.data) {
           setData(dashRes.data);
         } else {
-          // Demo fallback data matching Figma UI standards
           setData({
-            total_students: 48,
+            total_students: 128,
             average_readiness: 76.5,
-            weak_students_count: 5,
+            weak_students_count: 6,
             weak_students: [
-              { id: 'std-101', name: 'Alex Rivera', usn: '1LS22CS045', weak_subjects: ['Data Structures', 'Networks'], risk_level: 'High', readiness_score: 58 },
-              { id: 'std-102', name: 'Priya Sharma', usn: '1LS22CS082', weak_subjects: ['Operating Systems'], risk_level: 'Moderate', readiness_score: 64 },
-              { id: 'std-103', name: 'Rohan Gupta', usn: '1LS22CS091', weak_subjects: ['Algorithms', 'DBMS'], risk_level: 'High', readiness_score: 52 }
+              { id: '1', name: 'Santhosh', usn: 'CSE-2026-042', weak_subjects: ['Programming in C++'], risk_level: 'Weak', readiness_score: 39 },
+              { id: '2', name: 'Nidhish', usn: 'CSE-2026-089', weak_subjects: ['Physics II'], risk_level: 'Weak', readiness_score: 48 },
+              { id: '4', name: 'Nadya', usn: 'CSE-2026-145', weak_subjects: ['Programming in C++'], risk_level: 'Weak', readiness_score: 36 }
             ],
             top_performers: [
-              { id: 'std-201', name: 'Sneha Rao', usn: '1LS22CS110', readiness_score: 94 },
-              { id: 'std-202', name: 'Karan Mehta', usn: '1LS22CS054', readiness_score: 91 }
+              { id: '5', name: 'Meghan', usn: 'CSE-2026-018', readiness_score: 92 },
+              { id: '6', name: 'Nitish', usn: 'CSE-2026-056', readiness_score: 89 }
             ]
           });
         }
@@ -43,9 +42,9 @@ export const TeacherDashboard = () => {
           setInterventions(sbInterventions);
         } else {
           setInterventions([
-            { id: 'int-1', student_id: 'std-101', student_name: 'Alex Rivera', subject: 'Data Structures', status: 'Flagged' },
-            { id: 'int-2', student_id: 'std-101', student_name: 'Alex Rivera', subject: 'Computer Networks', status: 'Nudge Sent' },
-            { id: 'int-3', student_id: 'std-103', student_name: 'Rohan Gupta', subject: 'Algorithms', status: 'Flagged' }
+            { id: '1', student_id: '1', student_name: 'Santhosh', subject: 'Programming in C++', status: 'Flagged' },
+            { id: '2', student_id: '2', student_name: 'Nidhish', subject: 'Physics II', status: 'Nudge Sent' },
+            { id: '3', student_id: '3', student_name: 'Salih', subject: 'Mathematics III', status: 'Nudge Sent' }
           ]);
         }
       } catch (err) {
@@ -73,7 +72,7 @@ export const TeacherDashboard = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-400"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-600"></div>
       </div>
     );
   }
@@ -83,15 +82,15 @@ export const TeacherDashboard = () => {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
-      {/* Teacher Hero Banner */}
-      <div className="glass-panel rounded-3xl p-6 md:p-8 bg-gradient-to-r from-purple-950/40 via-violet-950/30 to-slate-900/50 border border-purple-500/30 relative overflow-hidden shadow-2xl">
-        <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      {/* Hero Banner */}
+      <div className="glass-panel rounded-3xl p-6 md:p-8 bg-gradient-to-r from-red-950/80 via-rose-950/60 to-slate-900/90 border border-red-900/60 relative overflow-hidden shadow-2xl">
+        <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-red-600/10 rounded-full blur-3xl pointer-events-none"></div>
 
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-purple-500/15 text-purple-300 border border-purple-500/30 flex items-center gap-1.5 shadow">
-                <Sparkles className="w-3.5 h-3.5 text-purple-400" /> Faculty Analytics & Intervention Portal
+              <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-rose-50 text-red-700 border border-rose-200 flex items-center gap-1.5 shadow">
+                <Sparkles className="w-3.5 h-3.5 text-red-600" /> Faculty Analytics & Intervention Portal
               </span>
               <span className="text-xs font-bold text-slate-400">CSE Dept • Sem 4</span>
             </div>
@@ -106,7 +105,7 @@ export const TeacherDashboard = () => {
           <div className="flex gap-3">
             <button
               onClick={() => navigate('/teacher/assistant')}
-              className="px-5 py-3.5 rounded-xl bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-500 hover:to-violet-500 text-white font-extrabold text-xs flex items-center gap-2 transition shadow-lg shadow-purple-600/30"
+              className="px-5 py-3.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs flex items-center gap-2 transition shadow-lg shadow-red-600/30"
             >
               <Sparkles className="w-4 h-4" /> AI Teacher Assistant
             </button>
@@ -118,10 +117,10 @@ export const TeacherDashboard = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <StatCard
           title="Total Students Enrolled"
-          value={data?.total_students || 48}
+          value={data?.total_students || 128}
           subtitle="Computer Science & Eng"
           icon={Users}
-          color="purple"
+          color="red"
         />
         <StatCard
           title="Average Class Readiness"
@@ -129,11 +128,11 @@ export const TeacherDashboard = () => {
           subtitle="Targeting > 80.0%"
           icon={Award}
           trend="+3.5%"
-          color="blue"
+          color="emerald"
         />
         <StatCard
           title="Intervention Needed"
-          value={`${data?.weak_students_count || 5} Students`}
+          value={`${data?.weak_students_count || 6} Students`}
           subtitle="IA marks < 35/50 in >= 1 subject"
           icon={AlertTriangle}
           color="rose"
@@ -148,19 +147,19 @@ export const TeacherDashboard = () => {
       </div>
 
       {/* Interventions Table Section */}
-      <GlassCard className="space-y-4 border-purple-500/30">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-4">
+      <GlassCard className="space-y-4 border-slate-200">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
           <div>
-            <h3 className="text-base font-extrabold text-white flex items-center gap-2">
-              <ShieldAlert className="w-5 h-5 text-purple-400" /> Active Faculty Interventions (Supabase Table: `interventions`)
+            <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
+              <ShieldAlert className="w-5 h-5 text-red-600" /> Active Faculty Interventions
             </h3>
-            <p className="text-xs text-slate-400 font-medium">Track and update intervention status: Flagged → Nudge Sent → Resolved</p>
+            <p className="text-xs text-slate-500 font-medium">Track and update intervention status: Flagged → Nudge Sent → Resolved</p>
           </div>
         </div>
 
-        <div className="overflow-x-auto rounded-xl border border-slate-800/80">
+        <div className="overflow-x-auto rounded-xl border border-slate-200">
           <table className="w-full text-left text-sm">
-            <thead className="bg-slate-900/90 text-slate-400 text-xs uppercase font-semibold">
+            <thead className="bg-slate-50 text-slate-500 text-xs uppercase font-semibold">
               <tr>
                 <th className="p-3.5">Student Name</th>
                 <th className="p-3.5">Target Subject</th>
@@ -168,18 +167,18 @@ export const TeacherDashboard = () => {
                 <th className="p-3.5 text-right">Faculty Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/80">
+            <tbody className="divide-y divide-slate-100">
               {interventions.map((item) => (
-                <tr key={item.id} className="hover:bg-slate-900/50 transition">
-                  <td className="p-3.5 font-extrabold text-white">
-                    {item.students?.name || item.student_name || 'Alex Rivera'}
+                <tr key={item.id} className="hover:bg-slate-50 transition">
+                  <td className="p-3.5 font-extrabold text-slate-900">
+                    {item.students?.name || item.student_name || 'Santhosh'}
                   </td>
-                  <td className="p-3.5 text-slate-300 font-semibold">{item.subject}</td>
+                  <td className="p-3.5 text-slate-700 font-semibold">{item.subject}</td>
                   <td className="p-3.5">
                     <span className={`px-2.5 py-1 rounded-lg text-xs font-bold ${
-                      item.status === 'Resolved' ? 'badge-strong' :
-                      item.status === 'Nudge Sent' ? 'badge-medium' :
-                      'badge-weak'
+                      item.status === 'Resolved' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' :
+                      item.status === 'Nudge Sent' ? 'bg-amber-50 text-amber-800 border border-amber-200' :
+                      'bg-rose-100 text-red-800 border border-rose-200'
                     }`}>
                       {item.status}
                     </span>
@@ -188,7 +187,7 @@ export const TeacherDashboard = () => {
                     {item.status === 'Flagged' && (
                       <button
                         onClick={() => handleUpdateStatus(item.id, 'Nudge Sent')}
-                        className="px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 text-xs font-extrabold flex items-center gap-1 transition"
+                        className="px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-extrabold flex items-center gap-1 transition shadow-xs"
                       >
                         <Send className="w-3.5 h-3.5" /> Send Nudge
                       </button>
@@ -196,7 +195,7 @@ export const TeacherDashboard = () => {
                     {item.status !== 'Resolved' && (
                       <button
                         onClick={() => handleUpdateStatus(item.id, 'Resolved')}
-                        className="px-3 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 text-xs font-extrabold flex items-center gap-1 transition"
+                        className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold flex items-center gap-1 transition shadow-xs"
                       >
                         <CheckCircle2 className="w-3.5 h-3.5" /> Mark Resolved
                       </button>
@@ -208,74 +207,6 @@ export const TeacherDashboard = () => {
           </table>
         </div>
       </GlassCard>
-
-      {/* Weak Students & Top Performers Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <GlassCard className="space-y-4 border-rose-500/20">
-          <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
-            <h3 className="text-base font-extrabold text-white flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-rose-400" /> Students Needing IA Intervention
-            </h3>
-            <button
-              onClick={() => navigate('/teacher/students')}
-              className="text-xs font-bold text-purple-400 hover:underline flex items-center gap-1"
-            >
-              Directory <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          <div className="space-y-3">
-            {weakStudents.map((s) => (
-              <div 
-                key={s.id} 
-                onClick={() => navigate(`/teacher/student/${s.id}`)}
-                className="p-4 rounded-xl bg-slate-900/70 border border-slate-800 hover:border-rose-500/40 cursor-pointer transition flex items-center justify-between"
-              >
-                <div>
-                  <h4 className="text-xs font-extrabold text-white">{s.name} <span className="text-[11px] text-slate-400 font-normal">({s.usn})</span></h4>
-                  <p className="text-xs text-rose-400 font-medium mt-0.5">Weak in: {s.weak_subjects?.join(', ') || 'Core Subjects'}</p>
-                </div>
-                <div className="text-right">
-                  <span className="px-2.5 py-1 rounded-lg text-xs font-bold badge-weak">
-                    {s.risk_level} Risk
-                  </span>
-                  <p className="text-[11px] text-slate-400 font-medium mt-1">{s.readiness_score}% Readiness</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </GlassCard>
-
-        {/* Top Performers */}
-        <GlassCard className="space-y-4 border-emerald-500/20">
-          <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
-            <h3 className="text-base font-extrabold text-white flex items-center gap-2">
-              <Award className="w-5 h-5 text-emerald-400" /> Top Performing Students
-            </h3>
-            <span className="text-xs font-bold text-emerald-400">&gt; 88% Readiness</span>
-          </div>
-
-          <div className="space-y-3">
-            {topPerformers.map((s) => (
-              <div 
-                key={s.id}
-                onClick={() => navigate(`/teacher/student/${s.id}`)}
-                className="p-4 rounded-xl bg-slate-900/70 border border-slate-800 hover:border-emerald-500/40 cursor-pointer transition flex items-center justify-between"
-              >
-                <div>
-                  <h4 className="text-xs font-extrabold text-white">{s.name} <span className="text-[11px] text-slate-400 font-normal">({s.usn})</span></h4>
-                  <p className="text-xs text-emerald-400 font-medium mt-0.5">High IA performance across all subjects</p>
-                </div>
-                <div className="text-right">
-                  <span className="px-2.5 py-1 rounded-lg text-xs font-bold badge-strong">
-                    {s.readiness_score}% Readiness
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </GlassCard>
-      </div>
     </div>
   );
 };

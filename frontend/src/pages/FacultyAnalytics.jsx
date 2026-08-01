@@ -3,10 +3,11 @@ import { Users, AlertCircle, CheckCircle2, Send, Search, Shield } from 'lucide-r
 import { teacherAPI } from '../services/api';
 
 export default function FacultyAnalytics({ addToast }) {
+  // Roster strictly utilizing the 7 requested student names
   const [students, setStudents] = useState([
     {
       id: 1,
-      student_name: 'Aarav Sharma',
+      student_name: 'Santhosh',
       student_code: 'CSE-2026-042',
       weak_subject: 'Programming in C++',
       internal_score: 19.5,
@@ -15,11 +16,11 @@ export default function FacultyAnalytics({ addToast }) {
       risk_level: 'Weak',
       status: 'Flagged',
       last_action: 'Requires Intervention',
-      avatar: 'AS'
+      avatar: 'SA'
     },
     {
       id: 2,
-      student_name: 'Priya Verma',
+      student_name: 'Nidhish',
       student_code: 'CSE-2026-089',
       weak_subject: 'Physics II',
       internal_score: 24.0,
@@ -28,11 +29,11 @@ export default function FacultyAnalytics({ addToast }) {
       risk_level: 'Weak',
       status: 'Nudge Sent',
       last_action: 'Nudge sent yesterday',
-      avatar: 'PV'
+      avatar: 'NI'
     },
     {
       id: 3,
-      student_name: 'Karan Patel',
+      student_name: 'Salih',
       student_code: 'CSE-2026-112',
       weak_subject: 'Mathematics III',
       internal_score: 32.5,
@@ -41,11 +42,11 @@ export default function FacultyAnalytics({ addToast }) {
       risk_level: 'Medium',
       status: 'Nudge Sent',
       last_action: 'Revision plan assigned',
-      avatar: 'KP'
+      avatar: 'SL'
     },
     {
       id: 4,
-      student_name: 'Sneha Gupta',
+      student_name: 'Nadya',
       student_code: 'CSE-2026-145',
       weak_subject: 'Programming in C++',
       internal_score: 18.0,
@@ -54,20 +55,46 @@ export default function FacultyAnalytics({ addToast }) {
       risk_level: 'Weak',
       status: 'Flagged',
       last_action: 'Action Required',
-      avatar: 'SG'
+      avatar: 'NA'
     },
     {
       id: 5,
-      student_name: 'Rohan Mehta',
+      student_name: 'Meghan',
       student_code: 'CSE-2026-018',
-      weak_subject: 'Programming in C++',
+      weak_subject: 'Data Structures',
       internal_score: 22.5,
       max_score: 50,
       percentage: 45.0,
       risk_level: 'Weak',
       status: 'Resolved',
       last_action: 'Completed Wk 1 Quiz',
-      avatar: 'RM'
+      avatar: 'ME'
+    },
+    {
+      id: 6,
+      student_name: 'Nitish',
+      student_code: 'CSE-2026-056',
+      weak_subject: 'Physics II',
+      internal_score: 33.0,
+      max_score: 50,
+      percentage: 66.0,
+      risk_level: 'Medium',
+      status: 'Flagged',
+      last_action: 'Pending Quiz Review',
+      avatar: 'NT'
+    },
+    {
+      id: 7,
+      student_name: 'Prajwant',
+      student_code: 'CSE-2026-074',
+      weak_subject: 'Mathematics III',
+      internal_score: 21.0,
+      max_score: 50,
+      percentage: 42.0,
+      risk_level: 'Weak',
+      status: 'Flagged',
+      last_action: 'Scheduled Mentoring',
+      avatar: 'PR'
     }
   ]);
 
@@ -128,7 +155,7 @@ export default function FacultyAnalytics({ addToast }) {
   return (
     <div className="space-y-8 max-w-7xl mx-auto px-2 sm:px-4">
       
-      {/* Header Banner with Dark Wine / Slate Red Gradient */}
+      {/* Header Banner */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-gradient-to-r from-slate-900 via-rose-950 to-red-950 p-5 sm:p-6 rounded-2xl border border-red-900/60 text-white shadow-xl">
         <div>
           <div className="flex items-center space-x-2 text-rose-300 text-xs font-bold uppercase tracking-wider mb-1">
@@ -225,7 +252,7 @@ export default function FacultyAnalytics({ addToast }) {
           </div>
         </div>
 
-        {/* Roster Table */}
+        {/* Roster Table (Displaying 7 Specific Students) */}
         <div className="overflow-x-auto no-scrollbar border border-slate-100 rounded-xl">
           <table className="w-full text-left text-xs min-w-[640px]">
             <thead>
@@ -267,7 +294,7 @@ export default function FacultyAnalytics({ addToast }) {
                     <span className="text-[10px] text-slate-500 block font-semibold">{stu.percentage}%</span>
                   </td>
 
-                  {/* Risk Level Badge (At Risk / Weak: Light Rose #FEE2E2 background with Crimson text) */}
+                  {/* Risk Level Badge */}
                   <td className="py-3.5 px-3">
                     <span className={`px-2.5 py-0.5 rounded-md text-[10px] font-black border ${
                       stu.risk_level === 'Weak'
@@ -295,7 +322,6 @@ export default function FacultyAnalytics({ addToast }) {
                   <td className="py-3.5 px-3 text-right">
                     <div className="flex items-center justify-end space-x-2">
                       {stu.status !== 'Resolved' && (
-                        /* Primary Crimson Red Button */
                         <button
                           disabled={loadingId === stu.id}
                           onClick={() => handleIntervention(stu.id, 'nudge')}

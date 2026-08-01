@@ -57,7 +57,6 @@ def analyze():
 
 @student_bp.route('/dashboard', methods=['GET'])
 def get_dashboard():
-    # Return complete dashboard data matching prompt specifications
     subjects = [
         {"name": "Mathematics III", "internal_marks": 44, "percentage": 88.0, "status": "Strong", "badge_color": "emerald"},
         {"name": "Physics II", "internal_marks": 31, "percentage": 62.0, "status": "Average", "badge_color": "amber"},
@@ -76,7 +75,7 @@ def get_dashboard():
     recommendations = GeminiAIService.generate_study_plan(subjects)
 
     return jsonify({
-        "student_name": "Rohan Mehta",
+        "student_name": "Nitheesh",
         "details": "Sem 4 • CSE • GPA 3.82",
         "readiness_score": 78.0,
         "readiness_status": "On Track",
@@ -91,13 +90,6 @@ def start_quiz():
     data = request.get_json() or {}
     week = data.get('week', 2)
 
-    # Adaptive quiz difficulty distribution rules matching prompt:
-    # Wk 1: 10 Easy
-    # Wk 2: 8 Easy, 2 Medium
-    # Wk 3: 5 Easy, 5 Medium
-    # Wk 4: 2 Easy, 6 Medium, 2 Hard
-    # Wk 5: 5 Medium, 5 Hard
-    # Wk 6: 10 Hard
     distribution = {
         1: {"easy": 10, "medium": 0, "hard": 0},
         2: {"easy": 8, "medium": 2, "hard": 0},

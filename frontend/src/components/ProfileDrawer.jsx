@@ -15,14 +15,14 @@ export default function ProfileDrawer({ isOpen, onClose, readinessScore = 78.0 }
       <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
         <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col border-l border-slate-200">
           
-          {/* Drawer Header with Dark Wine / Slate Red Accent */}
+          {/* Drawer Header with Dark Wine Accent */}
           <div className="p-6 bg-gradient-to-r from-red-900 via-red-800 to-rose-900 text-white relative flex items-center justify-between shadow-md">
             <div className="flex items-center space-x-3">
               <div className="w-12 h-12 rounded-2xl bg-white text-red-700 font-black text-lg flex items-center justify-center shadow-lg">
-                RM
+                N
               </div>
               <div>
-                <h3 className="text-lg font-black text-white">Rohan Mehta</h3>
+                <h3 className="text-lg font-black text-white">Nitheesh</h3>
                 <p className="text-xs text-rose-200 font-medium">Sem 4 • Computer Science & Eng.</p>
               </div>
             </div>
@@ -75,7 +75,7 @@ export default function ProfileDrawer({ isOpen, onClose, readinessScore = 78.0 }
                   <span className="text-slate-500 flex items-center gap-2 font-medium">
                     <User className="w-4 h-4 text-slate-400" /> Full Name
                   </span>
-                  <span className="font-bold text-slate-900">Rohan Mehta</span>
+                  <span className="font-bold text-slate-900">Nitheesh</span>
                 </div>
 
                 <div className="flex items-center justify-between">
@@ -103,7 +103,7 @@ export default function ProfileDrawer({ isOpen, onClose, readinessScore = 78.0 }
                   <span className="text-slate-500 flex items-center gap-2 font-medium">
                     <Mail className="w-4 h-4 text-slate-400" /> University Email
                   </span>
-                  <span className="font-bold text-slate-900">rohan.m@learnsphere.edu</span>
+                  <span className="font-bold text-slate-900">nitheesh.m@learnsphere.edu</span>
                 </div>
               </div>
             </div>

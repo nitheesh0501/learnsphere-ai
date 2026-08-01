@@ -25,7 +25,7 @@ export const studentAPI = {
     } catch (err) {
       console.warn('Backend offline, returning fallback student data');
       return {
-        student_name: 'Rohan Mehta',
+        student_name: 'Nitheesh',
         details: 'Sem 4 • CSE • GPA 3.82',
         readiness_score: 78.0,
         readiness_status: 'On Track',

@@ -59,7 +59,6 @@ export default function Header({ activeTab, setActiveTab, readinessScore = 78.0 
 
   return (
     <>
-      {/* Navigation Bar: Pure White Background, Thin Bottom Border #E2E8F0 */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="h-16 flex items-center justify-between gap-2">
@@ -70,7 +69,6 @@ export default function Header({ activeTab, setActiveTab, readinessScore = 78.0 
                 className="flex items-center space-x-2.5 cursor-pointer group" 
                 onClick={() => setActiveTab('hub')}
               >
-                {/* Logo Icon with Crimson Red Gradient */}
                 <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-red-600 via-red-700 to-rose-600 flex items-center justify-center shadow-lg shadow-red-600/25 group-hover:scale-105 transition-transform duration-200">
                   <GraduationCap className="w-5 h-5 text-white" />
                 </div>
@@ -84,7 +82,7 @@ export default function Header({ activeTab, setActiveTab, readinessScore = 78.0 
                 </div>
               </div>
 
-              {/* Navigation Tabs (Desktop & Landscape) */}
+              {/* Navigation Tabs */}
               <nav className="hidden md:flex items-center space-x-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
                 <button
                   onClick={() => setActiveTab('hub')}
@@ -209,10 +207,10 @@ export default function Header({ activeTab, setActiveTab, readinessScore = 78.0 
                 className="flex items-center space-x-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 p-1.5 pr-3.5 rounded-xl transition-all text-left focus:outline-none focus:ring-2 focus:ring-red-500/30"
               >
                 <div className="w-8.5 h-8.5 rounded-lg bg-gradient-to-br from-red-600 to-rose-700 flex items-center justify-center font-black text-white text-xs shadow-sm">
-                  RM
+                  N
                 </div>
                 <div className="hidden sm:block">
-                  <p className="text-xs font-bold text-slate-900 leading-tight">{user?.name || 'Rohan Mehta'}</p>
+                  <p className="text-xs font-bold text-slate-900 leading-tight">{user?.name || 'Nitheesh'}</p>
                   <p className="text-[10px] font-medium text-slate-500">{user?.semester || 'Sem 4 • CSE'}</p>
                 </div>
               </button>

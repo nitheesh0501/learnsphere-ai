@@ -4,15 +4,15 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState({
-    name: 'Rohan Mehta',
-    email: 'rohan.mehta@university.edu',
+    name: 'Nitheesh',
+    email: 'nitheesh.m@learnsphere.edu',
     role: 'student',
     studentCode: 'CSE-2026-018',
     semester: 'Sem 4 • CSE',
     gpa: 3.82
   });
 
-  const [activePortal, setActivePortal] = useState('student'); // 'student' or 'teacher'
+  const [activePortal, setActivePortal] = useState('student');
 
   const login = (userData, token) => {
     setUser(userData);
