@@ -24,6 +24,16 @@ export const UploadMarksheet = () => {
 
   const navigate = useNavigate();
 
+  // Input clamping helper: clamps typed or pasted values strictly between min and max
+  const clampValue = (val, max = 50, min = 0) => {
+    if (val === '' || val === null || val === undefined) return '';
+    const num = Number(val);
+    if (isNaN(num)) return '';
+    if (num > max) return max;
+    if (num < min) return min;
+    return num;
+  };
+
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       setFile(e.target.files[0]);
@@ -59,7 +69,6 @@ export const UploadMarksheet = () => {
       const res = await studentAPI.uploadMarksheet(formData);
       processedResult = res.data;
     } catch (err) {
-      // Fallback OCR extraction result for client-side processing
       processedResult = {
         marksheet: { filename: file.name },
         ml_analysis: {
@@ -80,7 +89,6 @@ export const UploadMarksheet = () => {
     setResult(processedResult);
     saveAnalysisLocally(processedResult);
 
-    // Sync extracted marks to Supabase if student ID is available
     if (student?.id && processedResult?.extracted_subjects) {
       for (const sub of processedResult.extracted_subjects) {
         try {
@@ -105,7 +113,7 @@ export const UploadMarksheet = () => {
     setError('');
 
     const processedSubjects = manualSubjects.map(sub => {
-      const scoreNum = Number(sub.score) || 0;
+      const scoreNum = Math.min(50, Math.max(0, Number(sub.score) || 0));
       let status = 'Strong';
       if (scoreNum < 35) status = 'Weak';
       else if (scoreNum <= 40) status = 'Medium';
@@ -136,7 +144,6 @@ export const UploadMarksheet = () => {
     setResult(manualResult);
     saveAnalysisLocally(manualResult);
 
-    // Sync to Supabase
     if (student?.id) {
       for (const sub of processedSubjects) {
         try {
@@ -167,7 +174,7 @@ export const UploadMarksheet = () => {
     <div className="space-y-6 max-w-4xl mx-auto">
       <div>
         <h1 className="text-2xl font-extrabold text-white flex items-center gap-2">
-          <UploadCloud className="w-7 h-7 text-cyan-400" /> Internal Assessment Marks Entry
+          <UploadCloud className="w-7 h-7 text-red-500" /> Internal Assessment Marks Entry
         </h1>
         <p className="text-sm text-slate-400 mt-1 font-medium">
           Upload your IA marksheet (PDF/PNG/JPG) for automated OCR extraction, or input your IA marks manually (Out of 50).
@@ -181,7 +188,7 @@ export const UploadMarksheet = () => {
             onClick={() => setActiveTab('ocr')}
             className={`py-3 px-6 text-sm font-bold border-b-2 transition ${
               activeTab === 'ocr'
-                ? 'border-cyan-500 text-cyan-400 bg-slate-900/40'
+                ? 'border-red-600 text-red-500 bg-slate-900/40'
                 : 'border-transparent text-slate-400 hover:text-white'
             }`}
           >
@@ -191,7 +198,7 @@ export const UploadMarksheet = () => {
             onClick={() => setActiveTab('manual')}
             className={`py-3 px-6 text-sm font-bold border-b-2 transition ${
               activeTab === 'manual'
-                ? 'border-cyan-500 text-cyan-400 bg-slate-900/40'
+                ? 'border-red-600 text-red-500 bg-slate-900/40'
                 : 'border-transparent text-slate-400 hover:text-white'
             }`}
           >
@@ -206,7 +213,7 @@ export const UploadMarksheet = () => {
           <GlassCard className="p-8">
             <form onSubmit={handleUpload} className="space-y-6">
               <div 
-                className="border-2 border-dashed border-slate-700 hover:border-cyan-500/50 rounded-2xl p-10 text-center bg-slate-900/40 transition cursor-pointer"
+                className="border-2 border-dashed border-slate-700 hover:border-red-500/50 rounded-2xl p-10 text-center bg-slate-900/40 transition cursor-pointer"
                 onClick={() => document.getElementById('file-upload-input').click()}
               >
                 <input
@@ -216,13 +223,13 @@ export const UploadMarksheet = () => {
                   onChange={handleFileChange}
                   className="hidden"
                 />
-                <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-red-500 flex items-center justify-center mx-auto mb-4">
                   <FileText className="w-8 h-8" />
                 </div>
                 {file ? (
                   <div>
                     <h4 className="text-base font-bold text-white">{file.name}</h4>
-                    <p className="text-xs text-cyan-400 mt-1 font-semibold">{(file.size / 1024).toFixed(1)} KB - Ready for OCR processing</p>
+                    <p className="text-xs text-red-400 mt-1 font-semibold">{(file.size / 1024).toFixed(1)} KB - Ready for OCR processing</p>
                   </div>
                 ) : (
                   <div>
@@ -241,7 +248,7 @@ export const UploadMarksheet = () => {
               <button
                 type="submit"
                 disabled={uploading || !file}
-                className="w-full py-3.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 disabled:opacity-50 text-white font-extrabold text-sm flex items-center justify-center gap-2 transition shadow-lg shadow-cyan-600/30"
+                className="w-full py-3.5 rounded-xl bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white font-extrabold text-sm flex items-center justify-center gap-2 transition shadow-lg shadow-red-600/30"
               >
                 {uploading ? (
                   <>
@@ -256,7 +263,7 @@ export const UploadMarksheet = () => {
             </form>
           </GlassCard>
         ) : (
-          /* Manual Entry Form */
+          /* Manual Entry Form with strict number clamping */
           <GlassCard className="p-8 space-y-6">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div>
@@ -266,7 +273,7 @@ export const UploadMarksheet = () => {
               <button
                 type="button"
                 onClick={addManualSubject}
-                className="px-3 py-1.5 rounded-lg bg-cyan-600/20 text-cyan-400 border border-cyan-500/30 text-xs font-bold flex items-center gap-1 hover:bg-cyan-600/30 transition"
+                className="px-3 py-1.5 rounded-lg bg-red-600/20 text-red-400 border border-rose-500/30 text-xs font-bold flex items-center gap-1 hover:bg-red-600/30 transition"
               >
                 <Plus className="w-3.5 h-3.5" /> Add Subject
               </button>
@@ -284,10 +291,11 @@ export const UploadMarksheet = () => {
                       updated[idx].name = e.target.value;
                       setManualSubjects(updated);
                     }}
-                    className="flex-1 px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-cyan-500 font-medium"
+                    className="flex-1 px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-red-500 font-medium"
                     required
                   />
                   <div className="flex items-center gap-2">
+                    {/* Number input with dynamic min/max and instant clamping */}
                     <input
                       type="number"
                       min="0"
@@ -296,10 +304,16 @@ export const UploadMarksheet = () => {
                       value={sub.score}
                       onChange={(e) => {
                         const updated = [...manualSubjects];
-                        updated[idx].score = e.target.value;
+                        updated[idx].score = clampValue(e.target.value, 50, 0);
                         setManualSubjects(updated);
                       }}
-                      className="w-20 px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-xs font-extrabold text-cyan-400 text-center focus:outline-none focus:border-cyan-500"
+                      onInput={(e) => {
+                        const clamped = clampValue(e.target.value, 50, 0);
+                        if (e.target.value !== '' && Number(e.target.value) !== clamped) {
+                          e.target.value = clamped;
+                        }
+                      }}
+                      className="w-20 px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-xs font-extrabold text-red-400 text-center focus:outline-none focus:border-red-500"
                       required
                     />
                     <span className="text-xs text-slate-400 font-semibold">/ 50</span>
@@ -320,7 +334,7 @@ export const UploadMarksheet = () => {
               <button
                 type="submit"
                 disabled={uploading}
-                className="w-full mt-4 py-3.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 disabled:opacity-50 text-white font-extrabold text-sm flex items-center justify-center gap-2 transition shadow-lg shadow-cyan-600/30"
+                className="w-full mt-4 py-3.5 rounded-xl bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white font-extrabold text-sm flex items-center justify-center gap-2 transition shadow-lg shadow-red-600/30"
               >
                 {uploading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <><Sparkles className="w-4 h-4" /> Save IA Marks & Generate AI Reports</>}
               </button>
@@ -348,11 +362,10 @@ export const UploadMarksheet = () => {
             </button>
           </div>
 
-          {/* ML Summary Header */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 text-center">
               <span className="text-xs text-slate-400 font-bold uppercase">Semester Readiness</span>
-              <h4 className="text-2xl font-extrabold text-cyan-400 mt-1">{result.ml_analysis?.readiness_score}%</h4>
+              <h4 className="text-2xl font-extrabold text-red-500 mt-1">{result.ml_analysis?.readiness_score}%</h4>
             </div>
             <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 text-center">
               <span className="text-xs text-slate-400 font-bold uppercase">Predicted Risk</span>
@@ -369,7 +382,6 @@ export const UploadMarksheet = () => {
             </div>
           </div>
 
-          {/* Extracted Subjects Table */}
           <div className="space-y-3">
             <h4 className="text-sm font-bold text-white uppercase tracking-wider">Internal Assessment Marks Breakdown</h4>
             <div className="overflow-x-auto rounded-xl border border-slate-800">
@@ -387,7 +399,7 @@ export const UploadMarksheet = () => {
                   {result.extracted_subjects?.map((sub, idx) => (
                     <tr key={idx} className="hover:bg-slate-900/40">
                       <td className="p-3.5 font-bold text-white">{sub.name}</td>
-                      <td className="p-3.5 font-extrabold text-cyan-400">{sub.ia_marks}</td>
+                      <td className="p-3.5 font-extrabold text-red-500">{sub.ia_marks}</td>
                       <td className="p-3.5 text-slate-400">{sub.max_marks}</td>
                       <td className="p-3.5 text-slate-300">{sub.percentage}%</td>
                       <td className="p-3.5">
@@ -409,13 +421,13 @@ export const UploadMarksheet = () => {
           <div className="flex flex-col sm:flex-row gap-3 pt-2">
             <button
               onClick={() => navigate('/student/gaps')}
-              className="flex-1 py-3.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-extrabold text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-cyan-600/30"
+              className="flex-1 py-3.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-red-600/30"
             >
               View Knowledge Gap Report <ArrowRight className="w-4 h-4" />
             </button>
             <button
               onClick={() => navigate('/student/study-plan')}
-              className="flex-1 py-3.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-extrabold text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-purple-600/30"
+              className="flex-1 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-xs flex items-center justify-center gap-2 transition shadow"
             >
               View Gemini AI Study Planner <ArrowRight className="w-4 h-4" />
             </button>

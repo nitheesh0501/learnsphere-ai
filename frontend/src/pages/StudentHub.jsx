@@ -34,6 +34,16 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
   const [isAuditing, setIsAuditing] = useState(false);
   const [auditMessage, setAuditMessage] = useState(null);
 
+  // Input clamping helper: clamps typed or pasted values strictly between min and max
+  const clampValue = (val, max = 50, min = 0) => {
+    if (val === '' || val === null || val === undefined) return '';
+    const num = Number(val);
+    if (isNaN(num)) return '';
+    if (num > max) return max;
+    if (num < min) return min;
+    return num;
+  };
+
   // Helper for risk classification (>40: Strong/Emerald, 35-40: Average/Amber, <35: Weak/Red)
   const calculateRisk = (scoreOutof50) => {
     const score = Number(scoreOutof50) || 0;
@@ -131,7 +141,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
   return (
     <div className="space-y-8 max-w-7xl mx-auto px-2 sm:px-4">
       
-      {/* Banner Welcome Section with Dark Slate Red / Wine Accent */}
+      {/* Banner Welcome Section */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-gradient-to-r from-red-950 via-rose-950 to-slate-900 p-6 rounded-2xl border border-red-900/60 shadow-xl text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 -mt-10 -mr-10 w-60 h-60 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
         <div>
@@ -170,10 +180,10 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
         </div>
       )}
 
-      {/* Top Grid: Card 1 (Assessment Input) & Card 2 (Performance Analysis & Semester Readiness) */}
+      {/* Top Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
         
-        {/* CARD 1: TOP LEFT CARD (Manual Score Entry Assessment Form) */}
+        {/* CARD 1: Manual Score Entry Assessment Form */}
         <div className="lg:col-span-6 bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 flex flex-col justify-between shadow-sm relative">
           <div>
             {/* Card Header */}
@@ -217,22 +227,35 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
 
                     <div className="flex items-center space-x-2 shrink-0">
                       <div className="flex items-center space-x-1">
+                        {/* Number Input with strict min/max and instant clamping */}
                         <input
                           type="number"
-                          max="50"
                           min="0"
+                          max={sub.maxMarks || 50}
                           value={sub.internalMarks}
-                          onChange={(e) => handleUpdateSubject(sub.id, 'internalMarks', Number(e.target.value))}
+                          onChange={(e) => {
+                            const clamped = clampValue(e.target.value, sub.maxMarks || 50, 0);
+                            handleUpdateSubject(sub.id, 'internalMarks', clamped);
+                          }}
+                          onInput={(e) => {
+                            const clamped = clampValue(e.target.value, sub.maxMarks || 50, 0);
+                            if (e.target.value !== '' && Number(e.target.value) !== clamped) {
+                              e.target.value = clamped;
+                            }
+                          }}
                           className="bg-white border border-slate-300 rounded-lg px-2 py-1 text-xs text-center text-slate-900 font-bold focus:outline-none focus:border-red-600 w-14 sm:w-16"
                         />
-                        <span className="text-xs text-slate-400 font-bold">/50</span>
+                        <span className="text-xs text-slate-400 font-bold">/{sub.maxMarks || 50}</span>
                       </div>
                       <input
                         type="number"
                         min="1"
                         max="6"
                         value={sub.credits}
-                        onChange={(e) => handleUpdateSubject(sub.id, 'credits', Number(e.target.value))}
+                        onChange={(e) => {
+                          const clamped = clampValue(e.target.value, 6, 1);
+                          handleUpdateSubject(sub.id, 'credits', clamped);
+                        }}
                         className="bg-white border border-slate-300 rounded-lg px-1.5 py-1 text-xs text-center text-slate-900 font-semibold focus:outline-none focus:border-red-600 w-10"
                       />
                       <button
@@ -262,13 +285,20 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
                     onChange={(e) => setNewSubjectTitle(e.target.value)}
                     className="sm:col-span-6 bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none focus:border-red-600"
                   />
+                  {/* New Subject IA score input with instant min/max clamping */}
                   <input
                     type="number"
                     placeholder="IA Score (/50)"
                     min="0"
                     max="50"
                     value={newSubjectScore}
-                    onChange={(e) => setNewSubjectScore(e.target.value)}
+                    onChange={(e) => setNewSubjectScore(clampValue(e.target.value, 50, 0))}
+                    onInput={(e) => {
+                      const clamped = clampValue(e.target.value, 50, 0);
+                      if (e.target.value !== '' && Number(e.target.value) !== clamped) {
+                        e.target.value = clamped;
+                      }
+                    }}
                     className="sm:col-span-4 bg-white border border-slate-300 rounded-lg px-2 py-1.5 text-xs text-slate-900 font-bold focus:outline-none focus:border-red-600"
                   />
                   <input
@@ -277,7 +307,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
                     min="1"
                     max="6"
                     value={newSubjectCredits}
-                    onChange={(e) => setNewSubjectCredits(e.target.value)}
+                    onChange={(e) => setNewSubjectCredits(clampValue(e.target.value, 6, 1))}
                     className="sm:col-span-2 bg-white border border-slate-300 rounded-lg px-2 py-1.5 text-xs text-center text-slate-900 font-semibold focus:outline-none focus:border-red-600"
                   />
                 </div>
@@ -286,7 +316,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
             </div>
           </div>
 
-          {/* Assessment Footer Action: Primary Crimson Button */}
+          {/* Assessment Footer Action */}
           <div className="mt-6 pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
             <span className="text-xs text-slate-500 font-medium text-center sm:text-left">
               Out of 50 IA Evaluation Mode
@@ -399,7 +429,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
         </div>
       </div>
 
-      {/* CARD 3: MIDDLE CARD (6-Week Adaptive Study Roadmap) */}
+      {/* CARD 3: 6-Week Adaptive Study Roadmap */}
       <section className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-8 shadow-sm relative">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-6 border-b border-slate-100 gap-2">
           <div>
@@ -447,7 +477,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
               </div>
             </div>
 
-            {/* Wk 2 (Current Active Node: Red Highlight) */}
+            {/* Wk 2 (Current) */}
             <div className="flex flex-col items-start lg:items-center text-left lg:text-center group bg-rose-50/50 lg:bg-transparent p-3 lg:p-0 rounded-xl lg:rounded-none">
               <div className="relative z-10 w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-white border-2 border-red-600 p-1 flex items-center justify-center shadow-md ring-4 ring-rose-100">
                 <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-red-900 font-black text-sm">
@@ -541,7 +571,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
         </div>
       </section>
 
-      {/* CARD 4: BOTTOM CARD (AI Suggested Study Priorities) */}
+      {/* CARD 4: AI Suggested Study Priorities */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
@@ -557,7 +587,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           
-          {/* Card 1: High Priority (Crimson Accent) */}
+          {/* Card 1 */}
           <div className="bg-white border border-rose-200 hover:border-red-400 rounded-2xl p-5 flex flex-col justify-between shadow-md transition-all duration-200 hover:-translate-y-1 relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-24 h-24 bg-red-600/5 rounded-full blur-xl group-hover:bg-red-600/10 transition-all" />
             <div>
@@ -589,7 +619,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
             </div>
           </div>
 
-          {/* Card 2: Review Needed (Amber Accent) */}
+          {/* Card 2 */}
           <div className="bg-white border border-amber-200 hover:border-amber-400 rounded-2xl p-5 flex flex-col justify-between shadow-md transition-all duration-200 hover:-translate-y-1 relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-full blur-xl group-hover:bg-amber-500/10 transition-all" />
             <div>
@@ -621,7 +651,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
             </div>
           </div>
 
-          {/* Card 3: Secondary Crimson Button Style */}
+          {/* Card 3 */}
           <div className="bg-white border border-emerald-200 hover:border-emerald-400 rounded-2xl p-5 flex flex-col justify-between shadow-md transition-all duration-200 hover:-translate-y-1 relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full blur-xl group-hover:bg-emerald-500/10 transition-all" />
             <div>
@@ -643,7 +673,6 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
 
             <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between">
               <span className="text-[11px] text-slate-500 font-semibold">1 Refresh Quiz</span>
-              {/* Secondary Button: White background with Crimson Red border and text */}
               <button
                 onClick={() => onNavigateToQuiz && onNavigateToQuiz('Mathematics III')}
                 className="px-4 py-2 bg-white hover:bg-rose-50 border-2 border-red-600 text-red-600 text-xs font-bold rounded-xl flex items-center space-x-1.5 transition-all shadow-xs"
