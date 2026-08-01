@@ -3,37 +3,56 @@ import { GraduationCap, BookOpen, Zap, BarChart3, Bell, Check, X } from 'lucide-
 import { useAuth } from '../context/AuthContext';
 import ProfileDrawer from './ProfileDrawer';
 
+const DEFAULT_NOTIFICATIONS = [
+  {
+    id: 1,
+    title: "Mathematics III Alert",
+    message: "IA Score 44/50 achieved. Recommended for Advanced Linear Algebra.",
+    time: "10m ago",
+    read: false,
+    type: "success"
+  },
+  {
+    id: 2,
+    title: "Faculty Nudge Received",
+    message: "Prof. Sharma assigned dynamic practice set for C++ Pointers & Memory.",
+    time: "1h ago",
+    read: false,
+    type: "alert"
+  },
+  {
+    id: 3,
+    title: "Weekly Readiness Audit",
+    message: "Semester readiness score updated to 78.0% (On Track).",
+    time: "1d ago",
+    read: true,
+    type: "info"
+  }
+];
+
 export default function Header({ activeTab, setActiveTab, readinessScore = 78.0 }) {
   const { user } = useAuth();
 
   const [isBellOpen, setIsBellOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      title: "Mathematics III Alert",
-      message: "IA Score 44/50 achieved. Recommended for Advanced Linear Algebra.",
-      time: "10m ago",
-      read: false,
-      type: "success"
-    },
-    {
-      id: 2,
-      title: "Faculty Nudge Received",
-      message: "Prof. Sharma assigned dynamic practice set for C++ Pointers & Memory.",
-      time: "1h ago",
-      read: false,
-      type: "alert"
-    },
-    {
-      id: 3,
-      title: "Weekly Readiness Audit",
-      message: "Semester readiness score updated to 78.0% (On Track).",
-      time: "1d ago",
-      read: true,
-      type: "info"
+
+  // Initialize notification state from localStorage or default list
+  const [notifications, setNotifications] = useState(() => {
+    const saved = localStorage.getItem('learnsphere_notifications');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.warn('Error parsing saved notifications:', e);
+      }
     }
-  ]);
+    return DEFAULT_NOTIFICATIONS;
+  });
+
+  // Auto-save notifications state to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('learnsphere_notifications', JSON.stringify(notifications));
+  }, [notifications]);
 
   const bellRef = useRef(null);
 
