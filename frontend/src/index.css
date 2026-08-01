@@ -21,6 +21,17 @@
     font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
   }
 
+  /* Global Mouse Text Selection Styles */
+  ::selection {
+    background-color: #FEE2E2; /* Light Rose Accent */
+    color: #DC2626; /* Crimson Red Text */
+  }
+
+  ::-moz-selection {
+    background-color: #FEE2E2;
+    color: #DC2626;
+  }
+
   /* Chrome, Safari, Edge, Opera - Remove number input spinner arrows */
   input[type=number]::-webkit-outer-spin-button,
   input[type=number]::-webkit-inner-spin-button {

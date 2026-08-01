@@ -155,6 +155,102 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
     }, 1500);
   };
 
+  // DYNAMIC RECOVERY ROADMAP STEPPER GENERATION BASED ON ACTIVE SUBJECTS
+  const generateDynamicRoadmap = (activeSubjects) => {
+    const defaultSteps = [
+      { week: 1, title: "Data Structures", desc: "Arrays, Stacks & Queues", status: "Done" },
+      { week: 2, title: "Calculus Refresher", desc: "Derivatives & Integration", status: "Current" },
+      { week: 3, title: "Classical Mechanics", desc: "Harmonic Waves", status: "Upcoming" },
+      { week: 4, title: "OOP & Pointers", desc: "Memory Allocation", status: "Upcoming" },
+      { week: 5, title: "Electromagnetism", desc: "Circuit Theory", status: "Upcoming" },
+      { week: 6, title: "Final Mock Exam", desc: "Full Evaluation", status: "Upcoming" }
+    ];
+
+    if (!activeSubjects || activeSubjects.length === 0) return defaultSteps;
+
+    // Create a dynamic 6-week roadmap where active subjects are assigned sequentially
+    return [
+      { week: 1, title: "Data Structures", desc: "Foundational Arrays & Queues", status: "Done" },
+      {
+        week: 2,
+        title: activeSubjects[0] ? activeSubjects[0].name : "Calculus Refresher",
+        desc: activeSubjects[0] ? `IA Score: ${activeSubjects[0].internalMarks}/50` : "Derivatives & Integration",
+        status: "Current"
+      },
+      {
+        week: 3,
+        title: activeSubjects[1] ? activeSubjects[1].name : "Classical Mechanics",
+        desc: activeSubjects[1] ? `IA Score: ${activeSubjects[1].internalMarks}/50` : "Harmonic Waves",
+        status: "Upcoming"
+      },
+      {
+        week: 4,
+        title: activeSubjects[2] ? activeSubjects[2].name : "OOP & Pointers",
+        desc: activeSubjects[2] ? `IA Score: ${activeSubjects[2].internalMarks}/50` : "Memory Allocation",
+        status: "Upcoming"
+      },
+      {
+        week: 5,
+        title: activeSubjects[3] ? activeSubjects[3].name : "Electromagnetism",
+        desc: activeSubjects[3] ? `IA Score: ${activeSubjects[3].internalMarks}/50` : "Circuit Theory",
+        status: "Upcoming"
+      },
+      { week: 6, title: "Final Mock Exam", desc: "Full Semester Evaluation", status: "Upcoming" }
+    ];
+  };
+
+  const dynamicRoadmap = generateDynamicRoadmap(subjects);
+
+  // DYNAMIC AI STUDY PRIORITIES QUEUE GENERATION BASED ON ACTIVE SUBJECTS
+  const dynamicPriorities = subjects.map((sub) => {
+    const score = Number(sub.internalMarks) || 0;
+    const pct = Math.round((score / (sub.maxMarks || 50)) * 100);
+
+    if (score < 35) {
+      return {
+        id: sub.id,
+        name: sub.name,
+        score,
+        pct,
+        priority: 'High Priority',
+        badgeClass: 'bg-rose-100 text-red-800 border-rose-200',
+        icon: AlertCircle,
+        iconColor: 'text-red-600',
+        borderClass: 'border-rose-200 hover:border-red-400',
+        estTime: '45 mins',
+        desc: `IA score is currently at ${score}/50 (${pct}%). Focus on foundational practice, problem sets, and core derivations.`
+      };
+    } else if (score <= 40) {
+      return {
+        id: sub.id,
+        name: sub.name,
+        score,
+        pct,
+        priority: 'Review Needed',
+        badgeClass: 'bg-amber-100 text-amber-800 border-amber-200',
+        icon: Clock,
+        iconColor: 'text-amber-600',
+        borderClass: 'border-amber-200 hover:border-amber-400',
+        estTime: '30 mins',
+        desc: `IA score is at ${score}/50 (${pct}%). Practice numerical problem sets and formula derivations.`
+      };
+    } else {
+      return {
+        id: sub.id,
+        name: sub.name,
+        score,
+        pct,
+        priority: 'Maintain Pace',
+        badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+        icon: CheckCircle2,
+        iconColor: 'text-emerald-600',
+        borderClass: 'border-emerald-200 hover:border-emerald-400',
+        estTime: '15 mins',
+        desc: `Strong performance at ${score}/50 (${pct}%). Maintain speed with quick revision drills.`
+      };
+    }
+  });
+
   return (
     <div className="space-y-8 max-w-7xl mx-auto px-2 sm:px-4">
       
@@ -444,7 +540,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
         </div>
       </div>
 
-      {/* CARD 3: 6-Week Adaptive Study Roadmap */}
+      {/* CARD 3: 6-Week Adaptive Study Roadmap (DYNAMICALLY RE-CALCULATED) */}
       <section className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-8 shadow-sm relative">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-6 border-b border-slate-100 gap-2">
           <div>
@@ -455,7 +551,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
               </span>
             </div>
             <p className="text-slate-500 text-xs mt-1">
-              Sequential learning milestones tailored to eliminate your specific subject performance gaps
+              Sequential learning milestones dynamically re-calculated from your active subject list ({subjects.length} subjects active)
             </p>
           </div>
           <div className="flex items-center space-x-2 text-xs font-semibold text-slate-600 shrink-0">
@@ -471,113 +567,56 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 relative z-10">
-            <div className="flex flex-col items-start lg:items-center text-left lg:text-center group bg-slate-50 lg:bg-transparent p-3 lg:p-0 rounded-xl lg:rounded-none">
-              <div className="relative z-10 w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-white border-2 border-emerald-500 p-1 flex items-center justify-center shadow-md">
-                <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-slate-900 font-black text-sm">
-                  <CheckCircle2 className="w-6 h-6 text-emerald-600" />
+            {dynamicRoadmap.map((step) => (
+              <div
+                key={step.week}
+                className={`flex flex-col items-start lg:items-center text-left lg:text-center group p-3 lg:p-0 rounded-xl lg:rounded-none transition-all ${
+                  step.status === 'Current'
+                    ? 'bg-rose-50/50 lg:bg-transparent'
+                    : 'bg-slate-50 lg:bg-transparent'
+                }`}
+              >
+                <div className={`relative z-10 w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-white border-2 p-1 flex items-center justify-center shadow-md ${
+                  step.status === 'Done'
+                    ? 'border-emerald-500'
+                    : step.status === 'Current'
+                    ? 'border-red-600 ring-4 ring-rose-100'
+                    : 'border-slate-300'
+                }`}>
+                  <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-slate-900 font-black text-sm">
+                    {step.status === 'Done' ? (
+                      <CheckCircle2 className="w-6 h-6 text-emerald-600" />
+                    ) : step.week === 6 ? (
+                      <Award className="w-6 h-6 text-slate-700" />
+                    ) : (
+                      <span className={step.status === 'Current' ? 'text-red-600 font-black text-base' : 'text-slate-700 font-bold text-xs'}>
+                        W{step.week}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="mt-3 space-y-1">
+                  <span className={`text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded border ${
+                    step.status === 'Done'
+                      ? 'text-emerald-800 bg-emerald-100 border-emerald-200'
+                      : step.status === 'Current'
+                      ? 'text-red-800 bg-rose-100 border-rose-200'
+                      : 'text-slate-600 bg-slate-100 border-slate-200'
+                  }`}>
+                    Wk {step.week} • {step.status}
+                  </span>
+                  <h4 className="text-xs font-bold text-slate-900 group-hover:text-red-600 transition-colors line-clamp-1">
+                    {step.title}
+                  </h4>
+                  <p className="text-[10px] text-slate-500 font-medium line-clamp-1">{step.desc}</p>
                 </div>
               </div>
-              <div className="mt-3 space-y-1">
-                <span className="text-[10px] font-extrabold text-emerald-800 uppercase tracking-wider bg-emerald-100 px-2 py-0.5 rounded border border-emerald-200">
-                  Wk 1 • Done
-                </span>
-                <h4 className="text-xs font-bold text-slate-900 group-hover:text-red-600 transition-colors">
-                  Data Structures
-                </h4>
-                <p className="text-[10px] text-slate-500 font-medium">Arrays, Stacks & Queues</p>
-              </div>
-            </div>
-
-            <div className="flex flex-col items-start lg:items-center text-left lg:text-center group bg-rose-50/50 lg:bg-transparent p-3 lg:p-0 rounded-xl lg:rounded-none">
-              <div className="relative z-10 w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-white border-2 border-red-600 p-1 flex items-center justify-center shadow-md ring-4 ring-rose-100">
-                <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-red-900 font-black text-sm">
-                  <span className="text-red-600 font-black text-base">W2</span>
-                </div>
-              </div>
-              <div className="mt-3 space-y-1">
-                <span className="text-[10px] font-extrabold text-red-800 uppercase tracking-wider bg-rose-100 px-2 py-0.5 rounded border border-rose-200">
-                  Wk 2 • Current
-                </span>
-                <h4 className="text-xs font-bold text-slate-900 group-hover:text-red-600 transition-colors">
-                  Calculus Refresher
-                </h4>
-                <p className="text-[10px] text-slate-500 font-medium">Derivatives & Integration</p>
-              </div>
-            </div>
-
-            <div className="flex flex-col items-start lg:items-center text-left lg:text-center group bg-slate-50 lg:bg-transparent p-3 lg:p-0 rounded-xl lg:rounded-none">
-              <div className="relative z-10 w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-white border-2 border-slate-300 p-1 flex items-center justify-center shadow-xs">
-                <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-slate-900 font-bold text-sm">
-                  <span className="text-slate-700 font-bold text-xs">W3</span>
-                </div>
-              </div>
-              <div className="mt-3 space-y-1">
-                <span className="text-[10px] font-semibold text-slate-600 uppercase tracking-wider bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
-                  Wk 3
-                </span>
-                <h4 className="text-xs font-bold text-slate-800 group-hover:text-red-600 transition-colors">
-                  Classical Mechanics
-                </h4>
-                <p className="text-[10px] text-slate-500 font-medium">Harmonic Waves</p>
-              </div>
-            </div>
-
-            <div className="flex flex-col items-start lg:items-center text-left lg:text-center group bg-slate-50 lg:bg-transparent p-3 lg:p-0 rounded-xl lg:rounded-none">
-              <div className="relative z-10 w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-white border-2 border-slate-300 p-1 flex items-center justify-center shadow-xs">
-                <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-slate-900 font-bold text-sm">
-                  <span className="text-slate-700 font-bold text-xs">W4</span>
-                </div>
-              </div>
-              <div className="mt-3 space-y-1">
-                <span className="text-[10px] font-semibold text-slate-600 uppercase tracking-wider bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
-                  Wk 4
-                </span>
-                <h4 className="text-xs font-bold text-slate-800 group-hover:text-red-600 transition-colors">
-                  OOP & Pointers
-                </h4>
-                <p className="text-[10px] text-slate-500 font-medium">Memory Allocation</p>
-              </div>
-            </div>
-
-            <div className="flex flex-col items-start lg:items-center text-left lg:text-center group bg-slate-50 lg:bg-transparent p-3 lg:p-0 rounded-xl lg:rounded-none">
-              <div className="relative z-10 w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-white border-2 border-slate-300 p-1 flex items-center justify-center shadow-xs">
-                <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-slate-900 font-bold text-sm">
-                  <span className="text-slate-700 font-bold text-xs">W5</span>
-                </div>
-              </div>
-              <div className="mt-3 space-y-1">
-                <span className="text-[10px] font-semibold text-slate-600 uppercase tracking-wider bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
-                  Wk 5
-                </span>
-                <h4 className="text-xs font-bold text-slate-800 group-hover:text-red-600 transition-colors">
-                  Electromagnetism
-                </h4>
-                <p className="text-[10px] text-slate-500 font-medium">Circuit Theory</p>
-              </div>
-            </div>
-
-            <div className="flex flex-col items-start lg:items-center text-left lg:text-center group bg-slate-50 lg:bg-transparent p-3 lg:p-0 rounded-xl lg:rounded-none">
-              <div className="relative z-10 w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-white border-2 border-slate-300 p-1 flex items-center justify-center shadow-xs">
-                <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-slate-900 font-bold text-sm">
-                  <Award className="w-6 h-6 text-slate-700" />
-                </div>
-              </div>
-              <div className="mt-3 space-y-1">
-                <span className="text-[10px] font-semibold text-slate-600 uppercase tracking-wider bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
-                  Wk 6
-                </span>
-                <h4 className="text-xs font-bold text-slate-800 group-hover:text-red-600 transition-colors">
-                  Final Mock Exam
-                </h4>
-                <p className="text-[10px] text-slate-500 font-medium">Full Evaluation</p>
-              </div>
-            </div>
-
+            ))}
           </div>
         </div>
       </section>
 
-      {/* CARD 4: AI Suggested Study Priorities */}
+      {/* CARD 4: AI SUGGESTED STUDY PRIORITIES (DYNAMICALLY RE-CALCULATED FROM ACTIVE SUBJECTS) */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
@@ -586,105 +625,50 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
               <span>AI-Suggested Study Priorities</span>
             </h2>
             <p className="text-slate-500 text-xs mt-0.5">
-              Priority-ranked modules recommended based on your recent IA grade analysis
+              Priority-ranked modules dynamically re-calculated from your active subject roster ({subjects.length} active)
             </p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="bg-white border border-rose-200 hover:border-red-400 rounded-2xl p-5 flex flex-col justify-between shadow-md transition-all duration-200 hover:-translate-y-1 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-red-600/5 rounded-full blur-xl group-hover:bg-red-600/10 transition-all" />
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-rose-100 text-red-800 border border-rose-200">
-                  <AlertCircle className="w-3 h-3 text-red-600" />
-                  <span>High Priority</span>
-                </span>
-                <span className="text-[11px] font-semibold text-slate-500">Est. 45 mins</span>
-              </div>
-
-              <h3 className="text-base font-bold text-slate-900 group-hover:text-red-700 transition-colors">
-                Object-Oriented Programming & Pointers
-              </h3>
-              <p className="text-slate-600 text-xs mt-2 leading-relaxed">
-                Your programming IA score is currently at <strong className="text-red-600">22.5/50 (45%)</strong>. Master dynamic memory allocation, class inheritance, and pointer arithmetic.
-              </p>
-            </div>
-
-            <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between">
-              <span className="text-[11px] text-slate-500 font-semibold">3 Interactive Drills</span>
-              <button
-                onClick={() => onNavigateToQuiz && onNavigateToQuiz('Programming in C++')}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl flex items-center space-x-1.5 transition-all shadow-sm"
+          {dynamicPriorities.map((item) => {
+            const Icon = item.icon;
+            return (
+              <div
+                key={item.id}
+                className={`bg-white border rounded-2xl p-5 flex flex-col justify-between shadow-md transition-all duration-200 hover:-translate-y-1 relative overflow-hidden group ${item.borderClass}`}
               >
-                <span>Start Practice</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
+                <div className="absolute top-0 right-0 w-24 h-24 bg-red-600/5 rounded-full blur-xl group-hover:bg-red-600/10 transition-all" />
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className={`inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider border ${item.badgeClass}`}>
+                      <Icon className={`w-3 h-3 ${item.iconColor}`} />
+                      <span>{item.priority}</span>
+                    </span>
+                    <span className="text-[11px] font-semibold text-slate-500">Est. {item.estTime}</span>
+                  </div>
 
-          <div className="bg-white border border-amber-200 hover:border-amber-400 rounded-2xl p-5 flex flex-col justify-between shadow-md transition-all duration-200 hover:-translate-y-1 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-full blur-xl group-hover:bg-amber-500/10 transition-all" />
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-200">
-                  <Clock className="w-3 h-3 text-amber-600" />
-                  <span>Review Needed</span>
-                </span>
-                <span className="text-[11px] font-semibold text-slate-500">Est. 30 mins</span>
+                  <h3 className="text-base font-bold text-slate-900 group-hover:text-red-700 transition-colors">
+                    {item.name}
+                  </h3>
+                  <p className="text-slate-600 text-xs mt-2 leading-relaxed">
+                    {item.desc}
+                  </p>
+                </div>
+
+                <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between">
+                  <span className="text-[11px] text-slate-500 font-semibold">{item.pct}% Score</span>
+                  <button
+                    onClick={() => onNavigateToQuiz && onNavigateToQuiz(item.name)}
+                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl flex items-center space-x-1.5 transition-all shadow-sm"
+                  >
+                    <span>Start Practice</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
-
-              <h3 className="text-base font-bold text-slate-900 group-hover:text-amber-700 transition-colors">
-                Wave Mechanics & Harmonic Oscillations
-              </h3>
-              <p className="text-slate-600 text-xs mt-2 leading-relaxed">
-                Physics standing is at <strong className="text-amber-600">31/50 (62%)</strong>. Practice standing wave equations, Doppler effect formulas, and damping coefficients.
-              </p>
-            </div>
-
-            <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between">
-              <span className="text-[11px] text-slate-500 font-semibold">5 Problem Sets</span>
-              <button
-                onClick={() => onNavigateToQuiz && onNavigateToQuiz('Physics II')}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl flex items-center space-x-1.5 transition-all shadow-sm"
-              >
-                <span>Start Practice</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
-
-          <div className="bg-white border border-emerald-200 hover:border-emerald-400 rounded-2xl p-5 flex flex-col justify-between shadow-md transition-all duration-200 hover:-translate-y-1 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full blur-xl group-hover:bg-emerald-500/10 transition-all" />
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-200">
-                  <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-                  <span>Maintain Pace</span>
-                </span>
-                <span className="text-[11px] font-semibold text-slate-500">Est. 15 mins</span>
-              </div>
-
-              <h3 className="text-base font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">
-                Linear Algebra & Matrix Operations
-              </h3>
-              <p className="text-slate-600 text-xs mt-2 leading-relaxed">
-                Mathematics is strong at <strong className="text-emerald-600">44/50 (88%)</strong>. Keep speed high with quick eigen-vector calculations and matrix transformation drills.
-              </p>
-            </div>
-
-            <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between">
-              <span className="text-[11px] text-slate-500 font-semibold">1 Refresh Quiz</span>
-              <button
-                onClick={() => onNavigateToQuiz && onNavigateToQuiz('Mathematics III')}
-                className="px-4 py-2 bg-white hover:bg-rose-50 border-2 border-red-600 text-red-600 text-xs font-bold rounded-xl flex items-center space-x-1.5 transition-all shadow-xs"
-              >
-                <span>Start Practice</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
-
+            );
+          })}
         </div>
       </section>
 
