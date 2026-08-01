@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Zap, CheckCircle2, ArrowRight, RotateCcw, Award, Sliders, BookOpen } from 'lucide-react';
+import { Zap, CheckCircle2, ArrowRight, RotateCcw, Award, Sliders, BookOpen, ExternalLink, Code2, Sparkles, AlertCircle } from 'lucide-react';
 import { studentAPI } from '../services/api';
 
 const WEEKLY_QUESTION_BANK = {
@@ -209,6 +209,68 @@ const WEEKLY_QUESTION_BANK = {
   ]
 };
 
+// LeetCode Problem Bank grouped by topic and difficulty
+const LEETCODE_BANK = {
+  "Programming in C++": {
+    topic: "Arrays, Pointers & Memory Management",
+    easy: [
+      { id: 1, title: "Two Sum", difficulty: "Easy", slug: "two-sum", tags: ["Array", "Hash Table"] },
+      { id: 242, title: "Valid Anagram", difficulty: "Easy", slug: "valid-anagram", tags: ["String", "Sorting"] },
+      { id: 217, title: "Contains Duplicate", difficulty: "Easy", slug: "contains-duplicate", tags: ["Array", "Hash Table"] }
+    ],
+    medium: [
+      { id: 15, title: "3Sum", difficulty: "Medium", slug: "3sum", tags: ["Two Pointers", "Sorting"] },
+      { id: 49, title: "Group Anagrams", difficulty: "Medium", slug: "group-anagrams", tags: ["Hash Table", "String"] }
+    ],
+    hard: [
+      { id: 42, title: "Trapping Rain Water", difficulty: "Hard", slug: "trapping-rain-water", tags: ["Two Pointers", "Stack"] },
+      { id: 23, title: "Merge k Sorted Lists", difficulty: "Hard", slug: "merge-k-sorted-lists", tags: ["Heap", "Divide & Conquer"] }
+    ]
+  },
+  "Data Structures": {
+    topic: "Stacks, Queues & Linked Lists",
+    easy: [
+      { id: 206, title: "Reverse Linked List", difficulty: "Easy", slug: "reverse-linked-list", tags: ["Linked List"] },
+      { id: 21, title: "Merge Two Sorted Lists", difficulty: "Easy", slug: "merge-two-sorted-lists", tags: ["Linked List", "Recursion"] }
+    ],
+    medium: [
+      { id: 2, title: "Add Two Numbers", difficulty: "Medium", slug: "add-two-numbers", tags: ["Linked List", "Math"] },
+      { id: 143, title: "Reorder List", difficulty: "Medium", slug: "reorder-list", tags: ["Two Pointers", "Linked List"] }
+    ],
+    hard: [
+      { id: 25, title: "Reverse Nodes in k-Group", difficulty: "Hard", slug: "reverse-nodes-in-k-group", tags: ["Linked List", "Recursion"] }
+    ]
+  },
+  "Mathematics III": {
+    topic: "Matrix Algebra & Discrete Mathematics",
+    easy: [
+      { id: 9, title: "Palindrome Number", difficulty: "Easy", slug: "palindrome-number", tags: ["Math"] },
+      { id: 509, title: "Fibonacci Number", difficulty: "Easy", slug: "fibonacci-number", tags: ["Math", "DP"] }
+    ],
+    medium: [
+      { id: 54, title: "Spiral Matrix", difficulty: "Medium", slug: "spiral-matrix", tags: ["Matrix", "Simulation"] },
+      { id: 48, title: "Rotate Image", difficulty: "Medium", slug: "rotate-image", tags: ["Matrix", "Math"] }
+    ],
+    hard: [
+      { id: 149, title: "Max Points on a Line", difficulty: "Hard", slug: "max-points-on-a-line", tags: ["Geometry", "Math"] }
+    ]
+  },
+  "Physics II": {
+    topic: "Wave Oscillations & Harmonic Computations",
+    easy: [
+      { id: 69, title: "Sqrt(x) (Harmonic Interpolation)", difficulty: "Easy", slug: "sqrtx", tags: ["Math", "Binary Search"] },
+      { id: 367, title: "Valid Perfect Square", difficulty: "Easy", slug: "valid-perfect-square", tags: ["Math", "Binary Search"] }
+    ],
+    medium: [
+      { id: 162, title: "Find Peak Element (Wave Crest)", difficulty: "Medium", slug: "find-peak-element", tags: ["Binary Search"] },
+      { id: 371, title: "Sum of Two Integers (Bitwise)", difficulty: "Medium", slug: "sum-of-two-integers", tags: ["Bit Manipulation"] }
+    ],
+    hard: [
+      { id: 4, title: "Median of Two Sorted Arrays", difficulty: "Hard", slug: "median-of-two-sorted-arrays", tags: ["Binary Search", "Divide & Conquer"] }
+    ]
+  }
+};
+
 export default function AdaptiveQuiz({ initialSubject, addToast }) {
   const [selectedWeek, setSelectedWeek] = useState(2);
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
@@ -271,6 +333,54 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
   };
 
   const dist = difficultyRules[selectedWeek];
+
+  // Logic to calculate Smart LeetCode Practice Recommendations based on Quiz Accuracy
+  const getLeetCodeRecommendations = (subjectName, currentScore, totalQuestions) => {
+    const accuracyPct = Math.round((currentScore / totalQuestions) * 100);
+    const bankKey = Object.keys(LEETCODE_BANK).find(
+      k => k.toLowerCase() === (subjectName || '').toLowerCase()
+    ) || "Programming in C++";
+    const bank = LEETCODE_BANK[bankKey];
+
+    let problems = [];
+    let levelLabel = "";
+    let levelBadgeColor = "";
+    let summaryText = "";
+
+    if (accuracyPct < 50) {
+      levelLabel = "Weak Baseline • Foundational Drills";
+      levelBadgeColor = "bg-rose-100 text-red-800 border-rose-200";
+      summaryText = "Score is below 50%. Solve 2-3 LeetCode Easy questions to strengthen foundational logic before retaking the quiz.";
+      problems = bank.easy;
+    } else if (accuracyPct <= 75) {
+      levelLabel = "Average Baseline • Gap-Bridging Drills";
+      levelBadgeColor = "bg-amber-50 text-amber-800 border-amber-200";
+      summaryText = "Score is between 50%-75%. Practice 2 LeetCode Medium problems to bridge logical gaps and handle edge cases.";
+      problems = bank.medium.slice(0, 2);
+    } else {
+      levelLabel = "Strong Baseline • Advanced Mastery";
+      levelBadgeColor = "bg-emerald-50 text-emerald-800 border-emerald-200";
+      summaryText = "Accuracy is >75%! Challenge yourself with 1 Medium and 1 Hard LeetCode problem to achieve advanced competitive mastery.";
+      problems = [bank.medium[0], bank.hard[0]];
+    }
+
+    return {
+      topic: bank.topic,
+      accuracyPct,
+      levelLabel,
+      levelBadgeColor,
+      summaryText,
+      problems
+    };
+  };
+
+  // Determine current active subject for recommendation calculation
+  const activeSubjectName = filterSubject || (currentQ ? currentQ.subject : "Programming in C++");
+  const leetCodeRecs = getLeetCodeRecommendations(
+    activeSubjectName,
+    isFinished ? score : Math.max(1, score),
+    questions.length
+  );
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto px-2 sm:px-4">
@@ -451,6 +561,95 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
           </div>
         </div>
       )}
+
+      {/* SMART LEETCODE PRACTICE RECOMMENDATIONS CARD */}
+      <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm space-y-5">
+        
+        {/* Card Header with Crimson Red Badge */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+          <div>
+            <div className="flex items-center space-x-2">
+              <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-md text-xs font-black uppercase tracking-wider bg-rose-50 text-red-700 border border-rose-200 shadow-2xs">
+                <Code2 className="w-3.5 h-3.5 text-red-600" />
+                <span>Recommended LeetCode Practice</span>
+              </span>
+              <span className="text-xs font-bold text-slate-500 hidden md:inline-block">
+                Target: {leetCodeRecs.topic}
+              </span>
+            </div>
+            <h2 className="text-base sm:text-lg font-black text-slate-900 mt-2">
+              Adaptive LeetCode Problem Recommendations
+            </h2>
+            <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
+              Curated coding problems dynamically matched to your {isFinished ? `quiz accuracy (${leetCodeRecs.accuracyPct}%)` : 'current subject mastery level'}
+            </p>
+          </div>
+
+          {/* Level Badge */}
+          <span className={`px-3 py-1 rounded-lg text-xs font-extrabold border shrink-0 ${leetCodeRecs.levelBadgeColor}`}>
+            {leetCodeRecs.levelLabel}
+          </span>
+        </div>
+
+        {/* Guidance Notice */}
+        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-start space-x-2.5 text-xs text-slate-700">
+          <Sparkles className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+          <p className="leading-relaxed font-medium">
+            {leetCodeRecs.summaryText}
+          </p>
+        </div>
+
+        {/* LeetCode Problem Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {leetCodeRecs.problems.map((prob) => (
+            <div
+              key={prob.id}
+              className="bg-white border border-slate-200 hover:border-red-300 rounded-xl p-4 flex items-center justify-between gap-3 shadow-xs hover:shadow-md transition-all duration-200 group"
+            >
+              <div className="space-y-1.5 flex-1 min-w-0">
+                <div className="flex items-center space-x-2 flex-wrap">
+                  <span className="text-[11px] font-black text-slate-400">LeetCode #{prob.id}</span>
+                  {/* Difficulty Pill */}
+                  <span className={`px-2 py-0.5 rounded-md text-[10px] font-extrabold border ${
+                    prob.difficulty === 'Easy'
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                      : prob.difficulty === 'Medium'
+                      ? 'bg-amber-50 text-amber-700 border-amber-200'
+                      : 'bg-rose-100 text-red-800 border-rose-200'
+                  }`}>
+                    {prob.difficulty}
+                  </span>
+                </div>
+
+                <h4 className="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-red-600 transition-colors truncate">
+                  {prob.title}
+                </h4>
+
+                <div className="flex items-center space-x-1.5 flex-wrap">
+                  {prob.tags.map((tg) => (
+                    <span key={tg} className="text-[9px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                      {tg}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Direct LeetCode External Link Button */}
+              <a
+                href={`https://leetcode.com/problems/${prob.slug}/`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-3 py-2 bg-slate-50 group-hover:bg-red-600 text-slate-700 group-hover:text-white border border-slate-200 group-hover:border-red-600 rounded-lg text-xs font-bold transition-all flex items-center space-x-1 shrink-0"
+                title={`Solve ${prob.title} on LeetCode`}
+              >
+                <span>Solve</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            </div>
+          ))}
+        </div>
+
+      </div>
 
     </div>
   );
