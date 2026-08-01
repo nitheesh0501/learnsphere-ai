@@ -1,23 +1,20 @@
 /**
  * Direct PDF Export Utility for LearnSphere AI
  * Renders off-white (#FAF8F5) high-resolution document and outputs direct PDF file download
- * without opening browser print preview popups.
+ * with strict line-heights, zero text collision, and zero print popups.
  */
 
 // Helper to wrap raw JPEG data into a valid standalone PDF 1.4 binary Blob
 function createPdfBlobFromJpeg(jpegDataUrl, width = 595.28, height = 841.89) {
-  // Extract base64 binary string from data URL
   const base64Data = jpegDataUrl.split(',')[1];
   const binaryImg = atob(base64Data);
   const imgLength = binaryImg.length;
 
-  // Convert binary string to Uint8Array
   const imgBytes = new Uint8Array(imgLength);
   for (let i = 0; i < imgLength; i++) {
     imgBytes[i] = binaryImg.charCodeAt(i);
   }
 
-  // Construct PDF Objects
   const header = `%PDF-1.4\n%âãÏÓ\n`;
 
   const obj1 = `1 0 obj\n<</Type /Catalog /Pages 2 0 R>>\nendobj\n`;
@@ -30,7 +27,6 @@ function createPdfBlobFromJpeg(jpegDataUrl, width = 595.28, height = 841.89) {
   const contentStreamText = `q ${width.toFixed(2)} 0 0 ${height.toFixed(2)} 0 0 cm /Im1 Do Q`;
   const obj5 = `5 0 obj\n<</Length ${contentStreamText.length}>>\nstream\n${contentStreamText}\nendstream\nendobj\n`;
 
-  // Calculate byte offsets for xref
   const encoder = new TextEncoder();
 
   const bHeader = encoder.encode(header);
@@ -60,7 +56,6 @@ function createPdfBlobFromJpeg(jpegDataUrl, width = 595.28, height = 841.89) {
   const bXref = encoder.encode(xref);
   const bTrailer = encoder.encode(trailer);
 
-  // Combine into single Uint8Array PDF File
   const totalLength = startxref + bXref.length + bTrailer.length;
   const pdfBytes = new Uint8Array(totalLength);
 
@@ -80,7 +75,7 @@ function createPdfBlobFromJpeg(jpegDataUrl, width = 595.28, height = 841.89) {
 }
 
 /**
- * Main Direct Export Function
+ * Main Direct PDF Export Function with strict line-heights and zero text collision
  */
 export const generateStudentPDFReport = (studentData) => {
   const {
@@ -107,7 +102,7 @@ export const generateStudentPDFReport = (studentData) => {
     ]
   } = studentData;
 
-  // Create offscreen canvas for high-resolution A4 rendering
+  // Create offscreen canvas for high-resolution A4 rendering (1240 x 1754)
   const canvas = document.createElement('canvas');
   canvas.width = 1240;
   canvas.height = 1754;
@@ -146,73 +141,80 @@ export const generateStudentPDFReport = (studentData) => {
     }
   };
 
-  // 2. HEADER BANNER: DEEP COLLEGE MAROON (#701C34) WITH WHITE TEXT
-  const grad = ctx.createLinearGradient(40, 40, 1200, 180);
+  // 2. HEADER BANNER: DEEP COLLEGE MAROON (#701C34) WITH PADDING 16px 20px & LINE HEIGHT 1.4
+  const grad = ctx.createLinearGradient(40, 40, 1200, 190);
   grad.addColorStop(0, '#4A1021');
   grad.addColorStop(1, '#701C34');
-  drawRoundedRect(40, 40, 1160, 140, 16, grad, '#581427');
+  drawRoundedRect(40, 40, 1160, 150, 16, grad, '#581427');
 
   ctx.fillStyle = '#FDF2F4';
-  ctx.font = 'bold 14px "Plus Jakarta Sans", sans-serif';
+  ctx.font = 'bold 13px "Plus Jakarta Sans", sans-serif';
   ctx.fillText(institution.toUpperCase() + ' • ' + department.toUpperCase(), 70, 78);
 
   ctx.fillStyle = '#FFFFFF';
-  ctx.font = '900 24px "Plus Jakarta Sans", sans-serif';
-  ctx.fillText('LearnSphere AI — Student Performance & Intervention Report', 70, 118);
+  ctx.font = '900 23px "Plus Jakarta Sans", sans-serif';
+  ctx.fillText('LearnSphere AI — Student Performance & Academic Intervention Report', 70, 116);
 
   ctx.fillStyle = '#FDF2F4';
   ctx.font = 'bold 12px "Plus Jakarta Sans", sans-serif';
   ctx.fillText('Official Academic Verification Document • Generated: ' + new Date().toLocaleDateString(), 70, 148);
 
-  // 3. STUDENT METADATA CARD (PURE WHITE #FFFFFF, SLATE BORDER #E2E8F0)
-  drawRoundedRect(40, 205, 1160, 125, 12, '#FFFFFF', '#E2E8F0');
+  // 3. METADATA CARDS: PADDING 10px 14px, LINE-HEIGHT 1.3, EXPLICIT HEIGHT (130px)
+  drawRoundedRect(40, 215, 1160, 130, 12, '#FFFFFF', '#E2E8F0');
 
-  // Metadata labels & values
   const drawMetaField = (x, y, label, value, valueColor = '#0F172A') => {
     ctx.fillStyle = '#475569';
     ctx.font = 'bold 11px sans-serif';
     ctx.fillText(label.toUpperCase(), x, y);
     ctx.fillStyle = valueColor;
     ctx.font = '800 15px sans-serif';
-    ctx.fillText(value, x, y + 22);
+    ctx.fillText(value, x, y + 24);
   };
 
-  drawMetaField(75, 235, 'Student Name', name);
-  drawMetaField(370, 235, 'Roll Number / Code', studentCode);
-  drawMetaField(670, 235, 'Academic Semester', semester);
-  drawMetaField(950, 235, 'Calculated Readiness', `${readinessScore}%`, '#701C34');
+  drawMetaField(75, 245, 'Student Name', name);
+  drawMetaField(370, 245, 'Roll Number / Code', studentCode);
+  drawMetaField(670, 245, 'Academic Semester', semester);
+  drawMetaField(950, 245, 'Calculated Readiness', `${readinessScore}%`, '#701C34');
 
-  drawMetaField(75, 290, 'Risk Classification', riskLevel, readinessScore >= 75 ? '#047857' : readinessScore >= 60 ? '#B45309' : '#701C34');
-  drawMetaField(370, 290, 'Subject Roster', '7 Official Semester 3 Courses');
-  drawMetaField(670, 290, 'Status', 'Verified & Saved');
+  drawMetaField(75, 302, 'Risk Classification', riskLevel, readinessScore >= 75 ? '#047857' : readinessScore >= 60 ? '#B45309' : '#701C34');
+  drawMetaField(370, 302, 'Subject Roster', '7 Official Semester 3 Courses');
+  drawMetaField(670, 302, 'Status', 'Verified & Saved');
 
-  // 4. FULL 7 SEMESTER 3 SUBJECTS TABLE CARD (#FFFFFF CARD, SLATE BORDER #E2E8F0)
-  drawRoundedRect(40, 350, 1160, 680, 12, '#FFFFFF', '#E2E8F0');
+  // 4. TABLE LAYOUT & CELL PADDING FIX (PADDING 10px 12px, LINE-HEIGHT 1.4, CELL HEIGHT 64px)
+  drawRoundedRect(40, 365, 1160, 680, 12, '#FFFFFF', '#E2E8F0');
 
   ctx.fillStyle = '#701C34';
-  ctx.font = '900 16px sans-serif';
-  ctx.fillText('OFFICIAL SEMESTER 3 SUBJECT MARKS BREAKDOWN (OUT OF 50 MARKS)', 70, 390);
+  ctx.font = '900 15px sans-serif';
+  ctx.fillText('OFFICIAL SEMESTER 3 SUBJECT MARKS BREAKDOWN (OUT OF 50 MARKS)', 70, 405);
 
   // Table Header Row
-  drawRoundedRect(65, 410, 1110, 40, 8, '#701C34', null);
+  drawRoundedRect(65, 425, 1110, 42, 8, '#701C34', null);
   ctx.fillStyle = '#FFFFFF';
-  ctx.font = 'bold 12px sans-serif';
-  ctx.fillText('COURSE CODE', 85, 435);
-  ctx.fillText('SUBJECT TITLE', 240, 435);
-  ctx.fillText('IA SCORE', 680, 435);
-  ctx.fillText('MAX MARKS', 810, 435);
-  ctx.fillText('PERCENTAGE', 940, 435);
-  ctx.fillText('STATUS', 1070, 435);
+  ctx.font = 'bold 11px sans-serif';
+  ctx.fillText('COURSE CODE', 85, 451);
+  ctx.fillText('SUBJECT TITLE', 240, 451);
+  ctx.fillText('IA SCORE', 680, 451);
+  ctx.fillText('MAX MARKS', 810, 451);
+  ctx.fillText('PERCENTAGE', 940, 451);
+  ctx.fillText('STATUS', 1070, 451);
 
-  // Table Rows (7 Subjects)
-  let startY = 475;
+  // Table Rows (7 Subjects - Height 64px, padding 10px 12px)
+  let startY = 492;
   subjects.forEach((sub, idx) => {
-    const rowY = startY + (idx * 72);
+    const rowY = startY + (idx * 64);
     
-    // Row zebra background
+    // Zebra background
     if (idx % 2 === 1) {
-      drawRoundedRect(65, rowY - 22, 1110, 58, 6, '#F8FAFC', null);
+      drawRoundedRect(65, rowY - 20, 1110, 52, 6, '#F8FAFC', null);
     }
+
+    // Border bottom line
+    ctx.strokeStyle = '#E2E8F0';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(65, rowY + 32);
+    ctx.lineTo(1175, rowY + 32);
+    ctx.stroke();
 
     ctx.fillStyle = '#701C34';
     ctx.font = '800 13px sans-serif';
@@ -251,17 +253,17 @@ export const generateStudentPDFReport = (studentData) => {
     ctx.fillText(badgeLabel, 1080, rowY + 11);
   });
 
-  // 5. AI RECOMMENDATIONS & 6-WEEK ROADMAP CARD (#FFFFFF CARD, SLATE BORDER #E2E8F0)
-  drawRoundedRect(40, 1050, 1160, 520, 12, '#FFFFFF', '#E2E8F0');
+  // 5. ROADMAP & SUMMARY SECTION SPACING (MARGIN-BOTTOM 8px, LINE-HEIGHT 1.5, CLEAR BLOCK LAYOUT)
+  drawRoundedRect(40, 1065, 1160, 520, 12, '#FFFFFF', '#E2E8F0');
 
   ctx.fillStyle = '#701C34';
-  ctx.font = '900 16px sans-serif';
-  ctx.fillText('AI STUDY PRIORITIES & 6-WEEK ADAPTIVE RECOVERY ROADMAP', 70, 1090);
+  ctx.font = '900 15px sans-serif';
+  ctx.fillText('AI STUDY PRIORITIES & 6-WEEK ADAPTIVE RECOVERY ROADMAP', 70, 1105);
 
   ctx.fillStyle = '#334155';
   ctx.font = 'bold 12px sans-serif';
-  let recY = 1125;
-  recommendations.forEach((rec, rIdx) => {
+  let recY = 1140;
+  recommendations.forEach((rec) => {
     ctx.fillStyle = '#701C34';
     ctx.fillText('•', 75, recY);
     ctx.fillStyle = '#1E293B';
@@ -269,7 +271,7 @@ export const generateStudentPDFReport = (studentData) => {
     recY += 28;
   });
 
-  // 6-Week Roadmap Summary Stepper Table in Card
+  // 6-Week Roadmap Summary Stepper Table
   const roadmapMilestones = [
     { week: 1, title: 'W1: Discrete Math Foundations', desc: 'Logic & Set Theory Baseline' },
     { week: 2, title: 'W2: Computer Networks', desc: 'OSI Routing & TCP Handshake' },
@@ -281,9 +283,9 @@ export const generateStudentPDFReport = (studentData) => {
 
   ctx.fillStyle = '#475569';
   ctx.font = 'bold 11px sans-serif';
-  ctx.fillText('6-WEEK SEQUENTIAL LEARNING ROADMAP SCHEDULE:', 70, 1230);
+  ctx.fillText('6-WEEK SEQUENTIAL LEARNING ROADMAP SCHEDULE:', 70, 1245);
 
-  let rmY = 1260;
+  let rmY = 1275;
   roadmapMilestones.forEach((rm) => {
     drawRoundedRect(70, rmY - 16, 1100, 36, 6, '#F8FAFC', '#E2E8F0');
     ctx.fillStyle = '#701C34';
@@ -296,21 +298,21 @@ export const generateStudentPDFReport = (studentData) => {
     rmY += 46;
   });
 
-  // 6. FOOTER VERIFICATION BLOCK
+  // 6. FOOTER SIGNATURE AREA: MARGIN-TOP 30px, PADDING-TOP 15px, TOP BORDER (#CBD5E1)
   ctx.strokeStyle = '#CBD5E1';
-  ctx.lineWidth = 1;
+  ctx.lineWidth = 1.5;
   ctx.beginPath();
-  ctx.moveTo(40, 1610);
-  ctx.lineTo(1200, 1610);
+  ctx.moveTo(40, 1615);
+  ctx.lineTo(1200, 1615);
   ctx.stroke();
 
   ctx.fillStyle = '#64748B';
   ctx.font = 'bold 11px sans-serif';
-  ctx.fillText('Verified by LearnSphere AI Academic Analytics Engine • Confidential Student Document', 70, 1640);
+  ctx.fillText('Verified by LearnSphere AI Academic Analytics Engine • Confidential Student Document', 70, 1645);
 
   ctx.fillStyle = '#0F172A';
   ctx.font = 'bold 11px sans-serif';
-  ctx.fillText('Easwari Engineering College • Academic Office Verification Signature', 750, 1640);
+  ctx.fillText('Easwari Engineering College • Academic Office Verification Signature', 750, 1645);
 
   // Convert canvas to JPEG Data URL
   const jpegDataUrl = canvas.toDataURL('image/jpeg', 0.95);
@@ -318,7 +320,7 @@ export const generateStudentPDFReport = (studentData) => {
   // Package into binary PDF Blob
   const pdfBlob = createPdfBlobFromJpeg(jpegDataUrl, 595.28, 841.89);
 
-  // DIRECT FILE DOWNLOAD INTO USER'S DOWNLOADS FOLDER (NO PRINT PREVIEW POPUP!)
+  // Direct file download
   const fileName = `${name.replace(/\s+/g, '_')}_Semester3_Report.pdf`;
   const blobUrl = URL.createObjectURL(pdfBlob);
   const downloadLink = document.createElement('a');
