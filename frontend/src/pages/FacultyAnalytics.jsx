@@ -1,97 +1,198 @@
 import React, { useState, useEffect } from 'react';
-import { Users, AlertCircle, CheckCircle2, Send, Search, Shield, TrendingDown, Activity, AlertTriangle } from 'lucide-react';
+import { Users, AlertCircle, CheckCircle2, Send, Search, Shield, Activity, FileText, Download } from 'lucide-react';
 import { teacherAPI } from '../services/api';
+import { generateStudentPDFReport } from '../utils/pdfExport';
 
+// 7 DISTINCT FACULTY ROSTER STUDENTS WITH UNIQUE MARKS, READINESS SCORES & SUBJECT WEAKNESSES
 const DEFAULT_ROSTER = [
   {
     id: 1,
     student_name: 'Santhosh',
     student_code: 'CSE-2026-042',
-    weak_subject: '2321CSC304R - Object Oriented Programming using Java (OOPJ)',
-    internal_score: 19.5,
+    weak_subject: '2321CSC301T - Computer Networks (CN) (32/50)',
+    internal_score: 32.0,
     max_score: 50,
-    percentage: 39.0,
-    risk_level: 'Weak',
+    percentage: 82.0,
+    readiness_score: 82.0,
+    risk_level: 'Low Risk',
     status: 'Flagged',
-    last_action: 'Requires Intervention',
-    avatar: 'SA'
+    last_action: 'Requires Nudge',
+    avatar: 'SA',
+    subjects: [
+      { code: '2321MAB301T', name: 'Discrete Mathematics (DM)', score: 45, max: 50 },
+      { code: '2321CSC301T', name: 'Computer Networks (CN)', score: 32, max: 50 },
+      { code: '2321CSC302J', name: 'Advanced Data Structures & Algorithms (ADSA)', score: 41, max: 50 },
+      { code: '2321CSC303J', name: 'Fundamentals of AI & ML (FAIML)', score: 44, max: 50 },
+      { code: '2321CSS301J', name: 'Embedded System Design (ESD)', score: 42, max: 50 },
+      { code: '2321CSC304R', name: 'Object Oriented Programming using Java (OOPJ)', score: 39, max: 50 },
+      { code: '2321SDA301L', name: 'Career Skill Development III (CSD)', score: 44, max: 50 }
+    ],
+    recommendations: [
+      "Targeted revision on Computer Networks OSI routing protocols.",
+      "Maintain high accuracy across Discrete Math & AI/ML modules."
+    ]
   },
   {
     id: 2,
     student_name: 'Nidhish',
     student_code: 'CSE-2026-089',
-    weak_subject: '2321CSC301T - Computer Networks (CN)',
-    internal_score: 24.0,
+    weak_subject: '2321MAB301T - DM (22/50), 2321CSS301J - ESD (24/50)',
+    internal_score: 22.0,
     max_score: 50,
-    percentage: 48.0,
-    risk_level: 'Weak',
+    percentage: 58.0,
+    readiness_score: 58.0,
+    risk_level: 'Moderate Risk',
     status: 'Nudge Sent',
     last_action: 'Nudge sent yesterday',
-    avatar: 'NI'
+    avatar: 'NI',
+    subjects: [
+      { code: '2321MAB301T', name: 'Discrete Mathematics (DM)', score: 22, max: 50 },
+      { code: '2321CSC301T', name: 'Computer Networks (CN)', score: 34, max: 50 },
+      { code: '2321CSC302J', name: 'Advanced Data Structures & Algorithms (ADSA)', score: 31, max: 50 },
+      { code: '2321CSC303J', name: 'Fundamentals of AI & ML (FAIML)', score: 35, max: 50 },
+      { code: '2321CSS301J', name: 'Embedded System Design (ESD)', score: 24, max: 50 },
+      { code: '2321CSC304R', name: 'Object Oriented Programming using Java (OOPJ)', score: 28, max: 50 },
+      { code: '2321SDA301L', name: 'Career Skill Development III (CSD)', score: 29, max: 50 }
+    ],
+    recommendations: [
+      "Practice set theory and graph logic in Discrete Mathematics.",
+      "Complete hands-on GPIO microcontrollers laboratory practice in ESD."
+    ]
   },
   {
     id: 3,
     student_name: 'Salih',
     student_code: 'CSE-2026-112',
-    weak_subject: '2321MAB301T - Discrete Mathematics (DM)',
-    internal_score: 32.5,
+    weak_subject: '2321CSC302J - ADSA (18/50), CN (20/50), DM (19/50)',
+    internal_score: 18.0,
     max_score: 50,
-    percentage: 65.0,
-    risk_level: 'Medium',
-    status: 'Nudge Sent',
-    last_action: 'Revision plan assigned',
-    avatar: 'SL'
+    percentage: 44.0,
+    readiness_score: 44.0,
+    risk_level: 'High Risk',
+    status: 'Flagged',
+    last_action: 'Action Required',
+    avatar: 'SL',
+    subjects: [
+      { code: '2321MAB301T', name: 'Discrete Mathematics (DM)', score: 19, max: 50 },
+      { code: '2321CSC301T', name: 'Computer Networks (CN)', score: 20, max: 50 },
+      { code: '2321CSC302J', name: 'Advanced Data Structures & Algorithms (ADSA)', score: 18, max: 50 },
+      { code: '2321CSC303J', name: 'Fundamentals of AI & ML (FAIML)', score: 25, max: 50 },
+      { code: '2321CSS301J', name: 'Embedded System Design (ESD)', score: 24, max: 50 },
+      { code: '2321CSC304R', name: 'Object Oriented Programming using Java (OOPJ)', score: 22, max: 50 },
+      { code: '2321SDA301L', name: 'Career Skill Development III (CSD)', score: 26, max: 50 }
+    ],
+    recommendations: [
+      "Urgent 1-on-1 tutoring required for ADSA Red-Black trees & DP.",
+      "Review TCP 3-way handshake and network subnetting fundamentals."
+    ]
   },
   {
     id: 4,
     student_name: 'Nadya',
     student_code: 'CSE-2026-145',
-    weak_subject: '2321CSC302J - Advanced Data Structures & Algorithms (ADSA)',
-    internal_score: 18.0,
+    weak_subject: '2321CSS301J - Embedded System Design (ESD) (38/50)',
+    internal_score: 38.0,
     max_score: 50,
-    percentage: 36.0,
-    risk_level: 'Weak',
-    status: 'Flagged',
-    last_action: 'Action Required',
-    avatar: 'NA'
+    percentage: 91.0,
+    readiness_score: 91.0,
+    risk_level: 'Dean Honor / Low Risk',
+    status: 'Resolved',
+    last_action: 'High Performance',
+    avatar: 'NA',
+    subjects: [
+      { code: '2321MAB301T', name: 'Discrete Mathematics (DM)', score: 48, max: 50 },
+      { code: '2321CSC301T', name: 'Computer Networks (CN)', score: 46, max: 50 },
+      { code: '2321CSC302J', name: 'Advanced Data Structures & Algorithms (ADSA)', score: 45, max: 50 },
+      { code: '2321CSC303J', name: 'Fundamentals of AI & ML (FAIML)', score: 47, max: 50 },
+      { code: '2321CSS301J', name: 'Embedded System Design (ESD)', score: 38, max: 50 },
+      { code: '2321CSC304R', name: 'Object Oriented Programming using Java (OOPJ)', score: 46, max: 50 },
+      { code: '2321SDA301L', name: 'Career Skill Development III (CSD)', score: 48, max: 50 }
+    ],
+    recommendations: [
+      "Maintain excellence across all Semester 3 modules.",
+      "Refine RTOS latency concepts for Embedded System Design."
+    ]
   },
   {
     id: 5,
     student_name: 'Meghan',
     student_code: 'CSE-2026-018',
-    weak_subject: '2321CSS301J - Embedded System Design (ESD)',
-    internal_score: 22.5,
+    weak_subject: '2321CSC303J - FAIML (26/50), ADSA (28/50)',
+    internal_score: 26.0,
     max_score: 50,
-    percentage: 45.0,
-    risk_level: 'Resolved',
+    percentage: 68.0,
+    readiness_score: 68.0,
+    risk_level: 'Moderate Risk',
+    status: 'Resolved',
     last_action: 'Completed Wk 1 Quiz',
-    avatar: 'ME'
+    avatar: 'ME',
+    subjects: [
+      { code: '2321MAB301T', name: 'Discrete Mathematics (DM)', score: 39, max: 50 },
+      { code: '2321CSC301T', name: 'Computer Networks (CN)', score: 38, max: 50 },
+      { code: '2321CSC302J', name: 'Advanced Data Structures & Algorithms (ADSA)', score: 28, max: 50 },
+      { code: '2321CSC303J', name: 'Fundamentals of AI & ML (FAIML)', score: 26, max: 50 },
+      { code: '2321CSS301J', name: 'Embedded System Design (ESD)', score: 34, max: 50 },
+      { code: '2321CSC304R', name: 'Object Oriented Programming using Java (OOPJ)', score: 36, max: 50 },
+      { code: '2321SDA301L', name: 'Career Skill Development III (CSD)', score: 37, max: 50 }
+    ],
+    recommendations: [
+      "Focus on Supervised Machine Learning algorithms & Loss functions.",
+      "Solve LeetCode Medium problem set on Dijkstra's Algorithm."
+    ]
   },
   {
     id: 6,
     student_name: 'Nitish',
     student_code: 'CSE-2026-056',
-    weak_subject: '2321CSC303J - Fundamentals of AI & ML (FAIML)',
-    internal_score: 33.0,
+    weak_subject: '2321CSC304R - OOP Java (21/50), DM (23/50)',
+    internal_score: 21.0,
     max_score: 50,
-    percentage: 66.0,
-    risk_level: 'Medium',
+    percentage: 52.0,
+    readiness_score: 52.0,
+    risk_level: 'High Risk',
     status: 'Flagged',
     last_action: 'Pending Quiz Review',
-    avatar: 'NT'
+    avatar: 'NT',
+    subjects: [
+      { code: '2321MAB301T', name: 'Discrete Mathematics (DM)', score: 23, max: 50 },
+      { code: '2321CSC301T', name: 'Computer Networks (CN)', score: 30, max: 50 },
+      { code: '2321CSC302J', name: 'Advanced Data Structures & Algorithms (ADSA)', score: 27, max: 50 },
+      { code: '2321CSC303J', name: 'Fundamentals of AI & ML (FAIML)', score: 29, max: 50 },
+      { code: '2321CSS301J', name: 'Embedded System Design (ESD)', score: 28, max: 50 },
+      { code: '2321CSC304R', name: 'Object Oriented Programming using Java (OOPJ)', score: 21, max: 50 },
+      { code: '2321SDA301L', name: 'Career Skill Development III (CSD)', score: 25, max: 50 }
+    ],
+    recommendations: [
+      "Practice Java OOP inheritance, polymorphism, and memory stack/heap.",
+      "Review discrete mathematical logic & recurrence relations."
+    ]
   },
   {
     id: 7,
     student_name: 'Prajwant',
     student_code: 'CSE-2026-074',
-    weak_subject: '2321SDA301L - Career Skill Development III (CSD)',
-    internal_score: 21.0,
+    weak_subject: '2321SDA301L - CSD III (31/50)',
+    internal_score: 31.0,
     max_score: 50,
-    percentage: 42.0,
-    risk_level: 'Weak',
+    percentage: 76.0,
+    readiness_score: 76.0,
+    risk_level: 'Low Risk',
     status: 'Flagged',
     last_action: 'Scheduled Mentoring',
-    avatar: 'PR'
+    avatar: 'PR',
+    subjects: [
+      { code: '2321MAB301T', name: 'Discrete Mathematics (DM)', score: 40, max: 50 },
+      { code: '2321CSC301T', name: 'Computer Networks (CN)', score: 39, max: 50 },
+      { code: '2321CSC302J', name: 'Advanced Data Structures & Algorithms (ADSA)', score: 38, max: 50 },
+      { code: '2321CSC303J', name: 'Fundamentals of AI & ML (FAIML)', score: 41, max: 50 },
+      { code: '2321CSS301J', name: 'Embedded System Design (ESD)', score: 38, max: 50 },
+      { code: '2321CSC304R', name: 'Object Oriented Programming using Java (OOPJ)', score: 39, max: 50 },
+      { code: '2321SDA301L', name: 'Career Skill Development III (CSD)', score: 31, max: 50 }
+    ],
+    recommendations: [
+      "Practice quantitative speed conversions and logical aptitude problem sets.",
+      "Maintain high baseline scores across core CSE courses."
+    ]
   }
 ];
 
@@ -101,7 +202,7 @@ export default function FacultyAnalytics({ addToast }) {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length === 7) return parsed;
       } catch (e) {
         console.warn('Error parsing saved roster:', e);
       }
@@ -158,6 +259,28 @@ export default function FacultyAnalytics({ addToast }) {
     }
   };
 
+  // FEATURE 5: FACULTY INDIVIDUAL STUDENT PDF REPORT DOWNLOAD HANDLER
+  const handleDownloadStudentPDF = (stu) => {
+    generateStudentPDFReport({
+      name: stu.student_name,
+      studentCode: stu.student_code,
+      institution: "Easwari Engineering College",
+      department: "Department of Computer Science & Engineering",
+      semester: "Semester 3 (CSE)",
+      readinessScore: stu.readiness_score,
+      riskLevel: stu.risk_level,
+      subjects: stu.subjects,
+      recommendations: stu.recommendations || [
+        `Targeted intervention for weak subject: ${stu.weak_subject}`,
+        "Complete 6-Week Adaptive Recovery Roadmap drills in Focus Mode."
+      ]
+    });
+
+    if (addToast) {
+      addToast('PDF Generated', `Official Semester 3 PDF Report generated for ${stu.student_name}.`, 'success');
+    }
+  };
+
   const filteredStudents = students.filter((s) => {
     const matchesSearch = s.student_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           s.student_code.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -171,7 +294,7 @@ export default function FacultyAnalytics({ addToast }) {
   const resolvedCount = students.filter((s) => s.status === 'Resolved').length;
 
   // Calculate class average readiness percentage across the 7 roster students
-  const classAvgPct = (students.reduce((acc, s) => acc + s.percentage, 0) / students.length).toFixed(1);
+  const classAvgPct = (students.reduce((acc, s) => acc + s.readiness_score, 0) / students.length).toFixed(1);
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto px-2 sm:px-4">
@@ -181,13 +304,13 @@ export default function FacultyAnalytics({ addToast }) {
         <div>
           <div className="flex items-center space-x-2 text-rose-200 text-xs font-bold uppercase tracking-wider mb-1">
             <Shield className="w-3.5 h-3.5 text-rose-300" />
-            <span>Academic Intervention Analytics • Semester 3</span>
+            <span>Easwari Engineering College • Semester 3</span>
           </div>
           <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-white tracking-tight">
-            Semester 3 Academic Intervention Dashboard
+            Faculty Academic Intervention & PDF Export Center
           </h1>
           <p className="text-rose-100/90 text-xs sm:text-sm mt-1 max-w-2xl leading-relaxed">
-            Monitor students flagged for low Internal Assessment (IA) test scores out of 50 in Semester 3 courses, send targeted nudges, and track intervention resolutions.
+            Monitor students flagged for low Internal Assessment (IA) test scores out of 50 in Semester 3 courses, send targeted nudges, and export individual student PDF performance reports.
           </p>
         </div>
       </div>
@@ -233,7 +356,7 @@ export default function FacultyAnalytics({ addToast }) {
 
       </div>
 
-      {/* FEATURE 2: HIGH-LEVEL PROBLEM STATEMENT ANALYTICS SUMMARY BANNER */}
+      {/* HIGH-LEVEL PROBLEM STATEMENT ANALYTICS SUMMARY BANNER */}
       <div className="bg-gradient-to-r from-rose-950 via-[#701C34] to-[#581427] text-white rounded-2xl p-5 shadow-lg border border-rose-900/60 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="flex items-center space-x-3.5">
           <div className="w-11 h-11 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0 shadow-inner">
@@ -280,7 +403,7 @@ export default function FacultyAnalytics({ addToast }) {
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-slate-100">
           <div>
             <h2 className="text-base sm:text-lg font-black text-slate-900">Priority Intervention Roster</h2>
-            <p className="text-xs text-slate-500">Semester 3 students (Santhosh, Nidhish, Salih, Nadya, Meghan, Nitish, Prajwant)</p>
+            <p className="text-xs text-slate-500">7 Distinct Semester 3 Students (Santhosh, Nidhish, Salih, Nadya, Meghan, Nitish, Prajwant)</p>
           </div>
 
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
@@ -315,15 +438,15 @@ export default function FacultyAnalytics({ addToast }) {
 
         {/* Roster Table */}
         <div className="overflow-x-auto no-scrollbar border border-slate-100 rounded-xl">
-          <table className="w-full text-left text-xs min-w-[640px]">
+          <table className="w-full text-left text-xs min-w-[720px]">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
                 <th className="py-3 px-3">Student</th>
-                <th className="py-3 px-3">Sem 3 Weak Course</th>
-                <th className="py-3 px-3">IA Score (/50)</th>
-                <th className="py-3 px-3">Risk Level</th>
-                <th className="py-3 px-3">Intervention Status</th>
-                <th className="py-3 px-3 text-right">Actions</th>
+                <th className="py-3 px-3">Sem 3 Weak Course(s)</th>
+                <th className="py-3 px-3">Readiness Score</th>
+                <th className="py-3 px-3">Risk Status</th>
+                <th className="py-3 px-3">Status</th>
+                <th className="py-3 px-3 text-right">PDF & Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -333,34 +456,34 @@ export default function FacultyAnalytics({ addToast }) {
                   {/* Student Info */}
                   <td className="py-3.5 px-3">
                     <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 rounded-lg bg-rose-50 text-[#701C34] font-bold flex items-center justify-center text-xs border border-rose-200 shrink-0">
+                      <div className="w-8.5 h-8.5 rounded-lg bg-rose-50 text-[#701C34] font-black flex items-center justify-center text-xs border border-rose-200 shrink-0 shadow-2xs">
                         {stu.avatar}
                       </div>
                       <div>
                         <p className="font-bold text-slate-900">{stu.student_name}</p>
-                        <p className="text-[10px] text-slate-500">{stu.student_code}</p>
+                        <p className="text-[10px] text-slate-500 font-medium">{stu.student_code}</p>
                       </div>
                     </div>
                   </td>
 
                   {/* Weak Subject */}
-                  <td className="py-3.5 px-3 font-bold text-slate-800">
-                    {stu.weak_subject}
+                  <td className="py-3.5 px-3 font-bold text-slate-800 max-w-[220px]">
+                    <span className="line-clamp-2 leading-snug">{stu.weak_subject}</span>
                   </td>
 
-                  {/* IA Score */}
+                  {/* Readiness Score */}
                   <td className="py-3.5 px-3">
-                    <span className="font-black text-slate-900">{stu.internal_score}</span>
-                    <span className="text-slate-400 font-semibold"> / 50</span>
-                    <span className="text-[10px] text-slate-500 block font-semibold">{stu.percentage}%</span>
+                    <span className="font-black text-[#701C34] text-sm">{stu.readiness_score}%</span>
                   </td>
 
                   {/* Risk Level Badge */}
                   <td className="py-3.5 px-3">
                     <span className={`px-2.5 py-0.5 rounded-md text-[10px] font-black border ${
-                      stu.risk_level === 'Weak'
+                      stu.readiness_score < 60
                         ? 'bg-rose-100 text-[#701C34] border-rose-200'
-                        : 'bg-amber-50 text-amber-800 border-amber-200'
+                        : stu.readiness_score < 75
+                        ? 'bg-amber-50 text-amber-800 border-amber-200'
+                        : 'bg-emerald-50 text-emerald-800 border-emerald-200'
                     }`}>
                       {stu.risk_level}
                     </span>
@@ -379,9 +502,20 @@ export default function FacultyAnalytics({ addToast }) {
                     </span>
                   </td>
 
-                  {/* Interactive Action Buttons */}
+                  {/* Interactive Action Buttons & PDF Export */}
                   <td className="py-3.5 px-3 text-right">
                     <div className="flex items-center justify-end space-x-2">
+                      
+                      {/* FEATURE 5: FACULTY INDIVIDUAL STUDENT PDF REPORT BUTTON */}
+                      <button
+                        onClick={() => handleDownloadStudentPDF(stu)}
+                        className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-lg text-xs font-bold transition-all flex items-center space-x-1 active:scale-95"
+                        title={`Download Printable PDF Report for ${stu.student_name}`}
+                      >
+                        <FileText className="w-3.5 h-3.5 text-[#701C34]" />
+                        <span>PDF Report</span>
+                      </button>
+
                       {stu.status !== 'Resolved' && (
                         <button
                           disabled={loadingId === stu.id}
@@ -389,7 +523,7 @@ export default function FacultyAnalytics({ addToast }) {
                           className="px-3 py-1.5 bg-[#701C34] hover:bg-[#581427] text-white rounded-lg text-xs font-bold transition-all shadow-xs flex items-center space-x-1 active:scale-95"
                         >
                           <Send className="w-3 h-3" />
-                          <span>Send Nudge</span>
+                          <span>Nudge</span>
                         </button>
                       )}
 
@@ -403,10 +537,11 @@ export default function FacultyAnalytics({ addToast }) {
                           <span>Resolve</span>
                         </button>
                       ) : (
-                        <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-200">
+                        <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
                           Resolved
                         </span>
                       )}
+
                     </div>
                   </td>
 

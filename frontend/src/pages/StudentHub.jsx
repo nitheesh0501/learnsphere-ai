@@ -15,8 +15,10 @@ import {
   Calculator,
   Lock,
   Download,
-  Info
+  Info,
+  FileText
 } from 'lucide-react';
+import { generateStudentPDFReport } from '../utils/pdfExport';
 
 // OFFICIAL SEMESTER 3 PREDEFINED SUBJECT DATASET (STRICTLY 7 COURSES - LOCKED STRUCTURE)
 const DEFAULT_SUBJECTS = [
@@ -188,7 +190,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
     }, 1500);
   };
 
-  // FEATURE 1: DOWNLOAD READINESS & PERFORMANCE REPORT
+  // FEATURE 1 & 6: DOWNLOAD FORMATTED STUDENT READINESS PDF REPORT FOR NITHEESH
   const handleDownloadReport = () => {
     if (hasInvalidMarks) {
       if (addToast) {
@@ -197,33 +199,32 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
       return;
     }
 
-    const reportHeader = `LEARNSPHERE AI - SEMESTER 3 READINESS & PERFORMANCE REPORT\n`;
-    const lineDivider = `=======================================================================\n`;
-    const studentInfo = `Student Name: Nitheesh\nSemester: Semester 3 (CSE)\nDate Generated: ${new Date().toLocaleDateString()}\nOverall Semester Readiness Score: ${isAllMarksEntered ? readinessScore + '%' : 'Pending Completion'}\n\n`;
+    const formattedSubjects = subjects.map((sub) => ({
+      code: sub.code,
+      name: sub.name,
+      score: sub.internalMarks !== '' ? sub.internalMarks : 0,
+      max: sub.maxMarks || 50,
+      status: Number(sub.internalMarks) > 40 ? 'Strong' : Number(sub.internalMarks) >= 35 ? 'Average' : 'Weak'
+    }));
 
-    const subjectsSection = `OFFICIAL SEMESTER 3 SUBJECT MARKS BREAKDOWN:\n` + lineDivider +
-      subjects.map(s => `  - [${s.code}] ${s.name}: ${s.internalMarks || '0'}/50 (${Math.round(((Number(s.internalMarks) || 0)/50)*100)}%)`).join('\n') + `\n\n`;
+    const weakSubs = subjects.filter(s => Number(s.internalMarks) < 35).map(s => s.name);
 
-    const prioritiesSection = `AI-SUGGESTED STUDY PRIORITIES:\n` + lineDivider +
-      (dynamicPriorities.length > 0 ? dynamicPriorities.map(p => `  - [${p.code}] ${p.name}: ${p.priority} (${p.desc})`).join('\n') : '  - Pending valid mark entries') + `\n\n`;
-
-    const roadmapSection = `6-WEEK RECOVERY ROADMAP SUMMARY:\n` + lineDivider +
-      (dynamicRoadmap.length > 0 ? dynamicRoadmap.map(r => `  - Week ${r.week} [${r.status}]: ${r.title} — ${r.desc}`).join('\n') : '  - Pending valid mark entries');
-
-    const fullContent = reportHeader + lineDivider + studentInfo + subjectsSection + prioritiesSection + roadmapSection;
-
-    const blob = new Blob([fullContent], { type: 'text/plain;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', `LearnSphere_Sem3_Readiness_Report_Nitheesh.txt`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    generateStudentPDFReport({
+      name: "Nitheesh",
+      studentCode: "CSE-2026-018",
+      institution: "Easwari Engineering College",
+      department: "Department of Computer Science & Engineering",
+      semester: "Semester 3 (CSE)",
+      readinessScore: isAllMarksEntered ? readinessScore : 0,
+      riskLevel: readinessScore >= 75 ? "On Track / Low Risk" : readinessScore >= 60 ? "Moderate Risk" : "High Risk",
+      subjects: formattedSubjects,
+      recommendations: weakSubs.length > 0
+        ? weakSubs.map(w => `Focus on foundational practice and code derivations in ${w}.`)
+        : ["Maintain academic pacing with daily diagnostic drills."]
+    });
 
     if (addToast) {
-      addToast('Report Downloaded', 'Semester 3 Readiness & Performance Report downloaded successfully.', 'success');
+      addToast('PDF Download Triggered', 'Personalized Semester 3 PDF Report generated for Nitheesh.', 'success');
     }
   };
 
@@ -343,15 +344,15 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
         </div>
 
         <div className="flex items-center space-x-2.5 self-stretch md:self-auto shrink-0 flex-wrap sm:flex-nowrap">
-          {/* Download Report Button */}
+          {/* Download PDF Report Button */}
           <button
             onClick={handleDownloadReport}
             disabled={hasInvalidMarks}
             className="flex-1 sm:flex-none flex items-center justify-center space-x-2 px-4 py-2.5 bg-rose-900/60 hover:bg-rose-900 border border-rose-400/40 text-white rounded-xl font-bold text-xs transition-all shadow-md active:scale-95 disabled:opacity-50"
-            title="Download Readiness & Performance Report Summary"
+            title="Download PDF Readiness Report for Nitheesh"
           >
             <Download className="w-4 h-4 text-rose-200" />
-            <span>Download Report</span>
+            <span>Download PDF Report</span>
           </button>
 
           {/* Re-Run AI Audit Button */}
