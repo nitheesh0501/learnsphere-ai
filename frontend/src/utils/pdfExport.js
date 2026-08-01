@@ -1,8 +1,87 @@
 /**
- * PDF / Printable Report Generator Utility for LearnSphere AI
- * Generates formatted A4 PDF reports for both Students and Faculty Analytics.
+ * Direct PDF Export Utility for LearnSphere AI
+ * Renders off-white (#FAF8F5) high-resolution document and outputs direct PDF file download
+ * without opening browser print preview popups.
  */
 
+// Helper to wrap raw JPEG data into a valid standalone PDF 1.4 binary Blob
+function createPdfBlobFromJpeg(jpegDataUrl, width = 595.28, height = 841.89) {
+  // Extract base64 binary string from data URL
+  const base64Data = jpegDataUrl.split(',')[1];
+  const binaryImg = atob(base64Data);
+  const imgLength = binaryImg.length;
+
+  // Convert binary string to Uint8Array
+  const imgBytes = new Uint8Array(imgLength);
+  for (let i = 0; i < imgLength; i++) {
+    imgBytes[i] = binaryImg.charCodeAt(i);
+  }
+
+  // Construct PDF Objects
+  const header = `%PDF-1.4\n%âãÏÓ\n`;
+
+  const obj1 = `1 0 obj\n<</Type /Catalog /Pages 2 0 R>>\nendobj\n`;
+  const obj2 = `2 0 obj\n<</Type /Pages /Kids [3 0 R] /Count 1>>\nendobj\n`;
+  const obj3 = `3 0 obj\n<</Type /Page /Parent 2 0 R /Resources <</XObject <</Im1 4 0 R>>>> /MediaBox [0 0 ${width.toFixed(2)} ${height.toFixed(2)}] /Contents 5 0 R>>\nendobj\n`;
+  
+  const obj4Header = `4 0 obj\n<</Type /XObject /Subtype /Image /Width 1240 /Height 1754 /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${imgLength}>>\nstream\n`;
+  const obj4Footer = `\nendstream\nendobj\n`;
+
+  const contentStreamText = `q ${width.toFixed(2)} 0 0 ${height.toFixed(2)} 0 0 cm /Im1 Do Q`;
+  const obj5 = `5 0 obj\n<</Length ${contentStreamText.length}>>\nstream\n${contentStreamText}\nendstream\nendobj\n`;
+
+  // Calculate byte offsets for xref
+  const encoder = new TextEncoder();
+
+  const bHeader = encoder.encode(header);
+  const bObj1 = encoder.encode(obj1);
+  const bObj2 = encoder.encode(obj2);
+  const bObj3 = encoder.encode(obj3);
+  const bObj4H = encoder.encode(obj4Header);
+  const bObj4F = encoder.encode(obj4Footer);
+  const bObj5 = encoder.encode(obj5);
+
+  const offset1 = bHeader.length;
+  const offset2 = offset1 + bObj1.length;
+  const offset3 = offset2 + bObj2.length;
+  const offset4 = offset3 + bObj3.length;
+  const offset5 = offset4 + bObj4H.length + imgBytes.length + bObj4F.length;
+
+  const xref = `xref\n0 6\n0000000000 65535 f \n` +
+    `${offset1.toString().padStart(10, '0')} 00000 n \n` +
+    `${offset2.toString().padStart(10, '0')} 00000 n \n` +
+    `${offset3.toString().padStart(10, '0')} 00000 n \n` +
+    `${offset4.toString().padStart(10, '0')} 00000 n \n` +
+    `${offset5.toString().padStart(10, '0')} 00000 n \n`;
+
+  const startxref = offset5 + bObj5.length;
+  const trailer = `trailer\n<</Size 6 /Root 1 0 R>>\nstartxref\n${startxref}\n%%EOF\n`;
+
+  const bXref = encoder.encode(xref);
+  const bTrailer = encoder.encode(trailer);
+
+  // Combine into single Uint8Array PDF File
+  const totalLength = startxref + bXref.length + bTrailer.length;
+  const pdfBytes = new Uint8Array(totalLength);
+
+  let pos = 0;
+  pdfBytes.set(bHeader, pos); pos += bHeader.length;
+  pdfBytes.set(bObj1, pos); pos += bObj1.length;
+  pdfBytes.set(bObj2, pos); pos += bObj2.length;
+  pdfBytes.set(bObj3, pos); pos += bObj3.length;
+  pdfBytes.set(bObj4H, pos); pos += bObj4H.length;
+  pdfBytes.set(imgBytes, pos); pos += imgBytes.length;
+  pdfBytes.set(bObj4F, pos); pos += bObj4F.length;
+  pdfBytes.set(bObj5, pos); pos += bObj5.length;
+  pdfBytes.set(bXref, pos); pos += bXref.length;
+  pdfBytes.set(bTrailer, pos); pos += bTrailer.length;
+
+  return new Blob([pdfBytes], { type: 'application/pdf' });
+}
+
+/**
+ * Main Direct Export Function
+ */
 export const generateStudentPDFReport = (studentData) => {
   const {
     name = "Nitheesh",
@@ -28,213 +107,225 @@ export const generateStudentPDFReport = (studentData) => {
     ]
   } = studentData;
 
-  const printWindow = window.open('', '_blank');
-  if (!printWindow) {
-    alert("Please allow popups to download/print the PDF report.");
+  // Create offscreen canvas for high-resolution A4 rendering
+  const canvas = document.createElement('canvas');
+  canvas.width = 1240;
+  canvas.height = 1754;
+  const ctx = canvas.getContext('2d');
+
+  if (!ctx) {
+    alert("Canvas 2D Context not supported.");
     return;
   }
 
-  const htmlContent = `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8" />
-      <title>${name}_Semester3_Report</title>
-      <style>
-        @page { size: A4; margin: 20mm; }
-        body {
-          font-family: 'Helvetica Neue', Arial, sans-serif;
-          color: #0F172A;
-          margin: 0;
-          padding: 20px;
-          background: #ffffff;
-          font-size: 13px;
-          line-height: 1.5;
-        }
-        .header-bar {
-          border-bottom: 3px solid #701C34;
-          padding-bottom: 12px;
-          margin-bottom: 20px;
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-end;
-        }
-        .institution-name {
-          font-size: 18px;
-          font-weight: 900;
-          color: #701C34;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-        }
-        .doc-title {
-          font-size: 14px;
-          font-weight: 700;
-          color: #475569;
-          margin-top: 2px;
-        }
-        .meta-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 12px;
-          background: #F8FAFC;
-          border: 1px solid #E2E8F0;
-          padding: 14px;
-          border-radius: 8px;
-          margin-bottom: 24px;
-        }
-        .meta-item { font-size: 12px; }
-        .meta-label { font-weight: 700; color: #475569; text-transform: uppercase; font-size: 10px; }
-        .meta-val { font-weight: 800; color: #0F172A; font-size: 13px; }
-        .badge {
-          display: inline-block;
-          padding: 3px 8px;
-          border-radius: 4px;
-          font-size: 11px;
-          font-weight: 800;
-          text-transform: uppercase;
-        }
-        .badge-strong { background: #ECFDF5; color: #047857; border: 1px solid #A7F3D0; }
-        .badge-average { background: #FFFBEB; color: #B45309; border: 1px solid #FDE68A; }
-        .badge-weak { background: #FDF2F4; color: #701C34; border: 1px solid #FECDD3; }
-        table {
-          width: 100%;
-          border-collapse: collapse;
-          margin-bottom: 24px;
-        }
-        th, td {
-          padding: 10px 12px;
-          text-align: left;
-          border-bottom: 1px solid #E2E8F0;
-        }
-        th {
-          background: #701C34;
-          color: #ffffff;
-          font-size: 11px;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-        }
-        tr:nth-child(even) { background: #F8FAFC; }
-        .section-title {
-          font-size: 14px;
-          font-weight: 800;
-          color: #701C34;
-          border-bottom: 2px solid #E2E8F0;
-          padding-bottom: 6px;
-          margin-top: 20px;
-          margin-bottom: 12px;
-          text-transform: uppercase;
-        }
-        .recs-list {
-          padding-left: 20px;
-          margin: 0 0 30px 0;
-        }
-        .recs-list li {
-          margin-bottom: 6px;
-          font-weight: 600;
-          color: #334155;
-        }
-        .footer-sig {
-          margin-top: 40px;
-          display: flex;
-          justify-content: space-between;
-          border-top: 1px solid #E2E8F0;
-          padding-top: 16px;
-          font-size: 11px;
-          color: #64748B;
-        }
-        .sig-box { text-align: center; width: 180px; }
-        .sig-line { border-top: 1px solid #94A3B8; margin-top: 30px; padding-top: 4px; font-weight: 700; }
-      </style>
-    </head>
-    <body>
-      <div class="header-bar">
-        <div>
-          <div class="institution-name">${institution}</div>
-          <div class="doc-title">${department}</div>
-        </div>
-        <div style="text-align: right;">
-          <div style="font-weight: 900; color: #701C34; font-size: 14px;">LearnSphere AI Engine</div>
-          <div style="font-size: 10px; color: #64748B;">Date: ${new Date().toLocaleDateString()}</div>
-        </div>
-      </div>
+  // 1. FULL PAGE OFF-WHITE BACKGROUND (#FAF8F5)
+  ctx.fillStyle = '#FAF8F5';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      <h2 style="margin: 0 0 16px 0; font-size: 16px; color: #0F172A; text-align: center; text-transform: uppercase;">
-        Faculty Student Performance & Academic Intervention Report
-      </h2>
+  // Helper: Draw Rounded Rect
+  const drawRoundedRect = (x, y, w, h, r, fillColor, strokeColor) => {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+    if (fillColor) {
+      ctx.fillStyle = fillColor;
+      ctx.fill();
+    }
+    if (strokeColor) {
+      ctx.strokeStyle = strokeColor;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+  };
 
-      <div class="meta-grid">
-        <div class="meta-item">
-          <div class="meta-label">Student Name</div>
-          <div class="meta-val">${name}</div>
-        </div>
-        <div class="meta-item">
-          <div class="meta-label">Student Roll / Code</div>
-          <div class="meta-val">${studentCode}</div>
-        </div>
-        <div class="meta-item">
-          <div class="meta-label">Academic Semester</div>
-          <div class="meta-val">${semester}</div>
-        </div>
-        <div class="meta-item">
-          <div class="meta-label">Calculated Semester Readiness</div>
-          <div class="meta-val" style="color: #701C34;">${readinessScore}% (${riskLevel})</div>
-        </div>
-      </div>
+  // 2. HEADER BANNER: DEEP COLLEGE MAROON (#701C34) WITH WHITE TEXT
+  const grad = ctx.createLinearGradient(40, 40, 1200, 180);
+  grad.addColorStop(0, '#4A1021');
+  grad.addColorStop(1, '#701C34');
+  drawRoundedRect(40, 40, 1160, 140, 16, grad, '#581427');
 
-      <div class="section-title">Official Semester 3 Subject Marks Breakdown (Out of 50)</div>
-      <table>
-        <thead>
-          <tr>
-            <th>Course Code</th>
-            <th>Subject Title</th>
-            <th>IA Score</th>
-            <th>Max Marks</th>
-            <th>Percentage</th>
-            <th>Performance Level</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${subjects.map(s => `
-            <tr>
-              <td style="font-weight: 800; color: #701C34;">${s.code}</td>
-              <td style="font-weight: 700;">${s.name}</td>
-              <td style="font-weight: 800;">${s.score}</td>
-              <td>${s.max || 50}</td>
-              <td>${Math.round(((Number(s.score) || 0) / (s.max || 50)) * 100)}%</td>
-              <td>
-                <span class="badge ${
-                  (Number(s.score) || 0) > 40 ? 'badge-strong' : (Number(s.score) || 0) >= 35 ? 'badge-average' : 'badge-weak'
-                }">
-                  ${(Number(s.score) || 0) > 40 ? 'Strong' : (Number(s.score) || 0) >= 35 ? 'Average' : 'Weak'}
-                </span>
-              </td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
+  ctx.fillStyle = '#FDF2F4';
+  ctx.font = 'bold 14px "Plus Jakarta Sans", sans-serif';
+  ctx.fillText(institution.toUpperCase() + ' • ' + department.toUpperCase(), 70, 78);
 
-      <div class="section-title">AI-Generated Weaknesses & 6-Week Recovery Milestones</div>
-      <ul class="recs-list">
-        ${recommendations.map(r => `<li>${r}</li>`).join('')}
-      </ul>
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = '900 24px "Plus Jakarta Sans", sans-serif';
+  ctx.fillText('LearnSphere AI — Student Performance & Intervention Report', 70, 118);
 
-      <div class="footer-sig">
-        <div>System Verified by LearnSphere AI Analytics</div>
-        <div class="sig-box">
-          <div class="sig-line">Academic Advisor Signature</div>
-        </div>
-      </div>
+  ctx.fillStyle = '#FDF2F4';
+  ctx.font = 'bold 12px "Plus Jakarta Sans", sans-serif';
+  ctx.fillText('Official Academic Verification Document • Generated: ' + new Date().toLocaleDateString(), 70, 148);
 
-      <script>
-        window.onload = function() {
-          window.print();
-        };
-      </script>
-    </body>
-    </html>
-  `;
+  // 3. STUDENT METADATA CARD (PURE WHITE #FFFFFF, SLATE BORDER #E2E8F0)
+  drawRoundedRect(40, 205, 1160, 125, 12, '#FFFFFF', '#E2E8F0');
 
-  printWindow.document.open();
-  printWindow.document.write(htmlContent);
-  printWindow.document.close();
+  // Metadata labels & values
+  const drawMetaField = (x, y, label, value, valueColor = '#0F172A') => {
+    ctx.fillStyle = '#475569';
+    ctx.font = 'bold 11px sans-serif';
+    ctx.fillText(label.toUpperCase(), x, y);
+    ctx.fillStyle = valueColor;
+    ctx.font = '800 15px sans-serif';
+    ctx.fillText(value, x, y + 22);
+  };
+
+  drawMetaField(75, 235, 'Student Name', name);
+  drawMetaField(370, 235, 'Roll Number / Code', studentCode);
+  drawMetaField(670, 235, 'Academic Semester', semester);
+  drawMetaField(950, 235, 'Calculated Readiness', `${readinessScore}%`, '#701C34');
+
+  drawMetaField(75, 290, 'Risk Classification', riskLevel, readinessScore >= 75 ? '#047857' : readinessScore >= 60 ? '#B45309' : '#701C34');
+  drawMetaField(370, 290, 'Subject Roster', '7 Official Semester 3 Courses');
+  drawMetaField(670, 290, 'Status', 'Verified & Saved');
+
+  // 4. FULL 7 SEMESTER 3 SUBJECTS TABLE CARD (#FFFFFF CARD, SLATE BORDER #E2E8F0)
+  drawRoundedRect(40, 350, 1160, 680, 12, '#FFFFFF', '#E2E8F0');
+
+  ctx.fillStyle = '#701C34';
+  ctx.font = '900 16px sans-serif';
+  ctx.fillText('OFFICIAL SEMESTER 3 SUBJECT MARKS BREAKDOWN (OUT OF 50 MARKS)', 70, 390);
+
+  // Table Header Row
+  drawRoundedRect(65, 410, 1110, 40, 8, '#701C34', null);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = 'bold 12px sans-serif';
+  ctx.fillText('COURSE CODE', 85, 435);
+  ctx.fillText('SUBJECT TITLE', 240, 435);
+  ctx.fillText('IA SCORE', 680, 435);
+  ctx.fillText('MAX MARKS', 810, 435);
+  ctx.fillText('PERCENTAGE', 940, 435);
+  ctx.fillText('STATUS', 1070, 435);
+
+  // Table Rows (7 Subjects)
+  let startY = 475;
+  subjects.forEach((sub, idx) => {
+    const rowY = startY + (idx * 72);
+    
+    // Row zebra background
+    if (idx % 2 === 1) {
+      drawRoundedRect(65, rowY - 22, 1110, 58, 6, '#F8FAFC', null);
+    }
+
+    ctx.fillStyle = '#701C34';
+    ctx.font = '800 13px sans-serif';
+    ctx.fillText(sub.code, 85, rowY + 12);
+
+    ctx.fillStyle = '#0F172A';
+    ctx.font = 'bold 13px sans-serif';
+    ctx.fillText(sub.name, 240, rowY + 12);
+
+    const scoreNum = Number(sub.score) || 0;
+    const maxNum = Number(sub.max) || 50;
+    const pct = Math.round((scoreNum / maxNum) * 100);
+
+    ctx.fillStyle = '#0F172A';
+    ctx.font = '900 14px sans-serif';
+    ctx.fillText(`${sub.score} / ${maxNum}`, 680, rowY + 12);
+
+    ctx.fillStyle = '#475569';
+    ctx.font = 'bold 13px sans-serif';
+    ctx.fillText(`${maxNum}`, 810, rowY + 12);
+
+    ctx.fillStyle = '#0F172A';
+    ctx.font = 'bold 13px sans-serif';
+    ctx.fillText(`${pct}%`, 940, rowY + 12);
+
+    // Status Pill Badge
+    const isStrong = scoreNum > 40;
+    const isAverage = scoreNum >= 35 && scoreNum <= 40;
+    const badgeBg = isStrong ? '#ECFDF5' : isAverage ? '#FFFBEB' : '#FDF2F4';
+    const badgeTxt = isStrong ? '#047857' : isAverage ? '#B45309' : '#701C34';
+    const badgeLabel = isStrong ? 'Strong' : isAverage ? 'Average' : 'Weak';
+
+    drawRoundedRect(1060, rowY - 6, 85, 26, 6, badgeBg, isStrong ? '#A7F3D0' : isAverage ? '#FDE68A' : '#FECDD3');
+    ctx.fillStyle = badgeTxt;
+    ctx.font = '900 11px sans-serif';
+    ctx.fillText(badgeLabel, 1080, rowY + 11);
+  });
+
+  // 5. AI RECOMMENDATIONS & 6-WEEK ROADMAP CARD (#FFFFFF CARD, SLATE BORDER #E2E8F0)
+  drawRoundedRect(40, 1050, 1160, 520, 12, '#FFFFFF', '#E2E8F0');
+
+  ctx.fillStyle = '#701C34';
+  ctx.font = '900 16px sans-serif';
+  ctx.fillText('AI STUDY PRIORITIES & 6-WEEK ADAPTIVE RECOVERY ROADMAP', 70, 1090);
+
+  ctx.fillStyle = '#334155';
+  ctx.font = 'bold 12px sans-serif';
+  let recY = 1125;
+  recommendations.forEach((rec, rIdx) => {
+    ctx.fillStyle = '#701C34';
+    ctx.fillText('•', 75, recY);
+    ctx.fillStyle = '#1E293B';
+    ctx.fillText(rec, 95, recY);
+    recY += 28;
+  });
+
+  // 6-Week Roadmap Summary Stepper Table in Card
+  const roadmapMilestones = [
+    { week: 1, title: 'W1: Discrete Math Foundations', desc: 'Logic & Set Theory Baseline' },
+    { week: 2, title: 'W2: Computer Networks', desc: 'OSI Routing & TCP Handshake' },
+    { week: 3, title: 'W3: Advanced DSA', desc: 'Red-Black Trees & DP Memoization' },
+    { week: 4, title: 'W4: AI & Machine Learning', desc: 'Supervised Learning & Binary Cross-Entropy' },
+    { week: 5, title: 'W5: Embedded System Design', desc: 'Microcontrollers & GPIO Timers' },
+    { week: 6, title: 'W6: Final Mock Evaluation', desc: 'Full Comprehensive Semester 3 Evaluation' }
+  ];
+
+  ctx.fillStyle = '#475569';
+  ctx.font = 'bold 11px sans-serif';
+  ctx.fillText('6-WEEK SEQUENTIAL LEARNING ROADMAP SCHEDULE:', 70, 1230);
+
+  let rmY = 1260;
+  roadmapMilestones.forEach((rm) => {
+    drawRoundedRect(70, rmY - 16, 1100, 36, 6, '#F8FAFC', '#E2E8F0');
+    ctx.fillStyle = '#701C34';
+    ctx.font = '900 12px sans-serif';
+    ctx.fillText(rm.title, 85, rmY + 6);
+
+    ctx.fillStyle = '#475569';
+    ctx.font = 'bold 12px sans-serif';
+    ctx.fillText(rm.desc, 450, rmY + 6);
+    rmY += 46;
+  });
+
+  // 6. FOOTER VERIFICATION BLOCK
+  ctx.strokeStyle = '#CBD5E1';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(40, 1610);
+  ctx.lineTo(1200, 1610);
+  ctx.stroke();
+
+  ctx.fillStyle = '#64748B';
+  ctx.font = 'bold 11px sans-serif';
+  ctx.fillText('Verified by LearnSphere AI Academic Analytics Engine • Confidential Student Document', 70, 1640);
+
+  ctx.fillStyle = '#0F172A';
+  ctx.font = 'bold 11px sans-serif';
+  ctx.fillText('Easwari Engineering College • Academic Office Verification Signature', 750, 1640);
+
+  // Convert canvas to JPEG Data URL
+  const jpegDataUrl = canvas.toDataURL('image/jpeg', 0.95);
+
+  // Package into binary PDF Blob
+  const pdfBlob = createPdfBlobFromJpeg(jpegDataUrl, 595.28, 841.89);
+
+  // DIRECT FILE DOWNLOAD INTO USER'S DOWNLOADS FOLDER (NO PRINT PREVIEW POPUP!)
+  const fileName = `${name.replace(/\s+/g, '_')}_Semester3_Report.pdf`;
+  const blobUrl = URL.createObjectURL(pdfBlob);
+  const downloadLink = document.createElement('a');
+  downloadLink.href = blobUrl;
+  downloadLink.download = fileName;
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  document.body.removeChild(downloadLink);
+  URL.revokeObjectURL(blobUrl);
 };
