@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Users, AlertCircle, CheckCircle2, Search, Shield, Activity, FileText, BookOpen, Layers, X, ArrowRight, Zap, Check } from 'lucide-react';
+import { Users, AlertCircle, CheckCircle2, Search, Shield, Activity, FileText, Layers, X, Zap, Check, Target, Award, Brain, BarChart3 } from 'lucide-react';
 import { teacherAPI } from '../services/api';
 import { generateStudentPDFReport } from '../utils/pdfExport';
 
@@ -9,13 +9,15 @@ const DEFAULT_ROSTER = [
     id: 1,
     student_name: 'Santhosh',
     student_code: 'CSE-2026-042',
-    weak_subject: '2321CSC301T - Computer Networks (CN) (32/50)',
+    weak_subject: 'Computer Networks (2321CSC301T)',
     weak_code: '2321CSC301T',
-    subtopic_breakdown: 'CN -> OSI Routing Protocols & Subnetting Calculations',
+    subtopic_breakdown: 'OSI Routing Protocols, Subnet Masking, Packet Forwarding',
+    concept_gaps: ['OSI Routing Protocols', 'Subnet Masking', 'Packet Forwarding'],
     internal_score: 32.0,
     max_score: 50,
     percentage: 82.0,
     readiness_score: 82.0,
+    practice_accuracy: 64,
     risk_level: 'Low Risk',
     status: 'Flagged',
     avatar: 'SA',
@@ -37,13 +39,15 @@ const DEFAULT_ROSTER = [
     id: 2,
     student_name: 'Nidhish',
     student_code: 'CSE-2026-089',
-    weak_subject: '2321MAB301T - DM (22/50), 2321CSS301J - ESD (24/50)',
+    weak_subject: 'Discrete Mathematics (2321MAB301T) & ESD (2321CSS301J)',
     weak_code: '2321MAB301T',
-    subtopic_breakdown: 'DM -> Set Theory Logic; ESD -> GPIO Microcontroller Timers',
+    subtopic_breakdown: 'Set Theory Logic, Graph Induction, GPIO Microcontroller Timers',
+    concept_gaps: ['Set Theory Logic', 'Graph Induction', 'GPIO Timers'],
     internal_score: 22.0,
     max_score: 50,
     percentage: 58.0,
     readiness_score: 58.0,
+    practice_accuracy: 48,
     risk_level: 'Moderate Risk',
     status: 'Remedial Assigned',
     avatar: 'NI',
@@ -65,13 +69,15 @@ const DEFAULT_ROSTER = [
     id: 3,
     student_name: 'Salih',
     student_code: 'CSE-2026-112',
-    weak_subject: '2321CSC302J - ADSA (18/50), CN (20/50), DM (19/50)',
+    weak_subject: 'Advanced Data Structures & Algorithms (2321CSC302J)',
     weak_code: '2321CSC302J',
-    subtopic_breakdown: 'ADSA -> DP Memoization & Red-Black Trees; CN -> TCP 3-Way Handshake',
+    subtopic_breakdown: 'DP Memoization, Red-Black Trees, TCP 3-Way Handshake',
+    concept_gaps: ['DP Memoization', 'Red-Black Trees', 'TCP Handshake'],
     internal_score: 18.0,
     max_score: 50,
     percentage: 44.0,
     readiness_score: 44.0,
+    practice_accuracy: 36,
     risk_level: 'High Risk',
     status: 'Flagged',
     avatar: 'SL',
@@ -93,13 +99,15 @@ const DEFAULT_ROSTER = [
     id: 4,
     student_name: 'Nadya',
     student_code: 'CSE-2026-145',
-    weak_subject: '2321CSS301J - Embedded System Design (ESD) (38/50)',
+    weak_subject: 'Embedded System Design (2321CSS301J)',
     weak_code: '2321CSS301J',
-    subtopic_breakdown: 'ESD -> RTOS Task Pacing & Latency Vectors',
+    subtopic_breakdown: 'RTOS Task Pacing, Interrupt Vector Tables',
+    concept_gaps: ['RTOS Task Pacing', 'Interrupt Vector Tables', 'UART Communication'],
     internal_score: 38.0,
     max_score: 50,
     percentage: 91.0,
     readiness_score: 91.0,
+    practice_accuracy: 82,
     risk_level: 'Dean Honor / Low Risk',
     status: 'Performance Improved',
     avatar: 'NA',
@@ -121,13 +129,15 @@ const DEFAULT_ROSTER = [
     id: 5,
     student_name: 'Meghan',
     student_code: 'CSE-2026-018',
-    weak_subject: '2321CSC303J - FAIML (26/50), ADSA (28/50)',
+    weak_subject: 'Fundamentals of AI & ML (2321CSC303J)',
     weak_code: '2321CSC303J',
-    subtopic_breakdown: 'FAIML -> Supervised Loss Functions; ADSA -> Dijkstra Shortest Path',
+    subtopic_breakdown: 'Supervised Loss Functions, Dijkstra Shortest Path',
+    concept_gaps: ['Supervised Loss Functions', 'Dijkstra Shortest Path', 'Feature Scaling'],
     internal_score: 26.0,
     max_score: 50,
     percentage: 68.0,
     readiness_score: 68.0,
+    practice_accuracy: 54,
     risk_level: 'Moderate Risk',
     status: 'Remedial Assigned',
     avatar: 'ME',
@@ -149,13 +159,15 @@ const DEFAULT_ROSTER = [
     id: 6,
     student_name: 'Nitish',
     student_code: 'CSE-2026-056',
-    weak_subject: '2321CSC304R - OOP Java (21/50), DM (23/50)',
+    weak_subject: 'OOP Java (2321CSC304R)',
     weak_code: '2321CSC304R',
-    subtopic_breakdown: 'OOPJ -> Polymorphism & Stack Memory; DM -> Recurrence Relations',
+    subtopic_breakdown: 'Polymorphism, Stack Memory Allocation, Recurrence Relations',
+    concept_gaps: ['Polymorphism', 'Stack Memory Allocation', 'Recurrence Relations'],
     internal_score: 21.0,
     max_score: 50,
     percentage: 52.0,
     readiness_score: 52.0,
+    practice_accuracy: 42,
     risk_level: 'High Risk',
     status: 'Flagged',
     avatar: 'NT',
@@ -177,13 +189,15 @@ const DEFAULT_ROSTER = [
     id: 7,
     student_name: 'Prajwant',
     student_code: 'CSE-2026-074',
-    weak_subject: '2321SDA301L - CSD III (31/50)',
+    weak_subject: 'Career Skill Development III (2321SDA301L)',
     weak_code: '2321SDA301L',
-    subtopic_breakdown: 'CSD III -> Quantitative Aptitude & Speed Conversions',
+    subtopic_breakdown: 'Quantitative Speed Conversions, Logical Aptitude',
+    concept_gaps: ['Quantitative Speed Conversions', 'Logical Aptitude', 'Verbal Reasoning'],
     internal_score: 31.0,
     max_score: 50,
     percentage: 76.0,
     readiness_score: 76.0,
+    practice_accuracy: 70,
     risk_level: 'Low Risk',
     status: 'Flagged',
     avatar: 'PR',
@@ -224,7 +238,7 @@ export default function FacultyAnalytics({ addToast }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('All Students');
   
-  // MODAL & PANEL STATES FOR THE TWO NEW FACULTY ACTIONS
+  // MODAL & PANEL STATES
   const [remedialModalStudent, setRemedialModalStudent] = useState(null);
   const [weaknessPanelStudent, setWeaknessPanelStudent] = useState(null);
   const [selectedRemedialModule, setSelectedRemedialModule] = useState('recovery_module');
@@ -312,7 +326,7 @@ export default function FacultyAnalytics({ addToast }) {
   const remedialAssignedCount = students.filter((s) => s.status === 'Remedial Assigned').length;
   const resolvedCount = students.filter((s) => s.status === 'Performance Improved' || s.status === 'Resolved').length;
 
-  // SAFE CLASS AVERAGE READINESS CALCULATION (PREVENT NaN%)
+  // SAFE CLASS AVERAGE READINESS CALCULATION
   const validReadinesses = students.map(s => Number(s.readiness_score) || Number(s.percentage) || 0);
   const classAvgPct = students.length > 0 
     ? (validReadinesses.reduce((acc, val) => acc + val, 0) / students.length).toFixed(1) 
@@ -378,7 +392,7 @@ export default function FacultyAnalytics({ addToast }) {
 
       </div>
 
-      {/* HIGH-LEVEL PROBLEM STATEMENT ANALYTICS SUMMARY BANNER (SAFE CLASS AVG READINESS) */}
+      {/* HIGH-LEVEL PROBLEM STATEMENT ANALYTICS SUMMARY BANNER */}
       <div className="bg-gradient-to-r from-rose-950 via-[#701C34] to-[#581427] text-white rounded-2xl p-5 shadow-lg border border-rose-900/60 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="flex items-center space-x-3.5">
           <div className="w-11 h-11 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0 shadow-inner">
@@ -421,7 +435,7 @@ export default function FacultyAnalytics({ addToast }) {
       {/* Priority Intervention Roster Section */}
       <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm space-y-6">
         
-        {/* Roster Controls & ACTIONABLE FILTER TABS */}
+        {/* Roster Controls */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-slate-100">
           <div>
             <h2 className="text-base sm:text-lg font-black text-slate-900">Priority Intervention Roster</h2>
@@ -441,7 +455,7 @@ export default function FacultyAnalytics({ addToast }) {
               />
             </div>
 
-            {/* NEW ACTIONABLE STATUS FILTER TABS */}
+            {/* ACTIONABLE STATUS FILTER TABS */}
             <div className="flex items-center space-x-1 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-bold overflow-x-auto no-scrollbar">
               {['All Students', 'Flagged / At-Risk', 'Remedial Assigned', 'Performance Improved'].map((st) => (
                 <button
@@ -488,7 +502,7 @@ export default function FacultyAnalytics({ addToast }) {
                     </div>
                   </td>
 
-                  {/* Weak Subject (Strict 7 Sem 3 Courses) */}
+                  {/* Weak Subject */}
                   <td className="py-3.5 px-3 font-bold text-slate-800 max-w-[210px]">
                     <span className="line-clamp-2 leading-snug">{stu.weak_subject}</span>
                   </td>
@@ -524,7 +538,7 @@ export default function FacultyAnalytics({ addToast }) {
                     </span>
                   </td>
 
-                  {/* TWO NEW HIGHLY FUNCTIONAL FACULTY ACTIONS + PDF BUTTON */}
+                  {/* FACULTY ACTIONS + PDF BUTTON */}
                   <td className="py-3.5 px-3 text-right">
                     <div className="flex items-center justify-end space-x-2">
                       
@@ -570,17 +584,18 @@ export default function FacultyAnalytics({ addToast }) {
       </div>
 
       {/* ========================================================================= */}
-      {/* MODAL 1: ASSIGN REMEDIAL MODULES MODAL */}
+      {/* MODAL 1: ASSIGN REMEDIAL MODULES MODAL (FIXED BACKDROP & Z-INDEX LAYER) */}
       {/* ========================================================================= */}
       {remedialModalStudent && (
-        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4">
-          {/* Backdrop */}
+        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 sm:p-6">
+          {/* SEMI-TRANSPARENT BACKDROP (bg-slate-900/40 backdrop-blur-sm z-40) */}
           <div
-            className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity"
+            className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 transition-opacity"
             onClick={() => setRemedialModalStudent(null)}
           />
 
-          <div className="relative bg-white rounded-2xl border border-slate-200 max-w-lg w-full p-6 shadow-2xl z-10 space-y-5">
+          {/* SOLID WHITE CONTAINER (bg-white z-50 rounded-2xl shadow-2xl) */}
+          <div className="relative bg-white rounded-2xl border border-slate-200 max-w-lg w-full p-6 shadow-2xl z-50 space-y-5">
             {/* Header */}
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center space-x-2.5">
@@ -594,7 +609,8 @@ export default function FacultyAnalytics({ addToast }) {
               </div>
               <button
                 onClick={() => setRemedialModalStudent(null)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+                title="Close Modal"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -685,103 +701,141 @@ export default function FacultyAnalytics({ addToast }) {
       )}
 
       {/* ========================================================================= */}
-      {/* SLIDE-OVER PANEL 2: VIEW SUB-TOPIC WEAKNESS BREAKDOWN */}
+      {/* MODAL 2: WEAKNESS BREAKDOWN MODAL (FIXED BACKDROP & PURE WHITE CONTAINER) */}
       {/* ========================================================================= */}
       {weaknessPanelStudent && (
-        <div className="fixed inset-0 z-50 overflow-hidden">
-          {/* Backdrop */}
+        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 sm:p-6">
+          {/* SEMI-TRANSPARENT BACKDROP (bg-slate-900/40 backdrop-blur-sm z-40) */}
           <div
-            className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity"
+            className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 transition-opacity"
             onClick={() => setWeaknessPanelStudent(null)}
           />
 
-          <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-            <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col border-l border-slate-200">
+          {/* SOLID PURE WHITE CONTAINER (bg-white rounded-2xl shadow-2xl z-50 max-w-xl) */}
+          <div className="relative bg-white rounded-2xl border border-slate-200 max-w-xl w-full p-6 shadow-2xl z-50 space-y-6 max-h-[90vh] overflow-y-auto">
+            
+            {/* Header with Prominent Close Icon (✕) */}
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-xl bg-rose-50 border border-rose-200 text-[#701C34] font-black text-sm flex items-center justify-center shrink-0">
+                  {weaknessPanelStudent.avatar}
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold text-slate-900">
+                    Academic Diagnostic Breakdown — {weaknessPanelStudent.student_name}
+                  </h3>
+                  <p className="text-xs text-slate-500 font-medium">
+                    {weaknessPanelStudent.student_code} • Semester 3
+                  </p>
+                </div>
+              </div>
+
+              {/* Prominent Close Icon (✕) Button */}
+              <button
+                onClick={() => setWeaknessPanelStudent(null)}
+                className="p-2 rounded-xl bg-slate-100 hover:bg-rose-100 text-slate-500 hover:text-[#701C34] transition-colors shrink-0"
+                title="Close Diagnostic Window"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Selected Subject Banner */}
+            <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
+              <span className="text-[10px] font-black uppercase text-slate-500 tracking-wider">Target Selected Course</span>
+              <p className="font-extrabold text-[#701C34] text-sm">{weaknessPanelStudent.weak_subject}</p>
+            </div>
+
+            {/* Sub-Topic Performance Cards Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               
-              {/* Header */}
-              <div className="p-6 bg-gradient-to-r from-[#4A1021] via-[#701C34] to-[#581427] text-white flex items-center justify-between shadow-md">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 rounded-xl bg-white text-[#701C34] font-black text-sm flex items-center justify-center shadow-md">
-                    {weaknessPanelStudent.avatar}
-                  </div>
-                  <div>
-                    <h3 className="text-base font-black text-white">{weaknessPanelStudent.student_name}</h3>
-                    <p className="text-xs text-rose-200 font-medium">{weaknessPanelStudent.student_code} • Sem 3</p>
-                  </div>
+              {/* Card 1: Internal Assessment Test Marks (/50) */}
+              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-1">
+                <div className="flex items-center space-x-1.5 text-slate-500 text-[10px] font-extrabold uppercase">
+                  <BarChart3 className="w-3.5 h-3.5 text-[#701C34]" />
+                  <span>Assessment Score</span>
                 </div>
-                <button
-                  onClick={() => setWeaknessPanelStudent(null)}
-                  className="p-2 rounded-xl text-rose-200 hover:text-white hover:bg-white/10 transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+                <div className="flex items-baseline space-x-1">
+                  <span className="text-2xl font-black text-slate-900">{weaknessPanelStudent.internal_score}</span>
+                  <span className="text-xs text-slate-500 font-bold">/ 50 Marks</span>
+                </div>
+                <span className="text-[11px] font-semibold text-slate-500 block">
+                  {Math.round((weaknessPanelStudent.internal_score / 50) * 100)}% Internal Test Average
+                </span>
               </div>
 
-              {/* Panel Content */}
-              <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50">
-                
-                {/* Readiness Score Badge */}
-                <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
-                  <div>
-                    <span className="text-[10px] font-extrabold uppercase text-slate-400 block">Readiness Score</span>
-                    <span className="text-2xl font-black text-[#701C34]">{weaknessPanelStudent.readiness_score}%</span>
-                  </div>
-                  <span className={`px-3 py-1 rounded-full text-xs font-black border ${
-                    weaknessPanelStudent.readiness_score < 60
-                      ? 'bg-rose-100 text-[#701C34] border-rose-200'
-                      : 'bg-amber-50 text-amber-800 border-amber-200'
-                  }`}>
-                    {weaknessPanelStudent.risk_level}
-                  </span>
+              {/* Card 2: Focus Mode Practice Accuracy (%) */}
+              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-1">
+                <div className="flex items-center space-x-1.5 text-slate-500 text-[10px] font-extrabold uppercase">
+                  <Target className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Focus Mode Accuracy</span>
                 </div>
-
-                {/* Sub-Topic Weakness Breakdown Box */}
-                <div className="bg-white p-5 rounded-2xl border border-rose-200 shadow-sm space-y-3">
-                  <h4 className="text-xs font-black uppercase text-[#701C34] flex items-center space-x-1.5">
-                    <Layers className="w-4 h-4 text-[#701C34]" />
-                    <span>Sub-Topic Weakness Analysis</span>
-                  </h4>
-                  <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs font-bold text-slate-900 leading-relaxed">
-                    {weaknessPanelStudent.subtopic_breakdown}
-                  </div>
+                <div className="flex items-baseline space-x-1">
+                  <span className="text-2xl font-black text-emerald-700">{weaknessPanelStudent.practice_accuracy || 58}%</span>
+                  <span className="text-xs text-slate-500 font-bold">Accuracy</span>
                 </div>
-
-                {/* 7 Semester 3 Course Test Scores Out of 50 */}
-                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-                  <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-400 border-b border-slate-100 pb-2">
-                    7 Semester 3 Test Scores (/50)
-                  </h4>
-                  <div className="space-y-2.5 text-xs">
-                    {weaknessPanelStudent.subjects.map((sub) => (
-                      <div key={sub.code} className="flex items-center justify-between border-b border-slate-100 pb-1.5">
-                        <div>
-                          <span className="font-extrabold text-[#701C34]">{sub.code}: </span>
-                          <span className="font-bold text-slate-800">{sub.name}</span>
-                        </div>
-                        <span className="font-black text-slate-900 shrink-0 ml-2">{sub.score} / 50</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-              </div>
-
-              {/* Footer */}
-              <div className="p-4 bg-white border-t border-slate-200 flex items-center space-x-3">
-                <button
-                  onClick={() => {
-                    const stu = weaknessPanelStudent;
-                    setWeaknessPanelStudent(null);
-                    setRemedialModalStudent(stu);
-                  }}
-                  className="flex-1 py-2.5 bg-[#701C34] hover:bg-[#581427] text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center justify-center space-x-1.5"
-                >
-                  <Zap className="w-4 h-4" />
-                  <span>Assign Remedial</span>
-                </button>
+                <span className="text-[11px] font-semibold text-slate-500 block">
+                  Based on quiz drills & LeetCode speed
+                </span>
               </div>
 
             </div>
+
+            {/* Concept Gaps Section */}
+            <div className="space-y-2.5">
+              <h4 className="text-xs font-black uppercase text-slate-700 tracking-wider flex items-center space-x-1.5">
+                <Brain className="w-4 h-4 text-[#701C34]" />
+                <span>Identified Sub-Topic Concept Gaps</span>
+              </h4>
+              <div className="flex flex-wrap gap-2">
+                {(weaknessPanelStudent.concept_gaps || ['OSI Routing', 'TCP Handshake', 'Subnetting']).map((gap) => (
+                  <span key={gap} className="px-3 py-1 bg-rose-50 text-[#701C34] border border-rose-200 rounded-lg text-xs font-extrabold">
+                    ⚠️ {gap}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* 7 Semester 3 Course Test Scores Table */}
+            <div className="space-y-2.5">
+              <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-500 border-b border-slate-100 pb-2">
+                All 7 Semester 3 Test Scores (/50)
+              </h4>
+              <div className="space-y-2 text-xs max-h-48 overflow-y-auto pr-1">
+                {weaknessPanelStudent.subjects.map((sub) => (
+                  <div key={sub.code} className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-100">
+                    <div>
+                      <span className="font-black text-[#701C34]">{sub.code}: </span>
+                      <span className="font-bold text-slate-800">{sub.name}</span>
+                    </div>
+                    <span className="font-black text-slate-900 shrink-0 ml-2">{sub.score} / 50</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
+              <button
+                onClick={() => setWeaknessPanelStudent(null)}
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all"
+              >
+                Close Diagnostic
+              </button>
+              
+              <button
+                onClick={() => {
+                  const stu = weaknessPanelStudent;
+                  setWeaknessPanelStudent(null);
+                  setRemedialModalStudent(stu);
+                }}
+                className="px-5 py-2 bg-[#701C34] hover:bg-[#581427] text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center space-x-1.5 active:scale-95"
+              >
+                <Zap className="w-4 h-4" />
+                <span>Assign Remedial Plan</span>
+              </button>
+            </div>
+
           </div>
         </div>
       )}
