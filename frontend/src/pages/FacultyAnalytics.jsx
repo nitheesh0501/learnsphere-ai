@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Users, AlertCircle, CheckCircle2, Search, Shield, Activity, FileText, Zap } from 'lucide-react';
 import { generateStudentPDFReport } from '../utils/pdfExport';
-import { calculateReadiness, getWeakSubject } from '../utils/readiness';
+import { calculateReadiness, getWeakSubject, getWeakSubjects } from '../utils/readiness';
 
 // HARDCODED VALID FACULTY ROSTER DATA (8 DISTINCT STUDENTS INCLUDING NITHEESH)
 const facultyRosterData = [
@@ -378,7 +378,7 @@ export default function FacultyAnalytics({ addToast, nitheeshReadiness }) {
       riskLevel: stu.riskStatus || stu.risk_level,
       subjects: stuSubjects,
       recommendations: stu.recommendations || [
-        `Targeted intervention for weak subject: ${weakSub}`,
+        `Targeted intervention for weak subject(s): ${weakSub}`,
         "Complete 6-Week Adaptive Recovery Roadmap drills in Focus Mode."
       ]
     });
@@ -569,7 +569,7 @@ export default function FacultyAnalytics({ addToast, nitheeshReadiness }) {
           </div>
         </div>
 
-        {/* Roster Table (8 DISTINCT STUDENTS HARDCODED, NITHEESH READINESS REAL-TIME EVENT SYNC) */}
+        {/* Roster Table (8 DISTINCT STUDENTS HARDCODED, DYNAMIC MULTI-SUBJECT WEAKNESS SUPPORT) */}
         <div className="overflow-x-auto no-scrollbar border border-slate-100 rounded-xl">
           <table className="w-full text-left text-xs min-w-[780px]">
             <thead>
@@ -587,7 +587,19 @@ export default function FacultyAnalytics({ addToast, nitheeshReadiness }) {
                 const isNitheesh = stu.id === "NI_H" || stu.name === "Nitheesh";
                 const sName = stu.name || stu.student_name;
                 const sRoll = stu.rollNo || stu.student_code;
-                const sWeak = stu.weakSubject || stu.weak_subject;
+                
+                // Dynamic multi-subject weak course calculation for Nitheesh when tied
+                let sWeak = stu.weakSubject || stu.weak_subject;
+                if (isNitheesh) {
+                  const savedMarks = localStorage.getItem('studentMarks') || localStorage.getItem('learnsphere_subjects');
+                  if (savedMarks) {
+                    try {
+                      const parsed = JSON.parse(savedMarks);
+                      sWeak = getWeakSubject(parsed);
+                    } catch (e) {}
+                  }
+                }
+
                 const sGaps = stu.subTopics || stu.concept_gaps || [];
                 
                 // Nitheesh's readiness score dynamically fetches via real-time event listener
@@ -630,7 +642,7 @@ export default function FacultyAnalytics({ addToast, nitheeshReadiness }) {
                       </div>
                     </td>
 
-                    {/* Weak Subject & Sub-Topic Tags Rendered Directly Inline (No Click Required) */}
+                    {/* Weak Subject(s) Rendered Directly Inline (Supports Tied Low Subjects) */}
                     <td className="py-3.5 px-3 max-w-[260px]">
                       <p className="font-extrabold text-[#701C34] leading-snug">{sWeak}</p>
                       <div className="flex flex-wrap gap-1 mt-1.5">

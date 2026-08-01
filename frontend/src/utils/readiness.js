@@ -42,29 +42,51 @@ export function calculateReadiness(subjects) {
 }
 
 /**
- * Identify primary weak subject from subject array
+ * Identify ALL weak subjects tied for the lowest score percentage
  */
-export function getWeakSubject(subjects) {
+export function getWeakSubjects(subjects) {
   if (!subjects || !Array.isArray(subjects) || subjects.length === 0) {
-    return "2321CSS301J — Embedded System Design (ESD)";
+    return [{ code: "2321CSS301J", name: "Embedded System Design (ESD)", internalMarks: 28, maxMarks: 50 }];
   }
-  let lowest = null;
-  let lowestRatio = 1.1;
 
-  subjects.forEach(sub => {
+  let minRatio = 1.1;
+
+  // Find lowest score ratio
+  subjects.forEach((sub) => {
     const val = Number(sub.internalMarks !== undefined ? sub.internalMarks : sub.score) || 0;
     const max = Number(sub.maxMarks || sub.max || 50);
     const ratio = val / max;
-    if (ratio < lowestRatio) {
-      lowestRatio = ratio;
-      lowest = sub;
+    if (ratio < minRatio) {
+      minRatio = ratio;
     }
   });
 
-  if (lowest) {
-    return `${lowest.code} — ${lowest.name}`;
+  // Filter ALL subjects matching lowest ratio
+  const tiedSubjects = subjects.filter((sub) => {
+    const val = Number(sub.internalMarks !== undefined ? sub.internalMarks : sub.score) || 0;
+    const max = Number(sub.maxMarks || sub.max || 50);
+    const ratio = val / max;
+    return Math.abs(ratio - minRatio) < 0.001;
+  });
+
+  return tiedSubjects;
+}
+
+/**
+ * Format tied weak subjects into a clean display string
+ */
+export function getWeakSubject(subjects) {
+  const tied = getWeakSubjects(subjects);
+  if (!tied || tied.length === 0) {
+    return "2321CSS301J — Embedded System Design (ESD)";
   }
-  return "2321CSS301J — Embedded System Design (ESD)";
+  if (tied.length === 1) {
+    return `${tied[0].code} — ${tied[0].name}`;
+  }
+  return tied.map((s) => {
+    const abbrev = s.name.includes('(') ? s.name.split('(')[1]?.replace(')', '') : s.name;
+    return `${s.code} (${abbrev})`;
+  }).join(' & ');
 }
 
 /**

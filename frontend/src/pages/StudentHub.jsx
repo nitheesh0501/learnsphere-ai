@@ -19,7 +19,7 @@ import {
   FileText
 } from 'lucide-react';
 import { generateStudentPDFReport } from '../utils/pdfExport';
-import { calculateReadiness, notifyMarksUpdated } from '../utils/readiness';
+import { calculateReadiness, notifyMarksUpdated, getWeakSubject, getWeakSubjects } from '../utils/readiness';
 
 // OFFICIAL SEMESTER 3 PREDEFINED SUBJECT DATASET (STRICTLY 7 COURSES - LOCKED STRUCTURE)
 const DEFAULT_SUBJECTS = [
@@ -626,7 +626,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
           <div className="mt-6 pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-slate-500 font-medium">
             <span className="flex items-center space-x-1.5">
               <AlertCircle className="w-3.5 h-3.5 text-[#701C34] shrink-0" />
-              <span>Primary Weak Area: {subjects.find(s => s.internalMarks !== '' && Number(s.internalMarks) < 35)?.name || 'None identified'}</span>
+              <span>Identified Weak Subject(s): <strong className="text-[#701C34]">{getWeakSubject(subjects)}</strong></span>
             </span>
             <span className="text-[#701C34] font-bold">Auto-updated</span>
           </div>
