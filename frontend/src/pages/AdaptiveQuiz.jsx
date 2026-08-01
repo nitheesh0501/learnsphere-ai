@@ -1,364 +1,317 @@
 import React, { useState, useEffect } from 'react';
-import { Zap, CheckCircle2, ArrowRight, RotateCcw, Award, Sliders, BookOpen, ExternalLink, Code2, Sparkles } from 'lucide-react';
+import { Zap, CheckCircle2, ArrowRight, RotateCcw, Award, Sliders, BookOpen, ExternalLink, Code2, Sparkles, Filter } from 'lucide-react';
 import { studentAPI } from '../services/api';
 
-const WEEKLY_QUESTION_BANK = {
-  1: [
+// OFFICIAL SEMESTER 3 SUBJECT LIST (7 EXACT COURSES)
+const SEM3_SUBJECTS = [
+  { code: '2321MAB301T', title: 'Discrete Mathematics', mne: 'DM', dept: 'Maths' },
+  { code: '2321CSC301T', title: 'Computer Networks', mne: 'CN', dept: 'CSE' },
+  { code: '2321CSC302J', title: 'Advanced Data Structures & Algorithms', mne: 'ADSA', dept: 'CSE' },
+  { code: '2321CSC303J', title: 'Fundamentals of AI & Machine Learning', mne: 'FAIML', dept: 'CSE' },
+  { code: '2321CSS301J', title: 'Embedded System Design', mne: 'ESD', dept: 'ECE' },
+  { code: '2321CSC304R', title: 'Object Oriented Programming using Java', mne: 'OOPJ', dept: 'CSE' },
+  { code: '2321SDA301L', title: 'Career Skill Development III', mne: 'CSD', dept: 'CSE' }
+];
+
+// STRICT SEMESTER 3 DOMAIN QUESTION BANK ISOLATED BY SUBJECT CODE & MNE
+const SEM3_QUESTION_BANK = {
+  // 1. Discrete Mathematics (2321MAB301T / DM)
+  "Discrete Mathematics": [
     {
       id: 101,
-      subject: "Programming in C++",
+      code: "2321MAB301T",
+      subject: "Discrete Mathematics",
       difficulty: "Easy",
-      question: "Which keyword is used to declare an integer variable in C++?",
-      options: ["int", "num", "integer", "var"],
-      correct: 0
+      question: "Which logical operation P → Q evaluates to False ONLY when P is True and Q is False?",
+      options: ["Conjunction (AND)", "Disjunction (OR)", "Conditional (Implication)", "Biconditional (XOR)"],
+      correct: 2
     },
     {
       id: 102,
-      subject: "Physics II",
-      difficulty: "Easy",
-      question: "What is the SI unit of electric current?",
-      options: ["Volt", "Ampere", "Joule", "Watt"],
-      correct: 1
+      code: "2321MAB301T",
+      subject: "Discrete Mathematics",
+      difficulty: "Medium",
+      question: "What is the chromatic number χ(G) of a complete graph K_n with n vertices?",
+      options: ["1", "n - 1", "n", "2"],
+      correct: 2
     },
     {
       id: 103,
-      subject: "Mathematics III",
-      difficulty: "Easy",
-      question: "What is the derivative of f(x) = x^2 with respect to x?",
-      options: ["x", "2x", "x^3 / 3", "2"],
+      code: "2321MAB301T",
+      subject: "Discrete Mathematics",
+      difficulty: "Hard",
+      question: "What is the solution to the recurrence relation T(n) = 2T(n/2) + n using the Master Theorem?",
+      options: ["O(n)", "O(n log n)", "O(n^2)", "O(2^n)"],
       correct: 1
-    },
-    {
-      id: 104,
-      subject: "Programming in C++",
-      difficulty: "Easy",
-      question: "Which header file is required for std::cout and std::cin?",
-      options: ["<iostream>", "<stdio.h>", "<stdlib.h>", "<conio.h>"],
-      correct: 0
     }
   ],
-  2: [
+
+  // 2. Computer Networks (2321CSC301T / CN)
+  "Computer Networks": [
     {
       id: 201,
-      subject: "Programming in C++",
+      code: "2321CSC301T",
+      subject: "Computer Networks",
       difficulty: "Easy",
-      question: "What is the memory size of a pointer variable on a 64-bit architecture?",
-      options: ["4 bytes", "8 bytes", "2 bytes", "16 bytes"],
+      question: "Which layer of the OSI model is responsible for end-to-end packet routing across networks?",
+      options: ["Data Link Layer", "Network Layer", "Transport Layer", "Session Layer"],
       correct: 1
     },
     {
       id: 202,
-      subject: "Physics II",
+      code: "2321CSC301T",
+      subject: "Computer Networks",
       difficulty: "Medium",
-      question: "In simple harmonic motion (SHM), where is the velocity of the oscillating object maximum?",
-      options: ["At maximum displacement", "At the mean equilibrium position", "Halfway to amplitude", "At zero acceleration only"],
-      correct: 1
+      question: "In TCP's three-way handshake connection establishment, what is the exact sequence of flag packets sent?",
+      options: ["SYN → SYN-ACK → ACK", "ACK → SYN → ACK", "SYN → ACK → FIN", "CONNECT → ACCEPT → READY"],
+      correct: 0
     },
     {
       id: 203,
-      subject: "Mathematics III",
-      difficulty: "Easy",
-      question: "What is the derivative of f(x) = e^(2x)?",
-      options: ["e^(2x)", "2 * e^(2x)", "0.5 * e^(2x)", "2x * e^(2x)"],
-      correct: 1
-    },
-    {
-      id: 204,
-      subject: "Programming in C++",
-      difficulty: "Medium",
-      question: "Which C++ feature allows dynamic binding at runtime?",
-      options: ["Operator Overloading", "Virtual Functions", "Function Templates", "Inline Functions"],
+      code: "2321CSC301T",
+      subject: "Computer Networks",
+      difficulty: "Hard",
+      question: "For a Class C IPv4 address with subnet mask 255.255.255.192 (/26), how many usable host IPs exist per subnet?",
+      options: ["64", "62", "30", "126"],
       correct: 1
     }
   ],
-  3: [
+
+  // 3. Advanced Data Structures & Algorithms (2321CSC302J / ADSA)
+  "Advanced Data Structures & Algorithms": [
     {
       id: 301,
-      subject: "Programming in C++",
-      difficulty: "Medium",
-      question: "Which data structure follows the Last-In-First-Out (LIFO) principle?",
-      options: ["Queue", "Stack", "Array", "Linked List"],
+      code: "2321CSC302J",
+      subject: "Advanced Data Structures & Algorithms",
+      difficulty: "Easy",
+      question: "What is the worst-case time complexity of searching an element in a balanced Red-Black Tree?",
+      options: ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
       correct: 1
     },
     {
       id: 302,
-      subject: "Physics II",
+      code: "2321CSC302J",
+      subject: "Advanced Data Structures & Algorithms",
       difficulty: "Medium",
-      question: "What is the period T of a simple pendulum of length L under gravity g?",
-      options: ["2π √(g/L)", "2π √(L/g)", "π √(L/g)", "√(L/g)"],
-      correct: 1
+      question: "Which algorithm finds the single-source shortest path in a weighted graph with non-negative edge weights?",
+      options: ["Dijkstra's Algorithm", "Floyd-Warshall Algorithm", "Kruskal's Algorithm", "Bellman-Ford Algorithm"],
+      correct: 0
     },
     {
       id: 303,
-      subject: "Mathematics III",
-      difficulty: "Medium",
-      question: "If matrix A is 2x3 and matrix B is 3x4, what are the dimensions of matrix product AB?",
-      options: ["3x3", "2x4", "4x2", "Undefined"],
-      correct: 1
-    },
-    {
-      id: 304,
-      subject: "Programming in C++",
-      difficulty: "Medium",
-      question: "What is the worst-case time complexity of inserting an element into a dynamic array?",
-      options: ["O(1)", "O(n)", "O(log n)", "O(n^2)"],
-      correct: 1
+      code: "2321CSC302J",
+      subject: "Advanced Data Structures & Algorithms",
+      difficulty: "Hard",
+      question: "In Dynamic Programming, what core property allows overlapping subproblems to be solved efficiently via memoization?",
+      options: ["Optimal Substructure", "Greedy Choice Property", "Divide and Conquer", "Amortized Analysis"],
+      correct: 0
     }
   ],
-  4: [
+
+  // 4. Fundamentals of AI & Machine Learning (2321CSC303J / FAIML)
+  "Fundamentals of AI & Machine Learning": [
     {
       id: 401,
-      subject: "Programming in C++",
-      difficulty: "Medium",
-      question: "Which access specifier makes class members accessible only within the class and derived classes?",
-      options: ["public", "private", "protected", "friend"],
-      correct: 2
+      code: "2321CSC303J",
+      subject: "Fundamentals of AI & Machine Learning",
+      difficulty: "Easy",
+      question: "Which learning paradigm uses labeled training datasets containing input-output pairs?",
+      options: ["Unsupervised Learning", "Supervised Learning", "Reinforcement Learning", "Self-Organizing Maps"],
+      correct: 1
     },
     {
       id: 402,
-      subject: "Physics II",
-      difficulty: "Hard",
-      question: "In Young's double-slit experiment, how does fringe width change if slit separation d is halved?",
-      options: ["Fringe width is halved", "Fringe width is doubled", "Fringe width quadruples", "No change"],
+      code: "2321CSC303J",
+      subject: "Fundamentals of AI & Machine Learning",
+      difficulty: "Medium",
+      question: "What phenomenon occurs when an ML model performs exceptionally high on training data but poorly on test data?",
+      options: ["Underfitting", "Overfitting", "High Bias", "Gradient Vanishing"],
       correct: 1
     },
     {
       id: 403,
-      subject: "Mathematics III",
-      difficulty: "Medium",
-      question: "What is the Laplace transform of L{1}?",
-      options: ["1/s", "1/s^2", "s", "1"],
+      code: "2321CSC303J",
+      subject: "Fundamentals of AI & Machine Learning",
+      difficulty: "Hard",
+      question: "Which loss function is standard for evaluating binary classification models in logistic regression?",
+      options: ["Mean Squared Error (MSE)", "Binary Cross-Entropy (Log Loss)", "Hinge Loss", "Mean Absolute Error (MAE)"],
+      correct: 1
+    }
+  ],
+
+  // 5. Embedded System Design (2321CSS301J / ESD)
+  "Embedded System Design": [
+    {
+      id: 501,
+      code: "2321CSS301J",
+      subject: "Embedded System Design",
+      difficulty: "Easy",
+      question: "What does GPIO stand for in microcontroller architecture?",
+      options: ["General Purpose Input/Output", "Global Processing I/O", "General Parallel Interface Operator", "Gated Programmable Input Option"],
       correct: 0
     },
     {
-      id: 404,
-      subject: "Programming in C++",
-      difficulty: "Hard",
-      question: "What occurs if memory allocated via 'new' is not deallocated using 'delete'?",
-      options: ["Dangling Pointer", "Memory Leak", "Stack Overflow", "Segmentation Fault"],
-      correct: 1
-    }
-  ],
-  5: [
-    {
-      id: 501,
-      subject: "Programming in C++",
-      difficulty: "Hard",
-      question: "What is the primary difference between a reference (int &ref = a) and a pointer (int *ptr = &a)?",
-      options: ["References can be NULL", "Pointers cannot be reassigned", "References cannot be reassigned to point to another object", "Pointers use less memory"],
+      id: 502,
+      code: "2321CSS301J",
+      subject: "Embedded System Design",
+      difficulty: "Medium",
+      question: "Which communication protocol uses two wires (SDA and SCL) for multi-master, multi-slave serial communication?",
+      options: ["SPI", "UART", "I2C (Inter-Integrated Circuit)", "CAN Bus"],
       correct: 2
     },
     {
-      id: 502,
-      subject: "Physics II",
-      difficulty: "Hard",
-      question: "According to Faraday's Law, the induced electromotive force (EMF) in a circuit is proportional to what?",
-      options: ["Magnetic Field Strength", "Rate of change of magnetic flux", "Total Electric Charge", "Resistance of loop"],
-      correct: 1
-    },
-    {
       id: 503,
-      subject: "Mathematics III",
+      code: "2321CSS301J",
+      subject: "Embedded System Design",
       difficulty: "Hard",
-      question: "What are the eigenvalues of the 2x2 identity matrix I?",
-      options: ["0, 1", "1, 1", "1, -1", "0, 0"],
-      correct: 1
-    },
-    {
-      id: 504,
-      subject: "Programming in C++",
-      difficulty: "Hard",
-      question: "Which smart pointer in C++11 provides exclusive ownership of a dynamically allocated resource?",
-      options: ["std::shared_ptr", "std::unique_ptr", "std::weak_ptr", "std::auto_ptr"],
+      question: "What critical requirement distinguishes a Real-Time Operating System (RTOS) from a general-purpose OS?",
+      options: ["High Graphical Throughput", "Deterministic Execution & Strict Latency Bounds", "Unlimited Thread Memory", "Virtualization Support"],
       correct: 1
     }
   ],
-  6: [
+
+  // 6. Object Oriented Programming using Java (2321CSC304R / OOPJ)
+  "Object Oriented Programming using Java": [
     {
       id: 601,
-      subject: "Programming in C++",
-      difficulty: "Hard",
-      question: "In C++, what happens when a virtual destructor is omitted in a base class with virtual functions?",
-      options: ["Compilation Error", "Undefined behavior when deleting a derived object via a base pointer", "Memory is automatically freed", "Virtual table is corrupted"],
+      code: "2321CSC304R",
+      subject: "Object Oriented Programming using Java",
+      difficulty: "Easy",
+      question: "Which keyword in Java prevents a class from being inherited or a method from being overridden?",
+      options: ["static", "final", "abstract", "super"],
       correct: 1
     },
     {
       id: 602,
-      subject: "Physics II",
-      difficulty: "Hard",
-      question: "What is the de Broglie wavelength λ of a particle with momentum p?",
-      options: ["λ = h / p", "λ = h * p", "λ = p / h", "λ = h / p^2"],
-      correct: 0
+      code: "2321CSC304R",
+      subject: "Object Oriented Programming using Java",
+      difficulty: "Medium",
+      question: "What is the primary difference between method overloading and method overriding in Java?",
+      options: ["Overloading is runtime polymorphism; Overriding is compile-time", "Overloading occurs in the same class with different signatures; Overriding occurs in subclass with same signature", "Overriding requires the static keyword", "Overloading cannot access private members"],
+      correct: 1
     },
     {
       id: 603,
-      subject: "Mathematics III",
+      code: "2321CSC304R",
+      subject: "Object Oriented Programming using Java",
       difficulty: "Hard",
-      question: "Which theorem relates a line integral around a closed curve C to a double integral over the region D bounded by C?",
-      options: ["Stokes' Theorem", "Green's Theorem", "Divergence Theorem", "Taylor's Theorem"],
+      question: "In Java's memory model, where are object instances stored when created using the 'new' keyword?",
+      options: ["Call Stack", "Heap Memory", "Method Area / Metaspace", "Program Counter Register"],
+      correct: 1
+    }
+  ],
+
+  // 7. Career Skill Development III (2321SDA301L / CSD)
+  "Career Skill Development III": [
+    {
+      id: 701,
+      code: "2321SDA301L",
+      subject: "Career Skill Development III",
+      difficulty: "Easy",
+      question: "If a speed of 72 km/h is converted into meters per second (m/s), what is the result?",
+      options: ["18 m/s", "20 m/s", "25 m/s", "15 m/s"],
       correct: 1
     },
     {
-      id: 604,
-      subject: "Programming in C++",
+      id: 702,
+      code: "2321SDA301L",
+      subject: "Career Skill Development III",
+      difficulty: "Medium",
+      question: "In a coding-decoding test, if 'LOGIC' is coded as 'MOHJD', how is 'SKILL' coded using the same transformation (+1 shift)?",
+      options: ["TLJMM", "TLKMM", "UJMNN", "RJKKK"],
+      correct: 0
+    },
+    {
+      id: 703,
+      code: "2321SDA301L",
+      subject: "Career Skill Development III",
       difficulty: "Hard",
-      question: "What is the computational complexity of searching an element in a balanced Red-Black Tree?",
-      options: ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
-      correct: 1
+      question: "What is the probability of obtaining a sum of 7 when two unbiased 6-sided dice are rolled simultaneously?",
+      options: ["1/6", "1/12", "5/36", "7/36"],
+      correct: 0
     }
   ]
 };
 
-// 6-WEEK DYNAMIC LEETCODE QUESTION POOL BY WEEK AND QUIZ SCORE DIFFICULTY
-const WEEKLY_LEETCODE_POOL = {
-  1: {
-    title: "Week 1 Practice Module: Arrays & Basic Hashing",
-    topic: "Arrays & Basic Hashing",
-    low: [
-      { id: 217, title: "Contains Duplicate", difficulty: "Easy", slug: "contains-duplicate", tags: ["Array", "Hash Table"] },
-      { id: 1, title: "Two Sum", difficulty: "Easy", slug: "two-sum", tags: ["Array", "Hash Table"] }
-    ],
-    mid: [
-      { id: 121, title: "Best Time to Buy and Sell Stock", difficulty: "Easy", slug: "best-time-to-buy-and-sell-stock", tags: ["Array", "Dynamic Programming"] },
-      { id: 242, title: "Valid Anagram", difficulty: "Easy", slug: "valid-anagram", tags: ["Hash Table", "String"] }
-    ],
-    high: [
-      { id: 238, title: "Product of Array Except Self", difficulty: "Medium", slug: "product-of-array-except-self", tags: ["Array", "Prefix Sum"] },
-      { id: 347, title: "Top K Frequent Elements", difficulty: "Medium", slug: "top-k-frequent-elements", tags: ["Hash Table", "Heap"] }
-    ]
-  },
-  2: {
-    title: "Week 2 Practice Module: Two Pointers & Sliding Window",
-    topic: "Two Pointers & Sliding Window",
-    low: [
-      { id: 125, title: "Valid Palindrome", difficulty: "Easy", slug: "valid-palindrome", tags: ["Two Pointers", "String"] },
-      { id: 26, title: "Remove Duplicates from Sorted Array", difficulty: "Easy", slug: "remove-duplicates-from-sorted-array", tags: ["Array", "Two Pointers"] }
-    ],
-    mid: [
-      { id: 167, title: "Two Sum II - Input Array Is Sorted", difficulty: "Medium", slug: "two-sum-ii-input-array-is-sorted", tags: ["Array", "Two Pointers"] },
-      { id: 11, title: "Container With Most Water", difficulty: "Medium", slug: "container-with-most-water", tags: ["Two Pointers", "Greedy"] }
-    ],
-    high: [
-      { id: 15, title: "3Sum", difficulty: "Medium", slug: "3sum", tags: ["Two Pointers", "Sorting"] },
-      { id: 3, title: "Longest Substring Without Repeating Characters", difficulty: "Medium", slug: "longest-substring-without-repeating-characters", tags: ["Sliding Window", "Hash Table"] }
-    ]
-  },
-  3: {
-    title: "Week 3 Practice Module: Linked Lists & Recursion",
-    topic: "Linked Lists & Recursion",
-    low: [
-      { id: 206, title: "Reverse Linked List", difficulty: "Easy", slug: "reverse-linked-list", tags: ["Linked List", "Recursion"] },
-      { id: 21, title: "Merge Two Sorted Lists", difficulty: "Easy", slug: "merge-two-sorted-lists", tags: ["Linked List", "Recursion"] }
-    ],
-    mid: [
-      { id: 876, title: "Middle of the Linked List", difficulty: "Easy", slug: "middle-of-the-linked-list", tags: ["Linked List", "Two Pointers"] },
-      { id: 141, title: "Linked List Cycle", difficulty: "Easy", slug: "linked-list-cycle", tags: ["Linked List", "Two Pointers"] }
-    ],
-    high: [
-      { id: 19, title: "Remove Nth Node From End of List", difficulty: "Medium", slug: "remove-nth-node-from-end-of-list", tags: ["Linked List", "Two Pointers"] },
-      { id: 2, title: "Add Two Numbers", difficulty: "Medium", slug: "add-two-numbers", tags: ["Linked List", "Math"] }
-    ]
-  },
-  4: {
-    title: "Week 4 Practice Module: Stacks, Queues & Monotonic Stacks",
-    topic: "Stacks, Queues & Monotonic Stacks",
-    low: [
-      { id: 20, title: "Valid Parentheses", difficulty: "Easy", slug: "valid-parentheses", tags: ["Stack", "String"] },
-      { id: 225, title: "Implement Stack using Queues", difficulty: "Easy", slug: "implement-stack-using-queues", tags: ["Stack", "Queue"] }
-    ],
-    mid: [
-      { id: 155, title: "Min Stack", difficulty: "Medium", slug: "min-stack", tags: ["Stack", "Design"] },
-      { id: 150, title: "Evaluate Reverse Polish Notation", difficulty: "Medium", slug: "evaluate-reverse-polish-notation", tags: ["Stack", "Math"] }
-    ],
-    high: [
-      { id: 739, title: "Daily Temperatures", difficulty: "Medium", slug: "daily-temperatures", tags: ["Stack", "Monotonic Stack"] },
-      { id: 853, title: "Car Fleet", difficulty: "Medium", slug: "car-fleet", tags: ["Array", "Monotonic Stack"] }
-    ]
-  },
-  5: {
-    title: "Week 5 Practice Module: Trees & Binary Search",
-    topic: "Trees & Binary Search",
-    low: [
-      { id: 704, title: "Binary Search", difficulty: "Easy", slug: "binary-search", tags: ["Binary Search", "Array"] },
-      { id: 226, title: "Invert Binary Tree", difficulty: "Easy", slug: "invert-binary-tree", tags: ["Tree", "DFS"] }
-    ],
-    mid: [
-      { id: 104, title: "Maximum Depth of Binary Tree", difficulty: "Easy", slug: "maximum-depth-of-binary-tree", tags: ["Tree", "DFS"] },
-      { id: 98, title: "Validate Binary Search Tree", difficulty: "Medium", slug: "validate-binary-search-tree", tags: ["BST", "DFS"] }
-    ],
-    high: [
-      { id: 102, title: "Binary Tree Level Order Traversal", difficulty: "Medium", slug: "binary-tree-level-order-traversal", tags: ["Tree", "BFS"] },
-      { id: 236, title: "Lowest Common Ancestor of a Binary Tree", difficulty: "Medium", slug: "lowest-common-ancestor-of-a-binary-tree", tags: ["Tree", "DFS"] }
-    ]
-  },
-  6: {
-    title: "Week 6 Practice Module: Final Sprint (Advanced Graphs & Dynamic Programming)",
-    topic: "Advanced Graphs & Dynamic Programming",
-    low: [
-      { id: 70, title: "Climbing Stairs", difficulty: "Easy", slug: "climbing-stairs", tags: ["Dynamic Programming", "Math"] },
-      { id: 733, title: "Flood Fill", difficulty: "Easy", slug: "flood-fill", tags: ["Graph", "BFS/DFS"] }
-    ],
-    mid: [
-      { id: 322, title: "Coin Change", difficulty: "Medium", slug: "coin-change", tags: ["Dynamic Programming", "BFS"] },
-      { id: 200, title: "Number of Islands", difficulty: "Medium", slug: "number-of-islands", tags: ["Graph", "BFS/DFS"] }
-    ],
-    high: [
-      { id: 300, title: "Longest Increasing Subsequence", difficulty: "Medium", slug: "longest-increasing-subsequence", tags: ["Dynamic Programming", "Binary Search"] },
-      { id: 207, title: "Course Schedule", difficulty: "Medium", slug: "course-schedule", tags: ["Graph", "Topological Sort"] }
-    ]
-  }
+// LEETCODE PRACTICE POOL FOR SEMESTER 3 COURSES
+const SEM3_LEETCODE_POOL = {
+  "Discrete Mathematics": [
+    { id: 509, title: "Fibonacci Number", difficulty: "Easy", slug: "fibonacci-number", tags: ["Math", "Recursion"] },
+    { id: 54, title: "Spiral Matrix", difficulty: "Medium", slug: "spiral-matrix", tags: ["Matrix", "Logic"] },
+    { id: 149, title: "Max Points on a Line", difficulty: "Hard", slug: "max-points-on-a-line", tags: ["Geometry", "Math"] }
+  ],
+  "Computer Networks": [
+    { id: 217, title: "Contains Duplicate (Address Hashing)", difficulty: "Easy", slug: "contains-duplicate", tags: ["Hash Table"] },
+    { id: 200, title: "Number of Islands (Routing Graph)", difficulty: "Medium", slug: "number-of-islands", tags: ["BFS", "Graph"] },
+    { id: 207, title: "Course Schedule (Topological Sort)", difficulty: "Hard", slug: "course-schedule", tags: ["Graph", "DAG"] }
+  ],
+  "Advanced Data Structures & Algorithms": [
+    { id: 206, title: "Reverse Linked List", difficulty: "Easy", slug: "reverse-linked-list", tags: ["Linked List"] },
+    { id: 15, title: "3Sum (Two Pointers)", difficulty: "Medium", slug: "3sum", tags: ["Two Pointers", "Sorting"] },
+    { id: 42, title: "Trapping Rain Water", difficulty: "Hard", slug: "trapping-rain-water", tags: ["Stack", "Two Pointers"] }
+  ],
+  "Fundamentals of AI & Machine Learning": [
+    { id: 1, title: "Two Sum (Vector Search)", difficulty: "Easy", slug: "two-sum", tags: ["Hash Table"] },
+    { id: 347, title: "Top K Frequent Elements (K-NN)", difficulty: "Medium", slug: "top-k-frequent-elements", tags: ["Heap", "Hash Table"] },
+    { id: 300, title: "Longest Increasing Subsequence", difficulty: "Hard", slug: "longest-increasing-subsequence", tags: ["Dynamic Programming"] }
+  ],
+  "Embedded System Design": [
+    { id: 704, title: "Binary Search (Register Array)", difficulty: "Easy", slug: "binary-search", tags: ["Binary Search"] },
+    { id: 155, title: "Min Stack (Interrupt Stack)", difficulty: "Medium", slug: "min-stack", tags: ["Stack", "Design"] },
+    { id: 23, title: "Merge k Sorted Lists (Buffer Queues)", difficulty: "Hard", slug: "merge-k-sorted-lists", tags: ["Heap"] }
+  ],
+  "Object Oriented Programming using Java": [
+    { id: 242, title: "Valid Anagram", difficulty: "Easy", slug: "valid-anagram", tags: ["String", "Hash Table"] },
+    { id: 49, title: "Group Anagrams (OOP Classes)", difficulty: "Medium", slug: "group-anagrams", tags: ["Hash Table", "String"] },
+    { id: 146, title: "LRU Cache (Interface Design)", difficulty: "Hard", slug: "lru-cache", tags: ["Design", "Doubly Linked List"] }
+  ],
+  "Career Skill Development III": [
+    { id: 9, title: "Palindrome Number (Aptitude)", difficulty: "Easy", slug: "palindrome-number", tags: ["Math"] },
+    { id: 121, title: "Best Time to Buy/Sell Stock (Logic)", difficulty: "Medium", slug: "best-time-to-buy-and-sell-stock", tags: ["Array", "Dynamic Programming"] },
+    { id: 4, title: "Median of Two Sorted Arrays", difficulty: "Hard", slug: "median-of-two-sorted-arrays", tags: ["Binary Search"] }
+  ]
 };
 
 export default function AdaptiveQuiz({ initialSubject, addToast }) {
-  const [selectedWeek, setSelectedWeek] = useState(2);
+  const [selectedSubject, setSelectedSubject] = useState(initialSubject || SEM3_SUBJECTS[0].title);
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
   const [score, setScore] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
-  const [filterSubject, setFilterSubject] = useState(initialSubject || null);
 
   useEffect(() => {
     if (initialSubject) {
-      setFilterSubject(initialSubject);
+      // Find matching Sem 3 subject title or code
+      const matched = SEM3_SUBJECTS.find(
+        s => s.title.toLowerCase().includes(initialSubject.toLowerCase()) ||
+             s.mne.toLowerCase() === initialSubject.toLowerCase() ||
+             s.code.toLowerCase() === initialSubject.toLowerCase()
+      );
+      if (matched) setSelectedSubject(matched.title);
     }
   }, [initialSubject]);
 
-  const difficultyRules = {
-    1: { easy: 4, medium: 0, hard: 0, label: "Foundations" },
-    2: { easy: 2, medium: 2, hard: 0, label: "Easy -> Medium" },
-    3: { easy: 1, medium: 3, hard: 0, label: "Intermediate" },
-    4: { easy: 0, medium: 2, hard: 2, label: "Medium -> Hard" },
-    5: { easy: 0, medium: 1, hard: 3, label: "Advanced" },
-    6: { easy: 0, medium: 0, hard: 4, label: "Advanced Mock" }
-  };
-
-  const rawQuestions = WEEKLY_QUESTION_BANK[selectedWeek] || WEEKLY_QUESTION_BANK[1];
-  
-  const questions = filterSubject
-    ? rawQuestions.filter(q => q.subject.toLowerCase() === filterSubject.toLowerCase()).length > 0
-      ? rawQuestions.filter(q => q.subject.toLowerCase() === filterSubject.toLowerCase())
-      : rawQuestions
-    : rawQuestions;
-
-  const currentQ = questions[activeQuestionIndex % questions.length];
+  // STRICT ISOLATED SEMESTER 3 QUESTION BANK LOOKUP
+  const activeQuestions = SEM3_QUESTION_BANK[selectedSubject] || SEM3_QUESTION_BANK["Discrete Mathematics"];
+  const currentQ = activeQuestions[activeQuestionIndex % activeQuestions.length];
 
   const handleNext = () => {
     const isCorrect = selectedOption === currentQ.correct;
     const newScore = score + (isCorrect ? 1 : 0);
 
-    if (selectedOption === currentQ.correct) {
+    if (isCorrect) {
       setScore(newScore);
     }
 
     setSelectedOption(null);
 
-    if (activeQuestionIndex + 1 < questions.length) {
+    if (activeQuestionIndex + 1 < activeQuestions.length) {
       setActiveQuestionIndex(activeQuestionIndex + 1);
     } else {
       setIsFinished(true);
-      studentAPI.submitQuiz(newScore, questions.length);
+      studentAPI.submitQuiz(newScore, activeQuestions.length).catch(() => null);
       if (addToast) {
-        addToast('Quiz Completed!', `You scored ${newScore} / ${questions.length} on Week ${selectedWeek} Quiz.`, 'success');
+        addToast('Sem 3 Assessment Complete!', `Scored ${newScore} / ${activeQuestions.length} in ${selectedSubject}.`, 'success');
       }
     }
   };
@@ -370,54 +323,14 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
     setIsFinished(false);
   };
 
-  const dist = difficultyRules[selectedWeek];
-
-  // Dynamic 6-Week LeetCode Recommendation calculation based on selectedWeek and Quiz Score Accuracy
-  const getWeeklyLeetCodeRecommendations = (weekNum, currentScore, totalQuestions) => {
-    const accuracyPct = isFinished
-      ? Math.round((currentScore / totalQuestions) * 100)
-      : 65; // Default demo baseline before quiz completion
-
-    const weekData = WEEKLY_LEETCODE_POOL[weekNum] || WEEKLY_LEETCODE_POOL[1];
-
-    let problems = [];
-    let levelLabel = "";
-    let levelBadgeColor = "";
-    let summaryText = "";
-
-    if (accuracyPct < 50) {
-      levelLabel = "Low Score (<50%) • Foundational Drills";
-      levelBadgeColor = "bg-rose-100 text-red-800 border-rose-200";
-      summaryText = `Quiz accuracy is ${accuracyPct}%. Practice these foundational Easy problems for Week ${weekNum} (${weekData.topic}) to build confidence.`;
-      problems = weekData.low;
-    } else if (accuracyPct <= 75) {
-      levelLabel = "Mid Score (50-75%) • Intermediate Drills";
-      levelBadgeColor = "bg-amber-50 text-amber-800 border-amber-200";
-      summaryText = `Quiz accuracy is ${accuracyPct}%. Solve these core Medium LeetCode problems for Week ${weekNum} (${weekData.topic}) to bridge logical gaps.`;
-      problems = weekData.mid;
-    } else {
-      levelLabel = "High Score (>75%) • Advanced Mastery";
-      levelBadgeColor = "bg-emerald-50 text-emerald-800 border-emerald-200";
-      summaryText = `Outstanding accuracy at ${accuracyPct}%! Master these advanced LeetCode challenges for Week ${weekNum} (${weekData.topic}).`;
-      problems = weekData.high;
-    }
-
-    return {
-      moduleTitle: weekData.title,
-      topic: weekData.topic,
-      accuracyPct,
-      levelLabel,
-      levelBadgeColor,
-      summaryText,
-      problems
-    };
+  const handleSubjectSwitch = (subjTitle) => {
+    setSelectedSubject(subjTitle);
+    restartQuiz();
   };
 
-  const leetCodeRecs = getWeeklyLeetCodeRecommendations(
-    selectedWeek,
-    score,
-    questions.length
-  );
+  // Get LeetCode practice problems for selected Semester 3 subject
+  const currentLeetCodeProblems = SEM3_LEETCODE_POOL[selectedSubject] || SEM3_LEETCODE_POOL["Discrete Mathematics"];
+  const activeSubjObj = SEM3_SUBJECTS.find(s => s.title === selectedSubject) || SEM3_SUBJECTS[0];
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto px-2 sm:px-4">
@@ -427,73 +340,51 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
         <div>
           <div className="flex items-center space-x-2 text-red-600 text-xs font-bold uppercase tracking-wider mb-1">
             <Zap className="w-4 h-4" />
-            <span>Adaptive Quiz Engine</span>
+            <span>Semester 3 Focus Mode Assessment</span>
           </div>
           <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-            Week {selectedWeek} Diagnostic Assessment
+            {activeSubjObj.title} ({activeSubjObj.mne})
           </h1>
           <p className="text-slate-500 text-xs mt-1">
-            Adaptive questions scaling from Foundations (Week 1) to Advanced Mock (Week 6).
+            Official Course Code: <strong className="text-red-600 font-bold">{activeSubjObj.code}</strong> • Department of {activeSubjObj.dept}
           </p>
         </div>
 
-        {/* Week Switcher: Crimson Red Active State */}
-        <div className="flex items-center space-x-1 bg-slate-100 p-1 rounded-xl border border-slate-200 overflow-x-auto max-w-full no-scrollbar shrink-0">
-          {[1, 2, 3, 4, 5, 6].map((w) => (
-            <button
-              key={w}
-              onClick={() => { setSelectedWeek(w); restartQuiz(); }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                selectedWeek === w
-                  ? 'bg-red-600 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
-              }`}
+        {/* Semester 3 Subject Switcher Dropdown */}
+        <div className="relative shrink-0 w-full sm:w-auto">
+          <div className="flex items-center space-x-2 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
+            <Filter className="w-4 h-4 text-red-600 ml-2" />
+            <select
+              value={selectedSubject}
+              onChange={(e) => handleSubjectSwitch(e.target.value)}
+              className="bg-transparent text-xs font-bold text-slate-800 focus:outline-none pr-3 py-1 cursor-pointer w-full sm:w-64"
             >
-              W{w}
-            </button>
-          ))}
+              {SEM3_SUBJECTS.map((s) => (
+                <option key={s.code} value={s.title}>
+                  {s.code} - {s.title} ({s.mne})
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
-      {/* Active Filter Notice */}
-      {filterSubject && (
-        <div className="bg-gradient-to-r from-red-950 to-slate-900 text-white rounded-xl p-3 px-4 flex items-center justify-between text-xs border border-red-900/60 shadow-sm">
-          <span className="flex items-center gap-2">
-            <BookOpen className="w-4 h-4 text-rose-400" />
-            <span>Focused Practice Subject: <strong>{filterSubject}</strong></span>
-          </span>
+      {/* Course Subject Tabs (Fast Switcher) */}
+      <div className="flex items-center space-x-1.5 overflow-x-auto no-scrollbar pb-1">
+        {SEM3_SUBJECTS.map((s) => (
           <button
-            onClick={() => setFilterSubject(null)}
-            className="text-xs text-rose-200 hover:text-white underline font-semibold"
+            key={s.code}
+            onClick={() => handleSubjectSwitch(s.title)}
+            className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all whitespace-nowrap border ${
+              selectedSubject === s.title
+                ? 'bg-red-600 text-white border-red-600 shadow-sm'
+                : 'bg-white text-slate-600 hover:text-slate-900 border-slate-200 hover:border-slate-300'
+            }`}
           >
-            Show All Subjects
+            <span>{s.mne}</span>
+            <span className="text-[10px] opacity-80 ml-1 font-semibold">({s.code})</span>
           </button>
-        </div>
-      )}
-
-      {/* Difficulty Mix Indicator */}
-      <div className="bg-rose-50 border border-rose-200 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-red-950 font-medium">
-        <span className="font-bold flex items-center gap-1.5">
-          <Sliders className="w-4 h-4 text-red-600" />
-          <span>Week {selectedWeek} Difficulty Level: <strong>{dist.label}</strong></span>
-        </span>
-        <div className="flex items-center space-x-2 flex-wrap">
-          {dist.easy > 0 && (
-            <span className="bg-emerald-50 text-emerald-800 px-2.5 py-0.5 rounded-md font-bold border border-emerald-200">
-              {dist.easy} Easy
-            </span>
-          )}
-          {dist.medium > 0 && (
-            <span className="bg-amber-50 text-amber-800 px-2.5 py-0.5 rounded-md font-bold border border-amber-200">
-              {dist.medium} Medium
-            </span>
-          )}
-          {dist.hard > 0 && (
-            <span className="bg-rose-100 text-red-800 px-2.5 py-0.5 rounded-md font-bold border border-rose-200">
-              {dist.hard} Hard
-            </span>
-          )}
-        </div>
+        ))}
       </div>
 
       {/* Quiz Card */}
@@ -501,10 +392,10 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
         <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-8 shadow-sm space-y-6">
           
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs font-bold text-slate-500 border-b border-slate-100 pb-4 gap-2">
-            <span className="text-red-600">Question {activeQuestionIndex + 1} of {questions.length}</span>
+            <span className="text-red-600 font-extrabold">Question {activeQuestionIndex + 1} of {activeQuestions.length}</span>
             <div className="flex items-center space-x-2">
-              <span className="bg-slate-100 px-2.5 py-1 rounded-lg text-slate-700 font-bold border border-slate-200">
-                {currentQ.subject}
+              <span className="bg-rose-50 text-red-700 px-2.5 py-1 rounded-lg font-bold border border-rose-200">
+                {currentQ.code}
               </span>
               <span className={`px-2.5 py-1 rounded-lg font-bold border ${
                 currentQ.difficulty === 'Easy'
@@ -547,10 +438,9 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
               className="px-4 py-2 text-xs font-bold text-slate-500 hover:text-slate-700 flex items-center space-x-1"
             >
               <RotateCcw className="w-3.5 h-3.5" />
-              <span>Reset</span>
+              <span>Reset Assessment</span>
             </button>
 
-            {/* Solid Crimson Primary Button */}
             <button
               disabled={selectedOption === null}
               onClick={handleNext}
@@ -560,7 +450,7 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
                   : 'bg-slate-200 text-slate-400 cursor-not-allowed'
               }`}
             >
-              <span>{activeQuestionIndex + 1 === questions.length ? 'Submit Quiz' : 'Next Question'}</span>
+              <span>{activeQuestionIndex + 1 === activeQuestions.length ? 'Submit Assessment' : 'Next Question'}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
@@ -573,17 +463,17 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
           </div>
 
           <div>
-            <h2 className="text-2xl font-black text-slate-900">Week {selectedWeek} Quiz Completed!</h2>
-            <p className="text-slate-500 text-xs mt-1">Your baseline risk profile has been updated automatically.</p>
+            <h2 className="text-2xl font-black text-slate-900">{selectedSubject} ({activeSubjObj.mne}) Assessment Complete!</h2>
+            <p className="text-slate-500 text-xs mt-1">Course Code: {activeSubjObj.code} • Baseline risk profile updated.</p>
           </div>
 
           <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 max-w-sm mx-auto space-y-1">
             <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">Final Score</p>
-            <p className="text-4xl font-black text-slate-900">{score} / {questions.length}</p>
+            <p className="text-4xl font-black text-slate-900">{score} / {activeQuestions.length}</p>
             <p className={`text-xs font-extrabold ${
-              (score / questions.length) >= 0.75 ? 'text-emerald-700' : 'text-amber-700'
+              (score / activeQuestions.length) >= 0.75 ? 'text-emerald-700' : 'text-amber-700'
             }`}>
-              {Math.round((score / questions.length) * 100)}% Accuracy Achieved
+              {Math.round((score / activeQuestions.length) * 100)}% Accuracy Achieved
             </p>
           </div>
 
@@ -593,62 +483,46 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
               className="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold shadow-md shadow-red-600/20 inline-flex items-center space-x-2 transition-all"
             >
               <RotateCcw className="w-4 h-4" />
-              <span>Retake Week {selectedWeek} Quiz</span>
+              <span>Retake {activeSubjObj.mne} Assessment</span>
             </button>
           </div>
         </div>
       )}
 
-      {/* DYNAMIC 6-WEEK LEETCODE PRACTICE RECOMMENDATIONS CARD */}
+      {/* DYNAMIC LEETCODE PRACTICE RECOMMENDATIONS FOR SELECTED SEM 3 SUBJECT */}
       <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm space-y-5">
         
-        {/* Card Header with Week Module Badge */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
           <div>
-            {/* Top Module Badge */}
             <div className="flex items-center space-x-2 flex-wrap gap-y-1">
               <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-md text-xs font-black uppercase tracking-wider bg-rose-50 text-red-700 border border-rose-200 shadow-2xs">
                 <Code2 className="w-3.5 h-3.5 text-red-600" />
                 <span>Recommended LeetCode Practice</span>
               </span>
               <span className="text-xs font-extrabold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded border border-slate-200">
-                Week {selectedWeek} Module: {leetCodeRecs.topic}
+                {activeSubjObj.code} • {activeSubjObj.mne}
               </span>
             </div>
 
             <h2 className="text-base sm:text-lg font-black text-slate-900 mt-2">
-              {leetCodeRecs.moduleTitle}
+              {activeSubjObj.title} Problem Set
             </h2>
             <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
-              Dynamically matched to Week {selectedWeek} curriculum and {isFinished ? `your score accuracy (${leetCodeRecs.accuracyPct}%)` : 'your active performance tier'}
+              Curated coding & analytical challenges matched strictly to {activeSubjObj.code} curriculum
             </p>
           </div>
-
-          {/* Score Level Badge */}
-          <span className={`px-3 py-1.5 rounded-lg text-xs font-extrabold border shrink-0 ${leetCodeRecs.levelBadgeColor}`}>
-            {leetCodeRecs.levelLabel}
-          </span>
-        </div>
-
-        {/* Guidance Notice */}
-        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-start space-x-2.5 text-xs text-slate-700">
-          <Sparkles className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
-          <p className="leading-relaxed font-medium">
-            {leetCodeRecs.summaryText}
-          </p>
         </div>
 
         {/* LeetCode Problem Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {leetCodeRecs.problems.map((prob) => (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {currentLeetCodeProblems.map((prob) => (
             <div
               key={prob.id}
-              className="bg-white border border-slate-200 hover:border-red-300 rounded-xl p-4 flex items-center justify-between gap-3 shadow-xs hover:shadow-md transition-all duration-200 group"
+              className="bg-white border border-slate-200 hover:border-red-300 rounded-xl p-4 flex flex-col justify-between space-y-3 shadow-xs hover:shadow-md transition-all duration-200 group"
             >
-              <div className="space-y-1.5 flex-1 min-w-0">
-                <div className="flex items-center space-x-2 flex-wrap">
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between flex-wrap">
                   <span className="text-[11px] font-black text-slate-400">LeetCode #{prob.id}</span>
-                  {/* Difficulty Pill */}
                   <span className={`px-2 py-0.5 rounded-md text-[10px] font-extrabold border ${
                     prob.difficulty === 'Easy'
                       ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
@@ -660,28 +534,27 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
                   </span>
                 </div>
 
-                <h4 className="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-red-600 transition-colors truncate">
+                <h4 className="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-red-600 transition-colors line-clamp-1">
                   {prob.title}
                 </h4>
 
-                <div className="flex items-center space-x-1.5 flex-wrap">
+                <div className="flex items-center space-x-1 flex-wrap">
                   {prob.tags.map((tg) => (
-                    <span key={tg} className="text-[9px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                    <span key={tg} className="text-[9px] font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
                       {tg}
                     </span>
                   ))}
                 </div>
               </div>
 
-              {/* Direct LeetCode External Link Button */}
               <a
                 href={`https://leetcode.com/problems/${prob.slug}/`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-3 py-2 bg-slate-50 group-hover:bg-red-600 text-slate-700 group-hover:text-white border border-slate-200 group-hover:border-red-600 rounded-lg text-xs font-bold transition-all flex items-center space-x-1 shrink-0"
+                className="w-full py-2 bg-slate-50 group-hover:bg-red-600 text-slate-700 group-hover:text-white border border-slate-200 group-hover:border-red-600 rounded-lg text-xs font-bold transition-all flex items-center justify-center space-x-1"
                 title={`Solve ${prob.title} on LeetCode`}
               >
-                <span>Solve</span>
+                <span>Solve Problem</span>
                 <ExternalLink className="w-3.5 h-3.5" />
               </a>
             </div>

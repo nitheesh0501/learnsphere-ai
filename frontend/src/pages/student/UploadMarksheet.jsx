@@ -14,12 +14,15 @@ export const UploadMarksheet = () => {
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
 
-  // Manual IA Marks Form State
+  // Manual IA Marks Form State (Official Semester 3 Courses)
   const [manualSubjects, setManualSubjects] = useState([
-    { name: 'Data Structures & Algorithms', score: '32' },
-    { name: 'Computer Networks', score: '34' },
-    { name: 'Operating Systems', score: '42' },
-    { name: 'Database Management Systems', score: '45' }
+    { name: '2321MAB301T - Discrete Mathematics (DM)', score: '42' },
+    { name: '2321CSC301T - Computer Networks (CN)', score: '34' },
+    { name: '2321CSC302J - Advanced Data Structures & Algorithms (ADSA)', score: '31' },
+    { name: '2321CSC303J - Fundamentals of AI & ML (FAIML)', score: '38' },
+    { name: '2321CSS301J - Embedded System Design (ESD)', score: '28' },
+    { name: '2321CSC304R - Object Oriented Programming using Java (OOPJ)', score: '22.5' },
+    { name: '2321SDA301L - Career Skill Development III (CSD)', score: '46' }
   ]);
 
   const navigate = useNavigate();
@@ -72,16 +75,18 @@ export const UploadMarksheet = () => {
       processedResult = {
         marksheet: { filename: file.name },
         ml_analysis: {
-          readiness_score: 72,
+          readiness_score: 75,
           risk_level: 'Moderate',
-          weak_subjects: ['Data Structures & Algorithms', 'Computer Networks']
+          weak_subjects: ['2321CSC304R - OOPJ', '2321CSS301J - ESD']
         },
         extracted_subjects: [
-          { name: 'Data Structures & Algorithms', ia_marks: 31, max_marks: 50, percentage: 62, status: 'Weak' },
-          { name: 'Computer Networks', ia_marks: 34, max_marks: 50, percentage: 68, status: 'Weak' },
-          { name: 'Operating Systems', ia_marks: 38, max_marks: 50, percentage: 76, status: 'Medium' },
-          { name: 'Database Management Systems', ia_marks: 44, max_marks: 50, percentage: 88, status: 'Strong' },
-          { name: 'Software Engineering', ia_marks: 46, max_marks: 50, percentage: 92, status: 'Strong' }
+          { name: '2321MAB301T - Discrete Mathematics (DM)', ia_marks: 42, max_marks: 50, percentage: 84, status: 'Strong' },
+          { name: '2321CSC301T - Computer Networks (CN)', ia_marks: 34, max_marks: 50, percentage: 68, status: 'Medium' },
+          { name: '2321CSC302J - Advanced Data Structures & Algorithms (ADSA)', ia_marks: 31, max_marks: 50, percentage: 62, status: 'Weak' },
+          { name: '2321CSC303J - Fundamentals of AI & ML (FAIML)', ia_marks: 38, max_marks: 50, percentage: 76, status: 'Medium' },
+          { name: '2321CSS301J - Embedded System Design (ESD)', ia_marks: 28, max_marks: 50, percentage: 56, status: 'Weak' },
+          { name: '2321CSC304R - Object Oriented Programming using Java (OOPJ)', ia_marks: 22.5, max_marks: 50, percentage: 45, status: 'Weak' },
+          { name: '2321SDA301L - Career Skill Development III (CSD)', ia_marks: 46, max_marks: 50, percentage: 92, status: 'Strong' }
         ]
       };
     }
@@ -174,10 +179,10 @@ export const UploadMarksheet = () => {
     <div className="space-y-6 max-w-4xl mx-auto">
       <div>
         <h1 className="text-2xl font-extrabold text-white flex items-center gap-2">
-          <UploadCloud className="w-7 h-7 text-red-500" /> Internal Assessment Marks Entry
+          <UploadCloud className="w-7 h-7 text-red-500" /> Semester 3 Internal Assessment Entry
         </h1>
         <p className="text-sm text-slate-400 mt-1 font-medium">
-          Upload your IA marksheet (PDF/PNG/JPG) for automated OCR extraction, or input your IA marks manually (Out of 50).
+          Upload your Sem 3 IA marksheet (PDF/PNG/JPG) for automated OCR extraction, or input your IA marks manually (Out of 50).
         </p>
       </div>
 
@@ -256,7 +261,7 @@ export const UploadMarksheet = () => {
                   </>
                 ) : (
                   <>
-                    <Sparkles className="w-4 h-4" /> Run OCR & Classify Knowledge Gaps
+                    <Sparkles className="w-4 h-4" /> Run OCR & Classify Sem 3 Knowledge Gaps
                   </>
                 )}
               </button>
@@ -267,7 +272,7 @@ export const UploadMarksheet = () => {
           <GlassCard className="p-8 space-y-6">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div>
-                <h3 className="text-base font-bold text-white">Input IA Test Marks (Out of 50)</h3>
+                <h3 className="text-base font-bold text-white">Input Sem 3 IA Test Marks (Out of 50)</h3>
                 <p className="text-xs text-slate-400 font-medium">Scores &lt;35 are Weak, 35–40 are Medium, &gt;40 are Strong.</p>
               </div>
               <button
@@ -284,7 +289,7 @@ export const UploadMarksheet = () => {
                 <div key={idx} className="flex items-center gap-3 bg-slate-900/60 p-3 rounded-xl border border-slate-800">
                   <input
                     type="text"
-                    placeholder="Subject Name"
+                    placeholder="Course Code & Title"
                     value={sub.name}
                     onChange={(e) => {
                       const updated = [...manualSubjects];
@@ -295,7 +300,6 @@ export const UploadMarksheet = () => {
                     required
                   />
                   <div className="flex items-center gap-2">
-                    {/* Number input with dynamic min/max and instant clamping */}
                     <input
                       type="number"
                       min="0"
@@ -350,7 +354,7 @@ export const UploadMarksheet = () => {
                 <CheckCircle2 className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-lg font-extrabold text-white">IA Marks Analysis Saved!</h3>
+                <h3 className="text-lg font-extrabold text-white">Sem 3 IA Marks Analysis Saved!</h3>
                 <p className="text-xs text-slate-400 font-medium">Source: {result.marksheet?.filename}</p>
               </div>
             </div>
@@ -388,7 +392,7 @@ export const UploadMarksheet = () => {
               <table className="w-full text-left text-sm">
                 <thead className="bg-slate-900 text-slate-400 text-xs uppercase font-semibold">
                   <tr>
-                    <th className="p-3.5">Subject Name</th>
+                    <th className="p-3.5">Course & Title</th>
                     <th className="p-3.5">IA Score</th>
                     <th className="p-3.5">Max Score</th>
                     <th className="p-3.5">Percentage</th>

@@ -6,16 +6,16 @@ import ProfileDrawer from './ProfileDrawer';
 const DEFAULT_NOTIFICATIONS = [
   {
     id: 1,
-    title: "Mathematics III Alert",
-    message: "IA Score 44/50 achieved. Recommended for Advanced Linear Algebra.",
+    title: "Discrete Mathematics Alert",
+    message: "IA Score 42/50 achieved in 2321MAB301T. Recommended for Advanced Graph Logic.",
     time: "10m ago",
     read: false,
     type: "success"
   },
   {
     id: 2,
-    title: "Faculty Nudge Received",
-    message: "Prof. Sharma assigned dynamic practice set for C++ Pointers & Memory.",
+    title: "Academic Intervention Notice",
+    message: "Department assigned dynamic practice set for 2321CSC304R (OOPJ) Pointers & Interfaces.",
     time: "1h ago",
     read: false,
     type: "alert"
@@ -23,7 +23,7 @@ const DEFAULT_NOTIFICATIONS = [
   {
     id: 3,
     title: "Weekly Readiness Audit",
-    message: "Semester readiness score updated to 78.0% (On Track).",
+    message: "Semester 3 readiness score updated to 78.0% (On Track).",
     time: "1d ago",
     read: true,
     type: "info"
@@ -225,7 +225,7 @@ export default function Header({ activeTab, setActiveTab, readinessScore = 78.0 
                 </div>
                 <div className="hidden sm:block">
                   <p className="text-xs font-bold text-slate-900 leading-tight">{user?.name || 'Nitheesh'}</p>
-                  <p className="text-[10px] font-medium text-slate-500">{user?.semester || 'Sem 4 • CSE'}</p>
+                  <p className="text-[10px] font-medium text-slate-500">{user?.semester || 'Sem 3 • CSE'}</p>
                 </div>
               </button>
 

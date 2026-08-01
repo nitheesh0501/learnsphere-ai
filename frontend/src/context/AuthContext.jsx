@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
     email: 'nitheesh.m@learnsphere.edu',
     role: 'student',
     studentCode: 'CSE-2026-018',
-    semester: 'Sem 4 • CSE',
+    semester: 'Sem 3 • CSE',
     gpa: 3.82
   });
 

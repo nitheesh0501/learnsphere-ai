@@ -7,7 +7,7 @@ const DEFAULT_ROSTER = [
     id: 1,
     student_name: 'Santhosh',
     student_code: 'CSE-2026-042',
-    weak_subject: 'Programming in C++',
+    weak_subject: '2321CSC304R - Object Oriented Programming using Java (OOPJ)',
     internal_score: 19.5,
     max_score: 50,
     percentage: 39.0,
@@ -20,7 +20,7 @@ const DEFAULT_ROSTER = [
     id: 2,
     student_name: 'Nidhish',
     student_code: 'CSE-2026-089',
-    weak_subject: 'Physics II',
+    weak_subject: '2321CSC301T - Computer Networks (CN)',
     internal_score: 24.0,
     max_score: 50,
     percentage: 48.0,
@@ -33,7 +33,7 @@ const DEFAULT_ROSTER = [
     id: 3,
     student_name: 'Salih',
     student_code: 'CSE-2026-112',
-    weak_subject: 'Mathematics III',
+    weak_subject: '2321MAB301T - Discrete Mathematics (DM)',
     internal_score: 32.5,
     max_score: 50,
     percentage: 65.0,
@@ -46,7 +46,7 @@ const DEFAULT_ROSTER = [
     id: 4,
     student_name: 'Nadya',
     student_code: 'CSE-2026-145',
-    weak_subject: 'Programming in C++',
+    weak_subject: '2321CSC302J - Advanced Data Structures & Algorithms (ADSA)',
     internal_score: 18.0,
     max_score: 50,
     percentage: 36.0,
@@ -59,7 +59,7 @@ const DEFAULT_ROSTER = [
     id: 5,
     student_name: 'Meghan',
     student_code: 'CSE-2026-018',
-    weak_subject: 'Data Structures',
+    weak_subject: '2321CSS301J - Embedded System Design (ESD)',
     internal_score: 22.5,
     max_score: 50,
     percentage: 45.0,
@@ -72,7 +72,7 @@ const DEFAULT_ROSTER = [
     id: 6,
     student_name: 'Nitish',
     student_code: 'CSE-2026-056',
-    weak_subject: 'Physics II',
+    weak_subject: '2321CSC303J - Fundamentals of AI & ML (FAIML)',
     internal_score: 33.0,
     max_score: 50,
     percentage: 66.0,
@@ -85,7 +85,7 @@ const DEFAULT_ROSTER = [
     id: 7,
     student_name: 'Prajwant',
     student_code: 'CSE-2026-074',
-    weak_subject: 'Mathematics III',
+    weak_subject: '2321SDA301L - Career Skill Development III (CSD)',
     internal_score: 21.0,
     max_score: 50,
     percentage: 42.0,
@@ -102,7 +102,8 @@ export default function FacultyAnalytics({ addToast }) {
     const saved = localStorage.getItem('learnsphere_roster');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
       } catch (e) {
         console.warn('Error parsing saved roster:', e);
       }
@@ -127,7 +128,7 @@ export default function FacultyAnalytics({ addToast }) {
         if (res && res.roster) {
           setStudents(res.roster);
         }
-      });
+      }).catch(() => null);
     }
   }, []);
 
@@ -163,7 +164,8 @@ export default function FacultyAnalytics({ addToast }) {
 
   const filteredStudents = students.filter((s) => {
     const matchesSearch = s.student_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          s.student_code.toLowerCase().includes(searchTerm.toLowerCase());
+                          s.student_code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          s.weak_subject.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFilter = filterStatus === 'All' || s.status === filterStatus;
     return matchesSearch && matchesFilter;
   });
@@ -180,13 +182,13 @@ export default function FacultyAnalytics({ addToast }) {
         <div>
           <div className="flex items-center space-x-2 text-rose-300 text-xs font-bold uppercase tracking-wider mb-1">
             <Shield className="w-3.5 h-3.5 text-red-400" />
-            <span>Faculty Intervention Analytics</span>
+            <span>Academic Intervention Analytics • Semester 3</span>
           </div>
           <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-white tracking-tight">
-            Early Academic Intervention Dashboard
+            Semester 3 Academic Intervention Dashboard
           </h1>
           <p className="text-rose-100/90 text-xs sm:text-sm mt-1 max-w-2xl leading-relaxed">
-            Monitor students flagged for low Internal Assessment (IA) test scores out of 50, send targeted nudges, and track intervention resolutions.
+            Monitor students flagged for low Internal Assessment (IA) test scores out of 50 in Semester 3 courses, send targeted nudges, and track intervention resolutions.
           </p>
         </div>
       </div>
@@ -199,7 +201,7 @@ export default function FacultyAnalytics({ addToast }) {
           <div>
             <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Enrolled Students</p>
             <p className="text-3xl font-black text-slate-900 mt-1">{totalEnrolled}</p>
-            <p className="text-[11px] text-slate-500 mt-1">Computer Science Dept • Sem 4</p>
+            <p className="text-[11px] text-slate-500 mt-1">Computer Science Dept • Sem 3</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-700 shrink-0">
             <Users className="w-6 h-6" />
@@ -239,7 +241,7 @@ export default function FacultyAnalytics({ addToast }) {
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-slate-100">
           <div>
             <h2 className="text-base sm:text-lg font-black text-slate-900">Priority Intervention Roster</h2>
-            <p className="text-xs text-slate-500">Students flagged based on Mid-Semester IA test scores out of 50</p>
+            <p className="text-xs text-slate-500">Semester 3 students flagged based on IA test scores out of 50</p>
           </div>
 
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
@@ -248,7 +250,7 @@ export default function FacultyAnalytics({ addToast }) {
               <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
               <input
                 type="text"
-                placeholder="Search student or code..."
+                placeholder="Search student, code, or course..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-1.5 text-xs text-slate-900 font-semibold focus:outline-none focus:border-red-600"
@@ -278,7 +280,7 @@ export default function FacultyAnalytics({ addToast }) {
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
                 <th className="py-3 px-3">Student</th>
-                <th className="py-3 px-3">Weak Subject</th>
+                <th className="py-3 px-3">Sem 3 Weak Course</th>
                 <th className="py-3 px-3">IA Score (/50)</th>
                 <th className="py-3 px-3">Risk Level</th>
                 <th className="py-3 px-3">Intervention Status</th>

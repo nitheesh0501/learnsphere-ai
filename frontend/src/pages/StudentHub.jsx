@@ -14,22 +14,29 @@ import {
   Award,
   AlertCircle,
   Zap,
-  Calculator
+  Calculator,
+  BookOpen
 } from 'lucide-react';
 
+// OFFICIAL SEMESTER 3 SUBJECT DATASET (EXACT 7 COURSES ONLY)
 const DEFAULT_SUBJECTS = [
-  { id: '1', name: 'Mathematics III', internalMarks: 44, maxMarks: 50, credits: 4 },
-  { id: '2', name: 'Physics II', internalMarks: 31, maxMarks: 50, credits: 4 },
-  { id: '3', name: 'Programming in C++', internalMarks: 22.5, maxMarks: 50, credits: 3 },
+  { id: '1', code: '2321MAB301T', name: 'Discrete Mathematics (DM)', internalMarks: 42, maxMarks: 50, credits: 4, dept: 'Maths' },
+  { id: '2', code: '2321CSC301T', name: 'Computer Networks (CN)', internalMarks: 34, maxMarks: 50, credits: 3, dept: 'CSE' },
+  { id: '3', code: '2321CSC302J', name: 'Advanced Data Structures & Algorithms (ADSA)', internalMarks: 31, maxMarks: 50, credits: 4, dept: 'CSE' },
+  { id: '4', code: '2321CSC303J', name: 'Fundamentals of AI & Machine Learning (FAIML)', internalMarks: 38, maxMarks: 50, credits: 4, dept: 'CSE' },
+  { id: '5', code: '2321CSS301J', name: 'Embedded System Design (ESD)', internalMarks: 28, maxMarks: 50, credits: 4, dept: 'ECE' },
+  { id: '6', code: '2321CSC304R', name: 'Object Oriented Programming using Java (OOPJ)', internalMarks: 22.5, maxMarks: 50, credits: 4, dept: 'CSE' },
+  { id: '7', code: '2321SDA301L', name: 'Career Skill Development III (CSD)', internalMarks: 46, maxMarks: 50, credits: 2, dept: 'CSE' }
 ];
 
 export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadinessScore, addToast }) {
-  // Initialize subjects state from localStorage or fall back to defaults
+  // Initialize subjects state from localStorage or fall back to Semester 3 default 7 courses
   const [subjects, setSubjects] = useState(() => {
     const saved = localStorage.getItem('learnsphere_subjects');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
       } catch (e) {
         console.warn('Error parsing localStorage subjects:', e);
       }
@@ -45,7 +52,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
   // Form state for adding a new subject entry
   const [newSubjectTitle, setNewSubjectTitle] = useState('');
   const [newSubjectScore, setNewSubjectScore] = useState('');
-  const [newSubjectCredits, setNewSubjectCredits] = useState('3');
+  const [newSubjectCredits, setNewSubjectCredits] = useState('4');
 
   // AI Audit state
   const [isAuditing, setIsAuditing] = useState(false);
@@ -121,10 +128,12 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
 
     const newSub = {
       id: Date.now().toString(),
+      code: `2321GEN3${Math.floor(10 + Math.random() * 90)}`,
       name: newSubjectTitle.trim(),
       internalMarks: scoreNum,
       maxMarks: 50,
-      credits: Number(newSubjectCredits) || 3
+      credits: Number(newSubjectCredits) || 4,
+      dept: 'CSE'
     };
 
     const updated = [...subjects, newSub];
@@ -133,7 +142,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
 
     setNewSubjectTitle('');
     setNewSubjectScore('');
-    setNewSubjectCredits('3');
+    setNewSubjectCredits('4');
 
     if (addToast) {
       addToast('Subject Added & Readiness Calculated', `New readiness score: ${newReadiness}%`, 'success');
@@ -143,65 +152,53 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
   // Handler: Re-Run AI Audit
   const handleReRunAudit = () => {
     setIsAuditing(true);
-    setAuditMessage('Analyzing Internal Assessment Trends...');
+    setAuditMessage('Analyzing Semester 3 Internal Assessment Trends...');
 
     setTimeout(() => {
       setIsAuditing(false);
       setAuditMessage(null);
       const newScore = updateOverallReadiness(subjects);
       if (addToast) {
-        addToast('AI Audit Complete', `Analyzed IA performance trends. Readiness: ${newScore}%`, 'success');
+        addToast('AI Audit Complete', `Analyzed Sem 3 performance trends. Readiness: ${newScore}%`, 'success');
       }
     }, 1500);
   };
 
-  // DYNAMIC RECOVERY ROADMAP STEPPER GENERATION BASED ON ACTIVE SUBJECTS
+  // DYNAMIC RECOVERY ROADMAP STEPPER GENERATION FOR SEMESTER 3
   const generateDynamicRoadmap = (activeSubjects) => {
-    const defaultSteps = [
-      { week: 1, title: "Data Structures", desc: "Arrays, Stacks & Queues", status: "Done" },
-      { week: 2, title: "Calculus Refresher", desc: "Derivatives & Integration", status: "Current" },
-      { week: 3, title: "Classical Mechanics", desc: "Harmonic Waves", status: "Upcoming" },
-      { week: 4, title: "OOP & Pointers", desc: "Memory Allocation", status: "Upcoming" },
-      { week: 5, title: "Electromagnetism", desc: "Circuit Theory", status: "Upcoming" },
-      { week: 6, title: "Final Mock Exam", desc: "Full Evaluation", status: "Upcoming" }
-    ];
-
-    if (!activeSubjects || activeSubjects.length === 0) return defaultSteps;
-
-    // Create a dynamic 6-week roadmap where active subjects are assigned sequentially
     return [
-      { week: 1, title: "Data Structures", desc: "Foundational Arrays & Queues", status: "Done" },
+      { week: 1, title: "Discrete Math Foundations", desc: "Logic & Set Theory Baseline", status: "Done" },
       {
         week: 2,
-        title: activeSubjects[0] ? activeSubjects[0].name : "Calculus Refresher",
-        desc: activeSubjects[0] ? `IA Score: ${activeSubjects[0].internalMarks}/50` : "Derivatives & Integration",
+        title: activeSubjects[0] ? activeSubjects[0].name : "Computer Networks",
+        desc: activeSubjects[0] ? `Code: ${activeSubjects[0].code || '2321CSC301T'} • Score: ${activeSubjects[0].internalMarks}/50` : "OSI & Subnetting",
         status: "Current"
       },
       {
         week: 3,
-        title: activeSubjects[1] ? activeSubjects[1].name : "Classical Mechanics",
-        desc: activeSubjects[1] ? `IA Score: ${activeSubjects[1].internalMarks}/50` : "Harmonic Waves",
+        title: activeSubjects[1] ? activeSubjects[1].name : "Advanced DSA",
+        desc: activeSubjects[1] ? `Code: ${activeSubjects[1].code || '2321CSC302J'} • Score: ${activeSubjects[1].internalMarks}/50` : "Red-Black Trees & DP",
         status: "Upcoming"
       },
       {
         week: 4,
-        title: activeSubjects[2] ? activeSubjects[2].name : "OOP & Pointers",
-        desc: activeSubjects[2] ? `IA Score: ${activeSubjects[2].internalMarks}/50` : "Memory Allocation",
+        title: activeSubjects[2] ? activeSubjects[2].name : "AI & Machine Learning",
+        desc: activeSubjects[2] ? `Code: ${activeSubjects[2].code || '2321CSC303J'} • Score: ${activeSubjects[2].internalMarks}/50` : "Supervised Algorithms",
         status: "Upcoming"
       },
       {
         week: 5,
-        title: activeSubjects[3] ? activeSubjects[3].name : "Electromagnetism",
-        desc: activeSubjects[3] ? `IA Score: ${activeSubjects[3].internalMarks}/50` : "Circuit Theory",
+        title: activeSubjects[3] ? activeSubjects[3].name : "Embedded System Design",
+        desc: activeSubjects[3] ? `Code: ${activeSubjects[3].code || '2321CSS301J'} • Score: ${activeSubjects[3].internalMarks}/50` : "Microcontrollers & GPIO",
         status: "Upcoming"
       },
-      { week: 6, title: "Final Mock Exam", desc: "Full Semester Evaluation", status: "Upcoming" }
+      { week: 6, title: "Semester 3 Final Mock Exam", desc: "Full Comprehensive Evaluation", status: "Upcoming" }
     ];
   };
 
   const dynamicRoadmap = generateDynamicRoadmap(subjects);
 
-  // DYNAMIC AI STUDY PRIORITIES QUEUE GENERATION BASED ON ACTIVE SUBJECTS
+  // DYNAMIC AI STUDY PRIORITIES QUEUE GENERATION FROM ACTIVE SEM 3 SUBJECTS
   const dynamicPriorities = subjects.map((sub) => {
     const score = Number(sub.internalMarks) || 0;
     const pct = Math.round((score / (sub.maxMarks || 50)) * 100);
@@ -209,6 +206,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
     if (score < 35) {
       return {
         id: sub.id,
+        code: sub.code,
         name: sub.name,
         score,
         pct,
@@ -218,11 +216,12 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
         iconColor: 'text-red-600',
         borderClass: 'border-rose-200 hover:border-red-400',
         estTime: '45 mins',
-        desc: `IA score is currently at ${score}/50 (${pct}%). Focus on foundational practice, problem sets, and core derivations.`
+        desc: `IA score in ${sub.code || ''} is currently at ${score}/50 (${pct}%). Focus on core problem solving, code derivations, and domain practice.`
       };
     } else if (score <= 40) {
       return {
         id: sub.id,
+        code: sub.code,
         name: sub.name,
         score,
         pct,
@@ -232,11 +231,12 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
         iconColor: 'text-amber-600',
         borderClass: 'border-amber-200 hover:border-amber-400',
         estTime: '30 mins',
-        desc: `IA score is at ${score}/50 (${pct}%). Practice numerical problem sets and formula derivations.`
+        desc: `IA score in ${sub.code || ''} is at ${score}/50 (${pct}%). Practice numerical problem sets and core concept reviews.`
       };
     } else {
       return {
         id: sub.id,
+        code: sub.code,
         name: sub.name,
         score,
         pct,
@@ -246,7 +246,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
         iconColor: 'text-emerald-600',
         borderClass: 'border-emerald-200 hover:border-emerald-400',
         estTime: '15 mins',
-        desc: `Strong performance at ${score}/50 (${pct}%). Maintain speed with quick revision drills.`
+        desc: `Strong performance in ${sub.code || ''} at ${score}/50 (${pct}%). Maintain speed with quick diagnostic drills.`
       };
     }
   });
@@ -260,13 +260,13 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
         <div>
           <div className="flex items-center space-x-2 text-rose-300 text-xs font-bold uppercase tracking-wider mb-1">
             <Sparkles className="w-3.5 h-3.5 text-red-400" />
-            <span>Early Intervention Engine</span>
+            <span>Official Syllabus • Semester 3 Curriculum</span>
           </div>
           <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-white tracking-tight">
-            Academic Assessment & Personalized Study Hub
+            Semester 3 Academic Assessment & Study Hub
           </h1>
           <p className="text-rose-100/90 text-xs sm:text-sm mt-1 max-w-2xl leading-relaxed">
-            Input Internal Assessment (IA) test scores out of 50 to calculate overall semester readiness, detect knowledge gaps, and receive targeted adaptive study roadmaps.
+            Manage your 7 official Semester 3 courses, input Internal Assessment (IA) test scores out of 50, detect knowledge gaps, and follow dynamic adaptive study roadmaps.
           </p>
         </div>
 
@@ -289,7 +289,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
             <RefreshCw className="w-4 h-4 text-red-600 animate-spin" />
             <span>{auditMessage}</span>
           </div>
-          <span className="text-[11px] font-semibold text-red-700">Pacing IA Analytics Engine...</span>
+          <span className="text-[11px] font-semibold text-red-700">Pacing Sem 3 IA Engine...</span>
         </div>
       )}
 
@@ -304,9 +304,9 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
               <div>
                 <h2 className="text-base sm:text-lg font-extrabold text-slate-900 flex items-center space-x-2">
                   <Sliders className="w-5 h-5 text-red-600" />
-                  <span>Manual Score Entry Assessment</span>
+                  <span>Semester 3 IA Marks Assessment</span>
                 </h2>
-                <p className="text-slate-500 text-xs mt-0.5">Enter Subject Title & IA score (out of 50)</p>
+                <p className="text-slate-500 text-xs mt-0.5">7 Official Semester 3 Subjects (Out of 50 Marks)</p>
               </div>
               <span className="text-[11px] font-bold bg-rose-50 text-red-700 px-2.5 py-1 rounded-lg border border-rose-200 shrink-0">
                 IA Out of 50
@@ -316,7 +316,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
             {/* Existing Subjects Roster */}
             <div className="mt-5 space-y-3">
               <div className="flex items-center justify-between text-[11px] text-slate-500 font-bold px-1 uppercase tracking-wider">
-                <span>Subject Title</span>
+                <span>Course & Subject Title</span>
                 <div className="flex items-center space-x-4">
                   <span>IA Score (/50)</span>
                   <span>Credits</span>
@@ -324,19 +324,26 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
                 </div>
               </div>
 
-              <div className="space-y-2.5 max-h-[220px] overflow-y-auto pr-1">
+              <div className="space-y-2.5 max-h-[260px] overflow-y-auto pr-1">
                 {subjects.map((sub) => (
                   <div
                     key={sub.id}
                     className="bg-slate-50 border border-slate-200 rounded-xl p-2.5 flex items-center justify-between gap-2"
                   >
-                    <input
-                      type="text"
-                      value={sub.name}
-                      onChange={(e) => handleUpdateSubject(sub.id, 'name', e.target.value)}
-                      className="bg-white border border-slate-300 rounded-lg px-2.5 py-1 text-xs text-slate-900 font-semibold focus:outline-none focus:border-red-600 flex-1 min-w-[120px]"
-                      placeholder="Subject Name"
-                    />
+                    <div className="flex-1 min-w-[140px]">
+                      {sub.code && (
+                        <span className="text-[9px] font-black text-red-600 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200 uppercase tracking-wider block w-max mb-0.5">
+                          {sub.code}
+                        </span>
+                      )}
+                      <input
+                        type="text"
+                        value={sub.name}
+                        onChange={(e) => handleUpdateSubject(sub.id, 'name', e.target.value)}
+                        className="bg-white border border-slate-300 rounded-lg px-2 py-1 text-xs text-slate-900 font-semibold focus:outline-none focus:border-red-600 w-full"
+                        placeholder="Subject Name"
+                      />
+                    </div>
 
                     <div className="flex items-center space-x-2 shrink-0">
                       <div className="flex items-center space-x-1">
@@ -386,13 +393,13 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
               <div className="pt-3 border-t border-slate-100 bg-slate-50/70 p-3 rounded-xl border border-slate-200 space-y-2.5">
                 <p className="text-xs font-bold text-slate-700 flex items-center space-x-1">
                   <Plus className="w-3.5 h-3.5 text-red-600" />
-                  <span>Add New Subject Entry</span>
+                  <span>Add New Course Entry</span>
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-12 gap-2">
                   <input
                     type="text"
-                    placeholder="Subject Title (e.g. Data Structures)"
+                    placeholder="Subject Title (e.g. Discrete Math)"
                     value={newSubjectTitle}
                     onChange={(e) => setNewSubjectTitle(e.target.value)}
                     className="sm:col-span-6 bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none focus:border-red-600"
@@ -452,24 +459,27 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
                   <BarChart3 className="w-5 h-5 text-red-600" />
                   <span>Performance Analysis & Risk Classification</span>
                 </h2>
-                <p className="text-slate-500 text-xs mt-0.5">Core subject IA score risk & semester readiness</p>
+                <p className="text-slate-500 text-xs mt-0.5">Semester 3 IA score risk & readiness</p>
               </div>
               <div className="flex items-center space-x-1.5 text-xs font-semibold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200 shrink-0">
                 <Calendar className="w-3.5 h-3.5 text-red-600" />
-                <span>Semester 4</span>
+                <span>Semester 3</span>
               </div>
             </div>
 
             <div className="mt-5 space-y-6">
               
               {/* Dynamic Horizontal Bar Charts */}
-              <div className="space-y-4 max-h-[220px] overflow-y-auto pr-1">
+              <div className="space-y-4 max-h-[260px] overflow-y-auto pr-1">
                 {subjects.map((sub) => {
                   const risk = calculateRisk(sub.internalMarks);
                   return (
                     <div key={sub.id} className="space-y-1.5">
                       <div className="flex items-center justify-between text-xs">
-                        <span className="font-bold text-slate-800">{sub.name}</span>
+                        <div className="flex items-center space-x-1.5">
+                          {sub.code && <span className="text-[9px] font-black text-slate-500">{sub.code}:</span>}
+                          <span className="font-bold text-slate-800">{sub.name}</span>
+                        </div>
                         <div className="flex items-center space-x-2">
                           <span className="text-slate-500 font-semibold">{sub.internalMarks} / 50</span>
                           <span className={`inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-md text-[11px] font-extrabold border ${risk.bg}`}>
@@ -494,7 +504,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
                   <div className="flex items-center space-x-2">
                     <Target className="w-4 h-4 text-red-600" />
                     <span className="text-xs font-black uppercase tracking-wider text-slate-700">
-                      Overall Semester Readiness Score
+                      Overall Semester 3 Readiness Score
                     </span>
                   </div>
                   <span className={`inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-xs font-extrabold border ${
@@ -540,18 +550,18 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
         </div>
       </div>
 
-      {/* CARD 3: 6-Week Adaptive Study Roadmap (DYNAMICALLY RE-CALCULATED) */}
+      {/* CARD 3: 6-Week Adaptive Study Roadmap (DYNAMICALLY RE-CALCULATED FOR SEM 3) */}
       <section className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-8 shadow-sm relative">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-6 border-b border-slate-100 gap-2">
           <div>
             <div className="flex items-center space-x-2">
               <h2 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight">6-Week Adaptive Study Roadmap</h2>
               <span className="bg-rose-50 text-red-800 text-[10px] uppercase font-extrabold px-2.5 py-0.5 rounded border border-rose-200">
-                AI Scheduled
+                Sem 3 AI Scheduled
               </span>
             </div>
             <p className="text-slate-500 text-xs mt-1">
-              Sequential learning milestones dynamically re-calculated from your active subject list ({subjects.length} subjects active)
+              Sequential learning milestones dynamically re-calculated from your 7 active Semester 3 courses
             </p>
           </div>
           <div className="flex items-center space-x-2 text-xs font-semibold text-slate-600 shrink-0">
@@ -616,7 +626,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
         </div>
       </section>
 
-      {/* CARD 4: AI SUGGESTED STUDY PRIORITIES (DYNAMICALLY RE-CALCULATED FROM ACTIVE SUBJECTS) */}
+      {/* CARD 4: AI SUGGESTED STUDY PRIORITIES FOR SEMESTER 3 COURSES */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
@@ -625,7 +635,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
               <span>AI-Suggested Study Priorities</span>
             </h2>
             <p className="text-slate-500 text-xs mt-0.5">
-              Priority-ranked modules dynamically re-calculated from your active subject roster ({subjects.length} active)
+              Priority-ranked modules dynamically re-calculated from your Semester 3 course roster ({subjects.length} active)
             </p>
           </div>
         </div>
@@ -648,9 +658,16 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
                     <span className="text-[11px] font-semibold text-slate-500">Est. {item.estTime}</span>
                   </div>
 
-                  <h3 className="text-base font-bold text-slate-900 group-hover:text-red-700 transition-colors">
-                    {item.name}
-                  </h3>
+                  <div className="space-y-1">
+                    {item.code && (
+                      <span className="text-[10px] font-black text-red-600 bg-rose-50 px-2 py-0.5 rounded border border-rose-200">
+                        {item.code}
+                      </span>
+                    )}
+                    <h3 className="text-base font-bold text-slate-900 group-hover:text-red-700 transition-colors pt-1">
+                      {item.name}
+                    </h3>
+                  </div>
                   <p className="text-slate-600 text-xs mt-2 leading-relaxed">
                     {item.desc}
                   </p>
