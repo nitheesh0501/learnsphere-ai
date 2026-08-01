@@ -15,7 +15,6 @@ const SEM3_SUBJECTS = [
 
 // STRICT SEMESTER 3 DOMAIN QUESTION BANK ISOLATED BY SUBJECT CODE & MNE
 const SEM3_QUESTION_BANK = {
-  // 1. Discrete Mathematics (2321MAB301T / DM)
   "Discrete Mathematics": [
     {
       id: 101,
@@ -45,8 +44,6 @@ const SEM3_QUESTION_BANK = {
       correct: 1
     }
   ],
-
-  // 2. Computer Networks (2321CSC301T / CN)
   "Computer Networks": [
     {
       id: 201,
@@ -76,8 +73,6 @@ const SEM3_QUESTION_BANK = {
       correct: 1
     }
   ],
-
-  // 3. Advanced Data Structures & Algorithms (2321CSC302J / ADSA)
   "Advanced Data Structures & Algorithms": [
     {
       id: 301,
@@ -107,8 +102,6 @@ const SEM3_QUESTION_BANK = {
       correct: 0
     }
   ],
-
-  // 4. Fundamentals of AI & Machine Learning (2321CSC303J / FAIML)
   "Fundamentals of AI & Machine Learning": [
     {
       id: 401,
@@ -138,8 +131,6 @@ const SEM3_QUESTION_BANK = {
       correct: 1
     }
   ],
-
-  // 5. Embedded System Design (2321CSS301J / ESD)
   "Embedded System Design": [
     {
       id: 501,
@@ -169,8 +160,6 @@ const SEM3_QUESTION_BANK = {
       correct: 1
     }
   ],
-
-  // 6. Object Oriented Programming using Java (2321CSC304R / OOPJ)
   "Object Oriented Programming using Java": [
     {
       id: 601,
@@ -200,8 +189,6 @@ const SEM3_QUESTION_BANK = {
       correct: 1
     }
   ],
-
-  // 7. Career Skill Development III (2321SDA301L / CSD)
   "Career Skill Development III": [
     {
       id: 701,
@@ -281,7 +268,6 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
 
   useEffect(() => {
     if (initialSubject) {
-      // Find matching Sem 3 subject title or code
       const matched = SEM3_SUBJECTS.find(
         s => s.title.toLowerCase().includes(initialSubject.toLowerCase()) ||
              s.mne.toLowerCase() === initialSubject.toLowerCase() ||
@@ -291,7 +277,6 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
     }
   }, [initialSubject]);
 
-  // STRICT ISOLATED SEMESTER 3 QUESTION BANK LOOKUP
   const activeQuestions = SEM3_QUESTION_BANK[selectedSubject] || SEM3_QUESTION_BANK["Discrete Mathematics"];
   const currentQ = activeQuestions[activeQuestionIndex % activeQuestions.length];
 
@@ -328,7 +313,6 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
     restartQuiz();
   };
 
-  // Get LeetCode practice problems for selected Semester 3 subject
   const currentLeetCodeProblems = SEM3_LEETCODE_POOL[selectedSubject] || SEM3_LEETCODE_POOL["Discrete Mathematics"];
   const activeSubjObj = SEM3_SUBJECTS.find(s => s.title === selectedSubject) || SEM3_SUBJECTS[0];
 
@@ -338,22 +322,22 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
       {/* Header Banner */}
       <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center space-x-2 text-red-600 text-xs font-bold uppercase tracking-wider mb-1">
-            <Zap className="w-4 h-4" />
+          <div className="flex items-center space-x-2 text-[#701C34] text-xs font-bold uppercase tracking-wider mb-1">
+            <Zap className="w-4 h-4 text-[#701C34]" />
             <span>Semester 3 Focus Mode Assessment</span>
           </div>
           <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
             {activeSubjObj.title} ({activeSubjObj.mne})
           </h1>
           <p className="text-slate-500 text-xs mt-1">
-            Official Course Code: <strong className="text-red-600 font-bold">{activeSubjObj.code}</strong> • Department of {activeSubjObj.dept}
+            Official Course Code: <strong className="text-[#701C34] font-bold">{activeSubjObj.code}</strong> • Department of {activeSubjObj.dept}
           </p>
         </div>
 
         {/* Semester 3 Subject Switcher Dropdown */}
         <div className="relative shrink-0 w-full sm:w-auto">
           <div className="flex items-center space-x-2 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
-            <Filter className="w-4 h-4 text-red-600 ml-2" />
+            <Filter className="w-4 h-4 text-[#701C34] ml-2" />
             <select
               value={selectedSubject}
               onChange={(e) => handleSubjectSwitch(e.target.value)}
@@ -377,7 +361,7 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
             onClick={() => handleSubjectSwitch(s.title)}
             className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all whitespace-nowrap border ${
               selectedSubject === s.title
-                ? 'bg-red-600 text-white border-red-600 shadow-sm'
+                ? 'bg-[#701C34] text-white border-[#701C34] shadow-sm'
                 : 'bg-white text-slate-600 hover:text-slate-900 border-slate-200 hover:border-slate-300'
             }`}
           >
@@ -392,9 +376,9 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
         <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-8 shadow-sm space-y-6">
           
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs font-bold text-slate-500 border-b border-slate-100 pb-4 gap-2">
-            <span className="text-red-600 font-extrabold">Question {activeQuestionIndex + 1} of {activeQuestions.length}</span>
+            <span className="text-[#701C34] font-extrabold">Question {activeQuestionIndex + 1} of {activeQuestions.length}</span>
             <div className="flex items-center space-x-2">
-              <span className="bg-rose-50 text-red-700 px-2.5 py-1 rounded-lg font-bold border border-rose-200">
+              <span className="bg-rose-50 text-[#701C34] px-2.5 py-1 rounded-lg font-bold border border-rose-200">
                 {currentQ.code}
               </span>
               <span className={`px-2.5 py-1 rounded-lg font-bold border ${
@@ -402,7 +386,7 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
                   ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                   : currentQ.difficulty === 'Medium'
                   ? 'bg-amber-50 text-amber-700 border-amber-200'
-                  : 'bg-rose-100 text-red-800 border-rose-200'
+                  : 'bg-rose-100 text-[#701C34] border-rose-200'
               }`}>
                 {currentQ.difficulty}
               </span>
@@ -421,12 +405,12 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
                 onClick={() => setSelectedOption(idx)}
                 className={`w-full p-4 rounded-xl text-left text-xs sm:text-sm font-semibold transition-all border flex items-center justify-between ${
                   selectedOption === idx
-                    ? 'border-red-600 bg-rose-50/80 text-red-950 shadow-xs'
+                    ? 'border-[#701C34] bg-rose-50/80 text-[#701C34] shadow-xs'
                     : 'border-slate-200 hover:border-slate-300 bg-slate-50/50 text-slate-800'
                 }`}
               >
                 <span>{opt}</span>
-                {selectedOption === idx && <CheckCircle2 className="w-5 h-5 text-red-600 shrink-0" />}
+                {selectedOption === idx && <CheckCircle2 className="w-5 h-5 text-[#701C34] shrink-0" />}
               </button>
             ))}
           </div>
@@ -446,7 +430,7 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
               onClick={handleNext}
               className={`px-6 py-2.5 rounded-xl text-xs font-bold flex items-center space-x-2 transition-all ${
                 selectedOption !== null
-                  ? 'bg-red-600 hover:bg-red-700 text-white shadow-md shadow-red-600/20'
+                  ? 'bg-[#701C34] hover:bg-[#581427] text-white shadow-md shadow-[#701C34]/20'
                   : 'bg-slate-200 text-slate-400 cursor-not-allowed'
               }`}
             >
@@ -458,7 +442,7 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
       ) : (
         /* Result Screen */
         <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm text-center space-y-6">
-          <div className="w-16 h-16 bg-rose-100 border border-rose-200 rounded-full flex items-center justify-center mx-auto text-red-600">
+          <div className="w-16 h-16 bg-rose-100 border border-rose-200 rounded-full flex items-center justify-center mx-auto text-[#701C34]">
             <Award className="w-8 h-8" />
           </div>
 
@@ -480,7 +464,7 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
           <div className="flex items-center justify-center gap-3">
             <button
               onClick={restartQuiz}
-              className="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold shadow-md shadow-red-600/20 inline-flex items-center space-x-2 transition-all"
+              className="px-6 py-2.5 bg-[#701C34] hover:bg-[#581427] text-white rounded-xl text-xs font-bold shadow-md shadow-[#701C34]/20 inline-flex items-center space-x-2 transition-all"
             >
               <RotateCcw className="w-4 h-4" />
               <span>Retake {activeSubjObj.mne} Assessment</span>
@@ -495,8 +479,8 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
           <div>
             <div className="flex items-center space-x-2 flex-wrap gap-y-1">
-              <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-md text-xs font-black uppercase tracking-wider bg-rose-50 text-red-700 border border-rose-200 shadow-2xs">
-                <Code2 className="w-3.5 h-3.5 text-red-600" />
+              <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-md text-xs font-black uppercase tracking-wider bg-rose-50 text-[#701C34] border border-rose-200 shadow-2xs">
+                <Code2 className="w-3.5 h-3.5 text-[#701C34]" />
                 <span>Recommended LeetCode Practice</span>
               </span>
               <span className="text-xs font-extrabold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded border border-slate-200">
@@ -518,7 +502,7 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
           {currentLeetCodeProblems.map((prob) => (
             <div
               key={prob.id}
-              className="bg-white border border-slate-200 hover:border-red-300 rounded-xl p-4 flex flex-col justify-between space-y-3 shadow-xs hover:shadow-md transition-all duration-200 group"
+              className="bg-white border border-slate-200 hover:border-[#701C34] rounded-xl p-4 flex flex-col justify-between space-y-3 shadow-xs hover:shadow-md transition-all duration-200 group"
             >
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between flex-wrap">
@@ -528,13 +512,13 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
                       ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                       : prob.difficulty === 'Medium'
                       ? 'bg-amber-50 text-amber-700 border-amber-200'
-                      : 'bg-rose-100 text-red-800 border-rose-200'
+                      : 'bg-rose-100 text-[#701C34] border-rose-200'
                   }`}>
                     {prob.difficulty}
                   </span>
                 </div>
 
-                <h4 className="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-red-600 transition-colors line-clamp-1">
+                <h4 className="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-[#701C34] transition-colors line-clamp-1">
                   {prob.title}
                 </h4>
 
@@ -551,7 +535,7 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
                 href={`https://leetcode.com/problems/${prob.slug}/`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-2 bg-slate-50 group-hover:bg-red-600 text-slate-700 group-hover:text-white border border-slate-200 group-hover:border-red-600 rounded-lg text-xs font-bold transition-all flex items-center justify-center space-x-1"
+                className="w-full py-2 bg-slate-50 group-hover:bg-[#701C34] text-slate-700 group-hover:text-white border border-slate-200 group-hover:border-[#701C34] rounded-lg text-xs font-bold transition-all flex items-center justify-center space-x-1"
                 title={`Solve ${prob.title} on LeetCode`}
               >
                 <span>Solve Problem</span>

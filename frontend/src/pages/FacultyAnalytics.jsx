@@ -63,8 +63,7 @@ const DEFAULT_ROSTER = [
     internal_score: 22.5,
     max_score: 50,
     percentage: 45.0,
-    risk_level: 'Weak',
-    status: 'Resolved',
+    risk_level: 'Resolved',
     last_action: 'Completed Wk 1 Quiz',
     avatar: 'ME'
   },
@@ -97,7 +96,6 @@ const DEFAULT_ROSTER = [
 ];
 
 export default function FacultyAnalytics({ addToast }) {
-  // Initialize students state from localStorage or default roster
   const [students, setStudents] = useState(() => {
     const saved = localStorage.getItem('learnsphere_roster');
     if (saved) {
@@ -111,7 +109,6 @@ export default function FacultyAnalytics({ addToast }) {
     return DEFAULT_ROSTER;
   });
 
-  // Auto-save roster changes to localStorage
   useEffect(() => {
     localStorage.setItem('learnsphere_roster', JSON.stringify(students));
   }, [students]);
@@ -121,7 +118,6 @@ export default function FacultyAnalytics({ addToast }) {
   const [loadingId, setLoadingId] = useState(null);
 
   useEffect(() => {
-    // Only fetch remote dashboard if localStorage hasn't stored customized interventions
     const saved = localStorage.getItem('learnsphere_roster');
     if (!saved) {
       teacherAPI.getDashboard().then((res) => {
@@ -178,10 +174,10 @@ export default function FacultyAnalytics({ addToast }) {
     <div className="space-y-8 max-w-7xl mx-auto px-2 sm:px-4">
       
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-gradient-to-r from-slate-900 via-rose-950 to-red-950 p-5 sm:p-6 rounded-2xl border border-red-900/60 text-white shadow-xl">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-gradient-to-r from-[#4A1021] via-[#701C34] to-[#581427] p-5 sm:p-6 rounded-2xl border border-[#581427] text-white shadow-xl">
         <div>
-          <div className="flex items-center space-x-2 text-rose-300 text-xs font-bold uppercase tracking-wider mb-1">
-            <Shield className="w-3.5 h-3.5 text-red-400" />
+          <div className="flex items-center space-x-2 text-rose-200 text-xs font-bold uppercase tracking-wider mb-1">
+            <Shield className="w-3.5 h-3.5 text-rose-300" />
             <span>Academic Intervention Analytics • Semester 3</span>
           </div>
           <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-white tracking-tight">
@@ -212,10 +208,10 @@ export default function FacultyAnalytics({ addToast }) {
         <div className="bg-white rounded-2xl border border-slate-200 p-5 flex items-center justify-between shadow-sm">
           <div>
             <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">At-Risk Student Count</p>
-            <p className="text-3xl font-black text-red-600 mt-1">{atRiskCount}</p>
-            <p className="text-[11px] text-red-600 font-bold mt-1">Requires Early Intervention</p>
+            <p className="text-3xl font-black text-[#701C34] mt-1">{atRiskCount}</p>
+            <p className="text-[11px] text-[#701C34] font-bold mt-1">Requires Early Intervention</p>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-center text-red-600 shrink-0">
+          <div className="w-12 h-12 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-center text-[#701C34] shrink-0">
             <AlertCircle className="w-6 h-6" />
           </div>
         </div>
@@ -253,7 +249,7 @@ export default function FacultyAnalytics({ addToast }) {
                 placeholder="Search student, code, or course..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-1.5 text-xs text-slate-900 font-semibold focus:outline-none focus:border-red-600"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-1.5 text-xs text-slate-900 font-semibold focus:outline-none focus:border-[#701C34]"
               />
             </div>
 
@@ -264,7 +260,7 @@ export default function FacultyAnalytics({ addToast }) {
                   key={st}
                   onClick={() => setFilterStatus(st)}
                   className={`px-3 py-1 rounded-lg transition-all whitespace-nowrap ${
-                    filterStatus === st ? 'bg-red-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                    filterStatus === st ? 'bg-[#701C34] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
                   {st}
@@ -294,7 +290,7 @@ export default function FacultyAnalytics({ addToast }) {
                   {/* Student Info */}
                   <td className="py-3.5 px-3">
                     <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 rounded-lg bg-rose-50 text-red-700 font-bold flex items-center justify-center text-xs border border-rose-200 shrink-0">
+                      <div className="w-8 h-8 rounded-lg bg-rose-50 text-[#701C34] font-bold flex items-center justify-center text-xs border border-rose-200 shrink-0">
                         {stu.avatar}
                       </div>
                       <div>
@@ -320,7 +316,7 @@ export default function FacultyAnalytics({ addToast }) {
                   <td className="py-3.5 px-3">
                     <span className={`px-2.5 py-0.5 rounded-md text-[10px] font-black border ${
                       stu.risk_level === 'Weak'
-                        ? 'bg-rose-100 text-red-800 border-rose-200'
+                        ? 'bg-rose-100 text-[#701C34] border-rose-200'
                         : 'bg-amber-50 text-amber-800 border-amber-200'
                     }`}>
                       {stu.risk_level}
@@ -331,7 +327,7 @@ export default function FacultyAnalytics({ addToast }) {
                   <td className="py-3.5 px-3">
                     <span className={`px-2.5 py-1 rounded-full text-[10px] font-black border inline-flex items-center space-x-1 ${
                       stu.status === 'Flagged'
-                        ? 'bg-rose-100 text-red-800 border-rose-200'
+                        ? 'bg-rose-100 text-[#701C34] border-rose-200'
                         : stu.status === 'Nudge Sent'
                         ? 'bg-amber-50 text-amber-800 border-amber-200'
                         : 'bg-emerald-50 text-emerald-800 border-emerald-200'
@@ -347,7 +343,7 @@ export default function FacultyAnalytics({ addToast }) {
                         <button
                           disabled={loadingId === stu.id}
                           onClick={() => handleIntervention(stu.id, 'nudge')}
-                          className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold transition-all shadow-xs flex items-center space-x-1 active:scale-95"
+                          className="px-3 py-1.5 bg-[#701C34] hover:bg-[#581427] text-white rounded-lg text-xs font-bold transition-all shadow-xs flex items-center space-x-1 active:scale-95"
                         >
                           <Send className="w-3 h-3" />
                           <span>Send Nudge</span>

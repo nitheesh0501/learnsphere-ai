@@ -4,10 +4,10 @@
 
 @layer base {
   :root {
-    --primary-accent: #DC2626;
-    --primary-hover: #B91C1C;
-    --dark-accent: #991B1B;
-    --light-accent: #FEE2E2;
+    --primary-accent: #701C34; /* College Maroon */
+    --primary-hover: #581427;
+    --dark-accent: #4A1021;
+    --light-accent: #FDF2F4;
     --bg-main: #F8FAFC;
     --bg-card: #FFFFFF;
     --border-card: #E2E8F0;
@@ -23,13 +23,13 @@
 
   /* Global Mouse Text Selection Styles */
   ::selection {
-    background-color: #FEE2E2; /* Light Rose Accent */
-    color: #DC2626; /* Crimson Red Text */
+    background-color: #FDF2F4; /* Pale Maroon Tint */
+    color: #701C34; /* Deep Maroon Text */
   }
 
   ::-moz-selection {
-    background-color: #FEE2E2;
-    color: #DC2626;
+    background-color: #FDF2F4;
+    color: #701C34;
   }
 
   /* Chrome, Safari, Edge, Opera - Remove number input spinner arrows */
@@ -60,8 +60,8 @@
 }
 
 .white-card-interactive:hover {
-  border-color: #DC2626;
-  box-shadow: 0 10px 25px -5px rgba(220, 38, 38, 0.12);
+  border-color: #701C34;
+  box-shadow: 0 10px 25px -5px rgba(112, 28, 52, 0.12);
   transform: translateY(-2px);
 }
 
