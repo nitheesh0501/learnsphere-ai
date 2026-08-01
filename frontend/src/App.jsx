@@ -10,10 +10,23 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('hub'); // 'hub' | 'quiz' | 'analytics'
   const [quizSubject, setQuizSubject] = useState(null);
 
-  // Initialize readinessScore state from localStorage or default 78.0
+  // Initialize readinessScore state from localStorage or default fallback 51.0
   const [readinessScore, setReadinessScore] = useState(() => {
     const saved = localStorage.getItem('learnsphere_readiness');
-    return saved ? Number(saved) : 78.0;
+    if (saved && !isNaN(Number(saved))) return Number(saved);
+    
+    // Calculate initial baseline readiness from localStorage subjects if available
+    const savedSubjects = localStorage.getItem('learnsphere_subjects');
+    if (savedSubjects) {
+      try {
+        const parsed = JSON.parse(savedSubjects);
+        if (Array.isArray(parsed) && parsed.length === 7) {
+          const totalPct = parsed.reduce((acc, sub) => acc + ((Number(sub.internalMarks) || 0) / (Number(sub.maxMarks) || 50)) * 100, 0);
+          return Math.round(totalPct / 7);
+        }
+      } catch (e) {}
+    }
+    return 51.0;
   });
 
   // Auto-save readinessScore to localStorage whenever it updates
@@ -72,6 +85,7 @@ export default function App() {
           {activeTab === 'analytics' && (
             <FacultyAnalytics
               addToast={addToast}
+              nitheeshReadiness={readinessScore}
             />
           )}
         </main>
@@ -84,7 +98,7 @@ export default function App() {
             </div>
             
             <div>
-              <p>© 2026 Academic Analytics Engine. All rights reserved.</p>
+              <p>© 2026 Academic Analytics Engine. Verified by Prof. Madhumitha.</p>
             </div>
           </div>
         </footer>

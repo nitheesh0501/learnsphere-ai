@@ -14,10 +14,10 @@ const facultyRosterData = [
     weak_subject: "2321CSS301J — Embedded System Design (ESD)",
     subTopics: ["GPIO Timers", "PWM Generation"],
     concept_gaps: ["GPIO Timers", "PWM Generation"],
-    readinessScore: "78%",
-    readiness_score: 78.0,
-    riskStatus: "Low Risk",
-    risk_level: "Low Risk",
+    readinessScore: "51%",
+    readiness_score: 51.0,
+    riskStatus: "Needs Review",
+    risk_level: "Needs Review",
     interventionStatus: "On Track",
     status: "On Track",
     avatar: "NI",
@@ -254,7 +254,7 @@ const facultyRosterData = [
   }
 ];
 
-export default function FacultyAnalytics({ addToast }) {
+export default function FacultyAnalytics({ addToast, nitheeshReadiness }) {
   const [students, setStudents] = useState(() => {
     const saved = localStorage.getItem('learnsphere_roster');
     if (saved) {
@@ -274,6 +274,28 @@ export default function FacultyAnalytics({ addToast }) {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('All Students');
+
+  // DYNAMICALLY FETCH NITHEESH'S CURRENT READINESS SCORE FROM LOCALSTORAGE OR PROP
+  const getDynamicNitheeshReadinessScore = () => {
+    if (nitheeshReadiness !== undefined && nitheeshReadiness !== null && !isNaN(Number(nitheeshReadiness))) {
+      return Math.round(Number(nitheeshReadiness));
+    }
+    const savedReadiness = localStorage.getItem('learnsphere_readiness');
+    if (savedReadiness && !isNaN(Number(savedReadiness))) {
+      return Math.round(Number(savedReadiness));
+    }
+    const savedSubjects = localStorage.getItem('learnsphere_subjects');
+    if (savedSubjects) {
+      try {
+        const parsed = JSON.parse(savedSubjects);
+        if (Array.isArray(parsed) && parsed.length === 7) {
+          const totalPct = parsed.reduce((acc, sub) => acc + ((Number(sub.internalMarks) || 0) / (Number(sub.maxMarks) || 50)) * 100, 0);
+          return Math.round(totalPct / 7);
+        }
+      } catch (e) {}
+    }
+    return 51;
+  };
 
   // DIRECT ACTION 1: INSTANT ASSIGN REMEDIAL ROADMAP (NO POPUPS / NO MODALS)
   const handleAssignRemedialDirect = (stu) => {
@@ -301,9 +323,31 @@ export default function FacultyAnalytics({ addToast }) {
 
   // DIRECT ACTION 2: FACULTY INDIVIDUAL STUDENT PDF REPORT DOWNLOAD HANDLER
   const handleDownloadStudentPDF = (stu) => {
-    const numScore = typeof stu.readinessScore === 'string' 
+    let numScore = typeof stu.readinessScore === 'string' 
       ? parseFloat(stu.readinessScore) 
-      : (stu.readiness_score || 78.0);
+      : (stu.readiness_score || 51.0);
+
+    let stuSubjects = stu.subjects;
+
+    // DYNAMIC SYNC FOR NITHEESH: Read live subject marks and readiness score from localStorage
+    if (stu.id === "NI_H" || stu.name === "Nitheesh") {
+      numScore = getDynamicNitheeshReadinessScore();
+      const savedSubjects = localStorage.getItem('learnsphere_subjects');
+      if (savedSubjects) {
+        try {
+          const parsed = JSON.parse(savedSubjects);
+          if (Array.isArray(parsed) && parsed.length === 7) {
+            stuSubjects = parsed.map(s => ({
+              code: s.code,
+              name: s.name,
+              score: Number(s.internalMarks) || 0,
+              max: Number(s.maxMarks) || 50,
+              status: Number(s.internalMarks) > 40 ? 'Strong' : Number(s.internalMarks) >= 35 ? 'Average' : 'Weak'
+            }));
+          }
+        } catch (e) {}
+      }
+    }
 
     generateStudentPDFReport({
       name: stu.name || stu.student_name,
@@ -313,7 +357,7 @@ export default function FacultyAnalytics({ addToast }) {
       semester: "Semester 3 (CSE)",
       readinessScore: numScore,
       riskLevel: stu.riskStatus || stu.risk_level,
-      subjects: stu.subjects,
+      subjects: stuSubjects,
       recommendations: stu.recommendations || [
         `Targeted intervention for weak subject: ${stu.weakSubject || stu.weak_subject}`,
         "Complete 6-Week Adaptive Recovery Roadmap drills in Focus Mode."
@@ -354,8 +398,11 @@ export default function FacultyAnalytics({ addToast }) {
   const remedialAssignedCount = students.filter((s) => (s.interventionStatus || s.status) === 'Remedial Assigned').length;
   const resolvedCount = students.filter((s) => (s.interventionStatus || s.status) === 'Resolved' || (s.interventionStatus || s.status) === 'On Track').length;
 
-  // SAFE CLASS AVERAGE READINESS CALCULATION
+  // SAFE CLASS AVERAGE READINESS CALCULATION (DYNAMIC FOR NITHEESH)
   const validReadinesses = students.map(s => {
+    if (s.id === "NI_H" || s.name === "Nitheesh") {
+      return getDynamicNitheeshReadinessScore();
+    }
     if (typeof s.readinessScore === 'string') return parseFloat(s.readinessScore) || 0;
     return Number(s.readiness_score) || 0;
   });
@@ -366,18 +413,18 @@ export default function FacultyAnalytics({ addToast }) {
   return (
     <div className="space-y-8 max-w-7xl mx-auto px-2 sm:px-4">
       
-      {/* Header Banner */}
+      {/* Header Banner: Faculty Analytics & Intervention Portal — Prof. Madhumitha */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-gradient-to-r from-[#4A1021] via-[#701C34] to-[#581427] p-5 sm:p-6 rounded-2xl border border-[#581427] text-white shadow-xl">
         <div>
           <div className="flex items-center space-x-2 text-rose-200 text-xs font-bold uppercase tracking-wider mb-1">
             <Shield className="w-3.5 h-3.5 text-rose-300" />
-            <span>Easwari Engineering College • Semester 3</span>
+            <span>Prof. Madhumitha | Course Coordinator — Semester 3 CSE</span>
           </div>
           <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-white tracking-tight">
-            Faculty Academic Intervention & Remedial Center
+            Faculty Analytics & Intervention Portal — Prof. Madhumitha
           </h1>
           <p className="text-rose-100/90 text-xs sm:text-sm mt-1 max-w-2xl leading-relaxed">
-            Monitor 7 official Semester 3 courses, assign targeted recovery modules & LeetCode drills, inspect weaknesses inline, and export individual student PDF performance reports.
+            Easwari Engineering College • Monitor 7 official Semester 3 courses, assign targeted recovery roadmaps, inspect inline weaknesses, and export verified PDF performance reports.
           </p>
         </div>
       </div>
@@ -412,7 +459,7 @@ export default function FacultyAnalytics({ addToast }) {
         {/* KPI 3: Remedial Assigned & Performance Improved */}
         <div className="bg-white rounded-2xl border border-slate-200 p-5 flex items-center justify-between shadow-sm sm:col-span-2 lg:col-span-1">
           <div>
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Remedial Active / Improved</p>
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Remedial Active / Resolved</p>
             <p className="text-3xl font-black text-emerald-600 mt-1">{remedialAssignedCount + resolvedCount}</p>
             <p className="text-[11px] text-emerald-700 font-bold mt-1">{remedialAssignedCount} Assigned • {resolvedCount} Resolved/Track</p>
           </div>
@@ -432,7 +479,7 @@ export default function FacultyAnalytics({ addToast }) {
           <div>
             <div className="flex items-center space-x-2">
               <span className="text-[10px] font-black uppercase tracking-wider text-rose-200 bg-white/10 px-2 py-0.5 rounded border border-white/15">
-                Problem Statement Analytics
+                Faculty Lead: Prof. Madhumitha
               </span>
             </div>
             <h3 className="text-base font-extrabold text-white mt-1">
@@ -503,7 +550,7 @@ export default function FacultyAnalytics({ addToast }) {
           </div>
         </div>
 
-        {/* Roster Table (8 DISTINCT STUDENTS HARDCODED, WEAKNESSES DIRECTLY IN TABLE CELL, CLEAN READINESS SCORE CELL) */}
+        {/* Roster Table (8 DISTINCT STUDENTS HARDCODED, NITHEESH READINESS DYNAMIC FROM LOCALSTORAGE) */}
         <div className="overflow-x-auto no-scrollbar border border-slate-100 rounded-xl">
           <table className="w-full text-left text-xs min-w-[780px]">
             <thead>
@@ -518,12 +565,21 @@ export default function FacultyAnalytics({ addToast }) {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {filteredStudents.map((stu) => {
+                const isNitheesh = stu.id === "NI_H" || stu.name === "Nitheesh";
                 const sName = stu.name || stu.student_name;
                 const sRoll = stu.rollNo || stu.student_code;
                 const sWeak = stu.weakSubject || stu.weak_subject;
                 const sGaps = stu.subTopics || stu.concept_gaps || [];
-                const rScore = stu.readinessScore || `${stu.readiness_score}%`;
-                const rRisk = stu.riskStatus || stu.risk_level;
+                
+                // Nitheesh's readiness score dynamically fetches from localStorage/state
+                const rScore = isNitheesh 
+                  ? `${getDynamicNitheeshReadinessScore()}%` 
+                  : (stu.readinessScore || `${stu.readiness_score}%`);
+                
+                const rRisk = isNitheesh 
+                  ? (getDynamicNitheeshReadinessScore() >= 75 ? 'Low Risk' : getDynamicNitheeshReadinessScore() >= 60 ? 'Needs Review' : 'Needs Review')
+                  : (stu.riskStatus || stu.risk_level);
+                  
                 const iStatus = stu.interventionStatus || stu.status;
                 const sAvatar = stu.avatar || sName.substring(0, 2).toUpperCase();
 
@@ -537,7 +593,14 @@ export default function FacultyAnalytics({ addToast }) {
                           {sAvatar}
                         </div>
                         <div>
-                          <p className="font-bold text-slate-900">{sName}</p>
+                          <p className="font-bold text-slate-900 flex items-center gap-1">
+                            <span>{sName}</span>
+                            {isNitheesh && (
+                              <span className="text-[9px] font-extrabold bg-rose-100 text-[#701C34] px-1 py-0.2 rounded border border-rose-200">
+                                Live Sync
+                              </span>
+                            )}
+                          </p>
                           <p className="text-[10px] text-slate-500 font-medium">{sRoll}</p>
                         </div>
                       </div>
@@ -555,7 +618,7 @@ export default function FacultyAnalytics({ addToast }) {
                       </div>
                     </td>
 
-                    {/* Readiness Score Cell (Direct rendering without orphaned % symbol) */}
+                    {/* Readiness Score Cell (Dynamically synced for Nitheesh) */}
                     <td className="py-3.5 px-3">
                       <span className="font-bold text-slate-800 text-sm">{rScore}</span>
                     </td>
