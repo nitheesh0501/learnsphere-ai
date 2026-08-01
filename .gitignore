@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+venv/
+.venv/
+env/
+
+# Production builds
+dist/
+build/
+frontend/dist/
+
+# Environment & Secret files
+.env
+.env.local
+backend/.env
+
+# Python Bytecode & Caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# System / IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+public_url.txt

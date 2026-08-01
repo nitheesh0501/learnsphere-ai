@@ -1,0 +1,72 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "LearnSphere AI API",
+    "description": "Production-ready OpenAPI specification for LearnSphere AI - Personalized Learning Assistant (ISTE Hackathon 2026)",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000",
+      "description": "Local Development Server"
+    }
+  ],
+  "paths": {
+    "/api/auth/register": {
+      "post": {
+        "summary": "Register new Student or Teacher account",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string" },
+                  "password": { "type": "string" },
+                  "name": { "type": "string" },
+                  "role": { "type": "string", "enum": ["student", "teacher"] }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "User created" }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "summary": "Login to receive JWT token",
+        "responses": {
+          "200": { "description": "JWT Token returned" }
+        }
+      }
+    },
+    "/api/student/upload-marksheet": {
+      "post": {
+        "summary": "Upload IA marksheet (PDF/PNG/JPG) for OCR extraction",
+        "responses": {
+          "200": { "description": "Subjects extracted and classified as Strong/Medium/Weak" }
+        }
+      }
+    },
+    "/api/student/quiz/start": {
+      "post": {
+        "summary": "Fetch adaptive quiz questions for selected week",
+        "responses": {
+          "200": { "description": "Adaptive questions breakdown returned" }
+        }
+      }
+    },
+    "/api/teacher/dashboard": {
+      "get": {
+        "summary": "Teacher Dashboard metrics and weak student alerts",
+        "responses": {
+          "200": { "description": "Dashboard data returned" }
+        }
+      }
+    }
+  }
+}
