@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Zap, CheckCircle2, ArrowRight, RotateCcw, Award, Sliders, BookOpen, ExternalLink, Code2, Sparkles, AlertCircle } from 'lucide-react';
+import { Zap, CheckCircle2, ArrowRight, RotateCcw, Award, Sliders, BookOpen, ExternalLink, Code2, Sparkles } from 'lucide-react';
 import { studentAPI } from '../services/api';
 
 const WEEKLY_QUESTION_BANK = {
@@ -209,64 +209,102 @@ const WEEKLY_QUESTION_BANK = {
   ]
 };
 
-// LeetCode Problem Bank grouped by topic and difficulty
-const LEETCODE_BANK = {
-  "Programming in C++": {
-    topic: "Arrays, Pointers & Memory Management",
-    easy: [
-      { id: 1, title: "Two Sum", difficulty: "Easy", slug: "two-sum", tags: ["Array", "Hash Table"] },
-      { id: 242, title: "Valid Anagram", difficulty: "Easy", slug: "valid-anagram", tags: ["String", "Sorting"] },
-      { id: 217, title: "Contains Duplicate", difficulty: "Easy", slug: "contains-duplicate", tags: ["Array", "Hash Table"] }
+// 6-WEEK DYNAMIC LEETCODE QUESTION POOL BY WEEK AND QUIZ SCORE DIFFICULTY
+const WEEKLY_LEETCODE_POOL = {
+  1: {
+    title: "Week 1 Practice Module: Arrays & Basic Hashing",
+    topic: "Arrays & Basic Hashing",
+    low: [
+      { id: 217, title: "Contains Duplicate", difficulty: "Easy", slug: "contains-duplicate", tags: ["Array", "Hash Table"] },
+      { id: 1, title: "Two Sum", difficulty: "Easy", slug: "two-sum", tags: ["Array", "Hash Table"] }
     ],
-    medium: [
-      { id: 15, title: "3Sum", difficulty: "Medium", slug: "3sum", tags: ["Two Pointers", "Sorting"] },
-      { id: 49, title: "Group Anagrams", difficulty: "Medium", slug: "group-anagrams", tags: ["Hash Table", "String"] }
+    mid: [
+      { id: 121, title: "Best Time to Buy and Sell Stock", difficulty: "Easy", slug: "best-time-to-buy-and-sell-stock", tags: ["Array", "Dynamic Programming"] },
+      { id: 242, title: "Valid Anagram", difficulty: "Easy", slug: "valid-anagram", tags: ["Hash Table", "String"] }
     ],
-    hard: [
-      { id: 42, title: "Trapping Rain Water", difficulty: "Hard", slug: "trapping-rain-water", tags: ["Two Pointers", "Stack"] },
-      { id: 23, title: "Merge k Sorted Lists", difficulty: "Hard", slug: "merge-k-sorted-lists", tags: ["Heap", "Divide & Conquer"] }
+    high: [
+      { id: 238, title: "Product of Array Except Self", difficulty: "Medium", slug: "product-of-array-except-self", tags: ["Array", "Prefix Sum"] },
+      { id: 347, title: "Top K Frequent Elements", difficulty: "Medium", slug: "top-k-frequent-elements", tags: ["Hash Table", "Heap"] }
     ]
   },
-  "Data Structures": {
-    topic: "Stacks, Queues & Linked Lists",
-    easy: [
-      { id: 206, title: "Reverse Linked List", difficulty: "Easy", slug: "reverse-linked-list", tags: ["Linked List"] },
+  2: {
+    title: "Week 2 Practice Module: Two Pointers & Sliding Window",
+    topic: "Two Pointers & Sliding Window",
+    low: [
+      { id: 125, title: "Valid Palindrome", difficulty: "Easy", slug: "valid-palindrome", tags: ["Two Pointers", "String"] },
+      { id: 26, title: "Remove Duplicates from Sorted Array", difficulty: "Easy", slug: "remove-duplicates-from-sorted-array", tags: ["Array", "Two Pointers"] }
+    ],
+    mid: [
+      { id: 167, title: "Two Sum II - Input Array Is Sorted", difficulty: "Medium", slug: "two-sum-ii-input-array-is-sorted", tags: ["Array", "Two Pointers"] },
+      { id: 11, title: "Container With Most Water", difficulty: "Medium", slug: "container-with-most-water", tags: ["Two Pointers", "Greedy"] }
+    ],
+    high: [
+      { id: 15, title: "3Sum", difficulty: "Medium", slug: "3sum", tags: ["Two Pointers", "Sorting"] },
+      { id: 3, title: "Longest Substring Without Repeating Characters", difficulty: "Medium", slug: "longest-substring-without-repeating-characters", tags: ["Sliding Window", "Hash Table"] }
+    ]
+  },
+  3: {
+    title: "Week 3 Practice Module: Linked Lists & Recursion",
+    topic: "Linked Lists & Recursion",
+    low: [
+      { id: 206, title: "Reverse Linked List", difficulty: "Easy", slug: "reverse-linked-list", tags: ["Linked List", "Recursion"] },
       { id: 21, title: "Merge Two Sorted Lists", difficulty: "Easy", slug: "merge-two-sorted-lists", tags: ["Linked List", "Recursion"] }
     ],
-    medium: [
-      { id: 2, title: "Add Two Numbers", difficulty: "Medium", slug: "add-two-numbers", tags: ["Linked List", "Math"] },
-      { id: 143, title: "Reorder List", difficulty: "Medium", slug: "reorder-list", tags: ["Two Pointers", "Linked List"] }
+    mid: [
+      { id: 876, title: "Middle of the Linked List", difficulty: "Easy", slug: "middle-of-the-linked-list", tags: ["Linked List", "Two Pointers"] },
+      { id: 141, title: "Linked List Cycle", difficulty: "Easy", slug: "linked-list-cycle", tags: ["Linked List", "Two Pointers"] }
     ],
-    hard: [
-      { id: 25, title: "Reverse Nodes in k-Group", difficulty: "Hard", slug: "reverse-nodes-in-k-group", tags: ["Linked List", "Recursion"] }
+    high: [
+      { id: 19, title: "Remove Nth Node From End of List", difficulty: "Medium", slug: "remove-nth-node-from-end-of-list", tags: ["Linked List", "Two Pointers"] },
+      { id: 2, title: "Add Two Numbers", difficulty: "Medium", slug: "add-two-numbers", tags: ["Linked List", "Math"] }
     ]
   },
-  "Mathematics III": {
-    topic: "Matrix Algebra & Discrete Mathematics",
-    easy: [
-      { id: 9, title: "Palindrome Number", difficulty: "Easy", slug: "palindrome-number", tags: ["Math"] },
-      { id: 509, title: "Fibonacci Number", difficulty: "Easy", slug: "fibonacci-number", tags: ["Math", "DP"] }
+  4: {
+    title: "Week 4 Practice Module: Stacks, Queues & Monotonic Stacks",
+    topic: "Stacks, Queues & Monotonic Stacks",
+    low: [
+      { id: 20, title: "Valid Parentheses", difficulty: "Easy", slug: "valid-parentheses", tags: ["Stack", "String"] },
+      { id: 225, title: "Implement Stack using Queues", difficulty: "Easy", slug: "implement-stack-using-queues", tags: ["Stack", "Queue"] }
     ],
-    medium: [
-      { id: 54, title: "Spiral Matrix", difficulty: "Medium", slug: "spiral-matrix", tags: ["Matrix", "Simulation"] },
-      { id: 48, title: "Rotate Image", difficulty: "Medium", slug: "rotate-image", tags: ["Matrix", "Math"] }
+    mid: [
+      { id: 155, title: "Min Stack", difficulty: "Medium", slug: "min-stack", tags: ["Stack", "Design"] },
+      { id: 150, title: "Evaluate Reverse Polish Notation", difficulty: "Medium", slug: "evaluate-reverse-polish-notation", tags: ["Stack", "Math"] }
     ],
-    hard: [
-      { id: 149, title: "Max Points on a Line", difficulty: "Hard", slug: "max-points-on-a-line", tags: ["Geometry", "Math"] }
+    high: [
+      { id: 739, title: "Daily Temperatures", difficulty: "Medium", slug: "daily-temperatures", tags: ["Stack", "Monotonic Stack"] },
+      { id: 853, title: "Car Fleet", difficulty: "Medium", slug: "car-fleet", tags: ["Array", "Monotonic Stack"] }
     ]
   },
-  "Physics II": {
-    topic: "Wave Oscillations & Harmonic Computations",
-    easy: [
-      { id: 69, title: "Sqrt(x) (Harmonic Interpolation)", difficulty: "Easy", slug: "sqrtx", tags: ["Math", "Binary Search"] },
-      { id: 367, title: "Valid Perfect Square", difficulty: "Easy", slug: "valid-perfect-square", tags: ["Math", "Binary Search"] }
+  5: {
+    title: "Week 5 Practice Module: Trees & Binary Search",
+    topic: "Trees & Binary Search",
+    low: [
+      { id: 704, title: "Binary Search", difficulty: "Easy", slug: "binary-search", tags: ["Binary Search", "Array"] },
+      { id: 226, title: "Invert Binary Tree", difficulty: "Easy", slug: "invert-binary-tree", tags: ["Tree", "DFS"] }
     ],
-    medium: [
-      { id: 162, title: "Find Peak Element (Wave Crest)", difficulty: "Medium", slug: "find-peak-element", tags: ["Binary Search"] },
-      { id: 371, title: "Sum of Two Integers (Bitwise)", difficulty: "Medium", slug: "sum-of-two-integers", tags: ["Bit Manipulation"] }
+    mid: [
+      { id: 104, title: "Maximum Depth of Binary Tree", difficulty: "Easy", slug: "maximum-depth-of-binary-tree", tags: ["Tree", "DFS"] },
+      { id: 98, title: "Validate Binary Search Tree", difficulty: "Medium", slug: "validate-binary-search-tree", tags: ["BST", "DFS"] }
     ],
-    hard: [
-      { id: 4, title: "Median of Two Sorted Arrays", difficulty: "Hard", slug: "median-of-two-sorted-arrays", tags: ["Binary Search", "Divide & Conquer"] }
+    high: [
+      { id: 102, title: "Binary Tree Level Order Traversal", difficulty: "Medium", slug: "binary-tree-level-order-traversal", tags: ["Tree", "BFS"] },
+      { id: 236, title: "Lowest Common Ancestor of a Binary Tree", difficulty: "Medium", slug: "lowest-common-ancestor-of-a-binary-tree", tags: ["Tree", "DFS"] }
+    ]
+  },
+  6: {
+    title: "Week 6 Practice Module: Final Sprint (Advanced Graphs & Dynamic Programming)",
+    topic: "Advanced Graphs & Dynamic Programming",
+    low: [
+      { id: 70, title: "Climbing Stairs", difficulty: "Easy", slug: "climbing-stairs", tags: ["Dynamic Programming", "Math"] },
+      { id: 733, title: "Flood Fill", difficulty: "Easy", slug: "flood-fill", tags: ["Graph", "BFS/DFS"] }
+    ],
+    mid: [
+      { id: 322, title: "Coin Change", difficulty: "Medium", slug: "coin-change", tags: ["Dynamic Programming", "BFS"] },
+      { id: 200, title: "Number of Islands", difficulty: "Medium", slug: "number-of-islands", tags: ["Graph", "BFS/DFS"] }
+    ],
+    high: [
+      { id: 300, title: "Longest Increasing Subsequence", difficulty: "Medium", slug: "longest-increasing-subsequence", tags: ["Dynamic Programming", "Binary Search"] },
+      { id: 207, title: "Course Schedule", difficulty: "Medium", slug: "course-schedule", tags: ["Graph", "Topological Sort"] }
     ]
   }
 };
@@ -334,13 +372,13 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
 
   const dist = difficultyRules[selectedWeek];
 
-  // Logic to calculate Smart LeetCode Practice Recommendations based on Quiz Accuracy
-  const getLeetCodeRecommendations = (subjectName, currentScore, totalQuestions) => {
-    const accuracyPct = Math.round((currentScore / totalQuestions) * 100);
-    const bankKey = Object.keys(LEETCODE_BANK).find(
-      k => k.toLowerCase() === (subjectName || '').toLowerCase()
-    ) || "Programming in C++";
-    const bank = LEETCODE_BANK[bankKey];
+  // Dynamic 6-Week LeetCode Recommendation calculation based on selectedWeek and Quiz Score Accuracy
+  const getWeeklyLeetCodeRecommendations = (weekNum, currentScore, totalQuestions) => {
+    const accuracyPct = isFinished
+      ? Math.round((currentScore / totalQuestions) * 100)
+      : 65; // Default demo baseline before quiz completion
+
+    const weekData = WEEKLY_LEETCODE_POOL[weekNum] || WEEKLY_LEETCODE_POOL[1];
 
     let problems = [];
     let levelLabel = "";
@@ -348,24 +386,25 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
     let summaryText = "";
 
     if (accuracyPct < 50) {
-      levelLabel = "Weak Baseline • Foundational Drills";
+      levelLabel = "Low Score (<50%) • Foundational Drills";
       levelBadgeColor = "bg-rose-100 text-red-800 border-rose-200";
-      summaryText = "Score is below 50%. Solve 2-3 LeetCode Easy questions to strengthen foundational logic before retaking the quiz.";
-      problems = bank.easy;
+      summaryText = `Quiz accuracy is ${accuracyPct}%. Practice these foundational Easy problems for Week ${weekNum} (${weekData.topic}) to build confidence.`;
+      problems = weekData.low;
     } else if (accuracyPct <= 75) {
-      levelLabel = "Average Baseline • Gap-Bridging Drills";
+      levelLabel = "Mid Score (50-75%) • Intermediate Drills";
       levelBadgeColor = "bg-amber-50 text-amber-800 border-amber-200";
-      summaryText = "Score is between 50%-75%. Practice 2 LeetCode Medium problems to bridge logical gaps and handle edge cases.";
-      problems = bank.medium.slice(0, 2);
+      summaryText = `Quiz accuracy is ${accuracyPct}%. Solve these core Medium LeetCode problems for Week ${weekNum} (${weekData.topic}) to bridge logical gaps.`;
+      problems = weekData.mid;
     } else {
-      levelLabel = "Strong Baseline • Advanced Mastery";
+      levelLabel = "High Score (>75%) • Advanced Mastery";
       levelBadgeColor = "bg-emerald-50 text-emerald-800 border-emerald-200";
-      summaryText = "Accuracy is >75%! Challenge yourself with 1 Medium and 1 Hard LeetCode problem to achieve advanced competitive mastery.";
-      problems = [bank.medium[0], bank.hard[0]];
+      summaryText = `Outstanding accuracy at ${accuracyPct}%! Master these advanced LeetCode challenges for Week ${weekNum} (${weekData.topic}).`;
+      problems = weekData.high;
     }
 
     return {
-      topic: bank.topic,
+      moduleTitle: weekData.title,
+      topic: weekData.topic,
       accuracyPct,
       levelLabel,
       levelBadgeColor,
@@ -374,11 +413,9 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
     };
   };
 
-  // Determine current active subject for recommendation calculation
-  const activeSubjectName = filterSubject || (currentQ ? currentQ.subject : "Programming in C++");
-  const leetCodeRecs = getLeetCodeRecommendations(
-    activeSubjectName,
-    isFinished ? score : Math.max(1, score),
+  const leetCodeRecs = getWeeklyLeetCodeRecommendations(
+    selectedWeek,
+    score,
     questions.length
   );
 
@@ -562,31 +599,33 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
         </div>
       )}
 
-      {/* SMART LEETCODE PRACTICE RECOMMENDATIONS CARD */}
+      {/* DYNAMIC 6-WEEK LEETCODE PRACTICE RECOMMENDATIONS CARD */}
       <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm space-y-5">
         
-        {/* Card Header with Crimson Red Badge */}
+        {/* Card Header with Week Module Badge */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
           <div>
-            <div className="flex items-center space-x-2">
+            {/* Top Module Badge */}
+            <div className="flex items-center space-x-2 flex-wrap gap-y-1">
               <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-md text-xs font-black uppercase tracking-wider bg-rose-50 text-red-700 border border-rose-200 shadow-2xs">
                 <Code2 className="w-3.5 h-3.5 text-red-600" />
                 <span>Recommended LeetCode Practice</span>
               </span>
-              <span className="text-xs font-bold text-slate-500 hidden md:inline-block">
-                Target: {leetCodeRecs.topic}
+              <span className="text-xs font-extrabold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded border border-slate-200">
+                Week {selectedWeek} Module: {leetCodeRecs.topic}
               </span>
             </div>
+
             <h2 className="text-base sm:text-lg font-black text-slate-900 mt-2">
-              Adaptive LeetCode Problem Recommendations
+              {leetCodeRecs.moduleTitle}
             </h2>
             <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
-              Curated coding problems dynamically matched to your {isFinished ? `quiz accuracy (${leetCodeRecs.accuracyPct}%)` : 'current subject mastery level'}
+              Dynamically matched to Week {selectedWeek} curriculum and {isFinished ? `your score accuracy (${leetCodeRecs.accuracyPct}%)` : 'your active performance tier'}
             </p>
           </div>
 
-          {/* Level Badge */}
-          <span className={`px-3 py-1 rounded-lg text-xs font-extrabold border shrink-0 ${leetCodeRecs.levelBadgeColor}`}>
+          {/* Score Level Badge */}
+          <span className={`px-3 py-1.5 rounded-lg text-xs font-extrabold border shrink-0 ${leetCodeRecs.levelBadgeColor}`}>
             {leetCodeRecs.levelLabel}
           </span>
         </div>
