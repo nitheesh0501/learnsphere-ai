@@ -4,39 +4,49 @@
 
 @layer base {
   :root {
-    --bg-main: #f8fafc;
-    --bg-card: #ffffff;
-    --bg-header: #0f172a;
-    --border-card: #e2e8f0;
-    --color-primary: #2563eb;
-    --color-strong: #10b981;
-    --color-average: #f59e0b;
-    --color-weak: #ef4444;
+    --primary-accent: #DC2626;
+    --primary-hover: #B91C1C;
+    --dark-accent: #991B1B;
+    --light-accent: #FEE2E2;
+    --bg-main: #F8FAFC;
+    --bg-card: #FFFFFF;
+    --border-card: #E2E8F0;
+    --text-primary: #0F172A;
+    --text-muted: #475569;
   }
 
   body {
     background-color: var(--bg-main);
-    color: #0f172a;
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    color: var(--text-primary);
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
   }
 }
 
 .white-card {
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  background-color: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -2px rgba(0, 0, 0, 0.02);
 }
 
 .white-card-interactive {
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  transition: all 0.2s ease-in-out;
+  background-color: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 16px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .white-card-interactive:hover {
-  border-color: #2563eb;
-  box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.12);
+  border-color: #DC2626;
+  box-shadow: 0 10px 25px -5px rgba(220, 38, 38, 0.12);
   transform: translateY(-2px);
+}
+
+/* Custom scrollbar */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

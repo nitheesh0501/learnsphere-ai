@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Zap, CheckCircle2, ArrowRight, RotateCcw, Award, Sliders, BookOpen, AlertCircle } from 'lucide-react';
+import { Zap, CheckCircle2, ArrowRight, RotateCcw, Award, Sliders, BookOpen } from 'lucide-react';
 import { studentAPI } from '../services/api';
 
-// Dynamic Question Bank Keyed by Week Number (Week 1 to Week 6)
 const WEEKLY_QUESTION_BANK = {
   1: [
     {
@@ -224,7 +223,6 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
     }
   }, [initialSubject]);
 
-  // Difficulty distributions per week
   const difficultyRules = {
     1: { easy: 4, medium: 0, hard: 0, label: "Foundations" },
     2: { easy: 2, medium: 2, hard: 0, label: "Easy -> Medium" },
@@ -236,7 +234,6 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
 
   const rawQuestions = WEEKLY_QUESTION_BANK[selectedWeek] || WEEKLY_QUESTION_BANK[1];
   
-  // Filter questions by subject if specified from Student Hub
   const questions = filterSubject
     ? rawQuestions.filter(q => q.subject.toLowerCase() === filterSubject.toLowerCase()).length > 0
       ? rawQuestions.filter(q => q.subject.toLowerCase() === filterSubject.toLowerCase())
@@ -281,7 +278,7 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
       {/* Header Banner */}
       <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center space-x-2 text-blue-600 text-xs font-bold uppercase tracking-wider mb-1">
+          <div className="flex items-center space-x-2 text-red-600 text-xs font-bold uppercase tracking-wider mb-1">
             <Zap className="w-4 h-4" />
             <span>Adaptive Quiz Engine</span>
           </div>
@@ -293,7 +290,7 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
           </p>
         </div>
 
-        {/* Week Switcher (Mobile Landscape & Touch Friendly) */}
+        {/* Week Switcher: Crimson Red Active State */}
         <div className="flex items-center space-x-1 bg-slate-100 p-1 rounded-xl border border-slate-200 overflow-x-auto max-w-full no-scrollbar shrink-0">
           {[1, 2, 3, 4, 5, 6].map((w) => (
             <button
@@ -301,7 +298,7 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
               onClick={() => { setSelectedWeek(w); restartQuiz(); }}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 selectedWeek === w
-                  ? 'bg-blue-600 text-white shadow-xs'
+                  ? 'bg-red-600 text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
               }`}
             >
@@ -313,14 +310,14 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
 
       {/* Active Filter Notice */}
       {filterSubject && (
-        <div className="bg-slate-900 text-white rounded-xl p-3 px-4 flex items-center justify-between text-xs">
+        <div className="bg-gradient-to-r from-red-950 to-slate-900 text-white rounded-xl p-3 px-4 flex items-center justify-between text-xs border border-red-900/60 shadow-sm">
           <span className="flex items-center gap-2">
-            <BookOpen className="w-4 h-4 text-blue-400" />
+            <BookOpen className="w-4 h-4 text-rose-400" />
             <span>Focused Practice Subject: <strong>{filterSubject}</strong></span>
           </span>
           <button
             onClick={() => setFilterSubject(null)}
-            className="text-xs text-blue-300 hover:text-white underline font-semibold"
+            className="text-xs text-rose-200 hover:text-white underline font-semibold"
           >
             Show All Subjects
           </button>
@@ -328,24 +325,24 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
       )}
 
       {/* Difficulty Mix Indicator */}
-      <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-blue-900 font-medium">
+      <div className="bg-rose-50 border border-rose-200 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-red-950 font-medium">
         <span className="font-bold flex items-center gap-1.5">
-          <Sliders className="w-4 h-4 text-blue-600" />
+          <Sliders className="w-4 h-4 text-red-600" />
           <span>Week {selectedWeek} Difficulty Level: <strong>{dist.label}</strong></span>
         </span>
         <div className="flex items-center space-x-2 flex-wrap">
           {dist.easy > 0 && (
-            <span className="bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-md font-bold border border-emerald-200">
+            <span className="bg-emerald-50 text-emerald-800 px-2.5 py-0.5 rounded-md font-bold border border-emerald-200">
               {dist.easy} Easy
             </span>
           )}
           {dist.medium > 0 && (
-            <span className="bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-md font-bold border border-amber-200">
+            <span className="bg-amber-50 text-amber-800 px-2.5 py-0.5 rounded-md font-bold border border-amber-200">
               {dist.medium} Medium
             </span>
           )}
           {dist.hard > 0 && (
-            <span className="bg-rose-100 text-rose-800 px-2.5 py-0.5 rounded-md font-bold border border-rose-200">
+            <span className="bg-rose-100 text-red-800 px-2.5 py-0.5 rounded-md font-bold border border-rose-200">
               {dist.hard} Hard
             </span>
           )}
@@ -357,7 +354,7 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
         <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-8 shadow-sm space-y-6">
           
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs font-bold text-slate-500 border-b border-slate-100 pb-4 gap-2">
-            <span className="text-blue-600">Question {activeQuestionIndex + 1} of {questions.length}</span>
+            <span className="text-red-600">Question {activeQuestionIndex + 1} of {questions.length}</span>
             <div className="flex items-center space-x-2">
               <span className="bg-slate-100 px-2.5 py-1 rounded-lg text-slate-700 font-bold border border-slate-200">
                 {currentQ.subject}
@@ -367,7 +364,7 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
                   ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                   : currentQ.difficulty === 'Medium'
                   ? 'bg-amber-50 text-amber-700 border-amber-200'
-                  : 'bg-rose-50 text-rose-700 border-rose-200'
+                  : 'bg-rose-100 text-red-800 border-rose-200'
               }`}>
                 {currentQ.difficulty}
               </span>
@@ -386,12 +383,12 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
                 onClick={() => setSelectedOption(idx)}
                 className={`w-full p-4 rounded-xl text-left text-xs sm:text-sm font-semibold transition-all border flex items-center justify-between ${
                   selectedOption === idx
-                    ? 'border-blue-600 bg-blue-50/80 text-blue-900 shadow-sm'
+                    ? 'border-red-600 bg-rose-50/80 text-red-950 shadow-xs'
                     : 'border-slate-200 hover:border-slate-300 bg-slate-50/50 text-slate-800'
                 }`}
               >
                 <span>{opt}</span>
-                {selectedOption === idx && <CheckCircle2 className="w-5 h-5 text-blue-600 shrink-0" />}
+                {selectedOption === idx && <CheckCircle2 className="w-5 h-5 text-red-600 shrink-0" />}
               </button>
             ))}
           </div>
@@ -406,12 +403,13 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
               <span>Reset</span>
             </button>
 
+            {/* Solid Crimson Primary Button */}
             <button
               disabled={selectedOption === null}
               onClick={handleNext}
               className={`px-6 py-2.5 rounded-xl text-xs font-bold flex items-center space-x-2 transition-all ${
                 selectedOption !== null
-                  ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-600/20'
+                  ? 'bg-red-600 hover:bg-red-700 text-white shadow-md shadow-red-600/20'
                   : 'bg-slate-200 text-slate-400 cursor-not-allowed'
               }`}
             >
@@ -423,7 +421,7 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
       ) : (
         /* Result Screen */
         <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm text-center space-y-6">
-          <div className="w-16 h-16 bg-emerald-100 border border-emerald-200 rounded-full flex items-center justify-center mx-auto text-emerald-600">
+          <div className="w-16 h-16 bg-rose-100 border border-rose-200 rounded-full flex items-center justify-center mx-auto text-red-600">
             <Award className="w-8 h-8" />
           </div>
 
@@ -445,7 +443,7 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
           <div className="flex items-center justify-center gap-3">
             <button
               onClick={restartQuiz}
-              className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md shadow-blue-600/20 inline-flex items-center space-x-2 transition-all"
+              className="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold shadow-md shadow-red-600/20 inline-flex items-center space-x-2 transition-all"
             >
               <RotateCcw className="w-4 h-4" />
               <span>Retake Week {selectedWeek} Quiz</span>

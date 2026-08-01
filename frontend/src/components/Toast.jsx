@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { CheckCircle2, AlertCircle, Info, X } from 'lucide-react';
 
 export default function Toast({ toasts, removeToast }) {
@@ -14,7 +14,7 @@ export default function Toast({ toasts, removeToast }) {
               ? 'bg-slate-900 border-emerald-500/40 text-white'
               : toast.type === 'warning'
               ? 'bg-slate-900 border-amber-500/40 text-white'
-              : 'bg-slate-900 border-blue-500/40 text-white'
+              : 'bg-slate-900 border-red-500/40 text-white'
           }`}
         >
           <div className="flex items-center space-x-3">
@@ -23,7 +23,7 @@ export default function Toast({ toasts, removeToast }) {
             ) : toast.type === 'warning' ? (
               <AlertCircle className="w-5 h-5 text-amber-400 shrink-0" />
             ) : (
-              <Info className="w-5 h-5 text-blue-400 shrink-0" />
+              <Info className="w-5 h-5 text-red-400 shrink-0" />
             )}
             <div>
               <p className="text-xs font-bold text-slate-100">{toast.title}</p>
