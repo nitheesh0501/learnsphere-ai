@@ -203,14 +203,19 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
     }
   };
 
-  // REACTIVE 6-WEEK RECOVERY ROADMAP
+  // REACTIVE 6-WEEK RECOVERY ROADMAP (SORTED BY LOWEST MARKS FIRST)
   const dynamicRoadmap = useMemo(() => {
     if (hasInvalidMarks) return [];
 
-    const weakList = subjects.filter(
-      (s) => s.internalMarks !== '' && !isNaN(Number(s.internalMarks)) && Number(s.internalMarks) < 40
-    );
-    const activeList = weakList.length > 0 ? weakList : subjects;
+    const sortedByLowest = [...subjects]
+      .filter((s) => s.internalMarks !== '' && s.internalMarks !== null && !isNaN(Number(s.internalMarks)))
+      .sort((a, b) => {
+        const scoreA = Number(a.internalMarks) / Number(a.maxMarks || 50);
+        const scoreB = Number(b.internalMarks) / Number(b.maxMarks || 50);
+        return scoreA - scoreB;
+      });
+
+    const activeList = sortedByLowest.length > 0 ? sortedByLowest : subjects;
 
     return [
       { week: 1, title: "Discrete Math Foundations", desc: "Logic & Set Theory Baseline", status: "Done" },
@@ -242,11 +247,11 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
     ];
   }, [subjects, hasInvalidMarks]);
 
-  // REACTIVE AI STUDY PRIORITIES QUEUE
+  // REACTIVE AI STUDY PRIORITIES QUEUE (SORTED BY LOWEST SCORE FIRST)
   const dynamicPriorities = useMemo(() => {
     if (hasInvalidMarks) return [];
 
-    return subjects.map((sub) => {
+    const list = subjects.map((sub) => {
       const scoreVal = sub.internalMarks !== '' && !isNaN(Number(sub.internalMarks)) ? Number(sub.internalMarks) : 0;
       const pct = Math.round((scoreVal / (sub.maxMarks || 50)) * 100);
 
@@ -297,6 +302,8 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
         };
       }
     });
+
+    return list.sort((a, b) => a.score - b.score);
   }, [subjects, hasInvalidMarks]);
 
   return (

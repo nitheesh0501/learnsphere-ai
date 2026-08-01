@@ -42,52 +42,53 @@ export function calculateReadiness(subjects) {
 }
 
 /**
- * Identify ALL weak subjects tied for the lowest score percentage
+ * Identify ALL weak subjects tied for the lowest numerical score out of 50
  */
 export function getWeakSubjects(subjects) {
   if (!subjects || !Array.isArray(subjects) || subjects.length === 0) {
     return [{ code: "2321CSS301J", name: "Embedded System Design (ESD)", internalMarks: 28, maxMarks: 50 }];
   }
 
-  let minRatio = 1.1;
-
-  // Find lowest score ratio
-  subjects.forEach((sub) => {
-    const val = Number(sub.internalMarks !== undefined ? sub.internalMarks : sub.score) || 0;
-    const max = Number(sub.maxMarks || sub.max || 50);
-    const ratio = val / max;
-    if (ratio < minRatio) {
-      minRatio = ratio;
-    }
+  const validCourses = subjects.map(c => {
+    const rawVal = c.internalMarks !== undefined ? c.internalMarks : (c.score !== undefined ? c.score : 0);
+    const numericScore = rawVal === '' || rawVal === null || isNaN(Number(rawVal)) ? 0 : Number(rawVal);
+    const maxMarks = Number(c.maxMarks || c.max || 50);
+    return {
+      ...c,
+      numericScore,
+      maxMarks,
+      ratio: numericScore / maxMarks
+    };
   });
 
-  // Filter ALL subjects matching lowest ratio
-  const tiedSubjects = subjects.filter((sub) => {
-    const val = Number(sub.internalMarks !== undefined ? sub.internalMarks : sub.score) || 0;
-    const max = Number(sub.maxMarks || sub.max || 50);
-    const ratio = val / max;
-    return Math.abs(ratio - minRatio) < 0.001;
-  });
+  // Find absolute minimum score ratio
+  const minRatio = Math.min(...validCourses.map(c => c.ratio));
 
-  return tiedSubjects;
+  // Filter ALL subjects matching lowest score ratio
+  const lowestSubjects = validCourses.filter(c => Math.abs(c.ratio - minRatio) < 0.0001);
+
+  return lowestSubjects;
 }
 
 /**
  * Format tied weak subjects into a clean display string
  */
 export function getWeakSubject(subjects) {
-  const tied = getWeakSubjects(subjects);
-  if (!tied || tied.length === 0) {
+  const lowest = getWeakSubjects(subjects);
+  if (!lowest || lowest.length === 0) {
     return "2321CSS301J — Embedded System Design (ESD)";
   }
-  if (tied.length === 1) {
-    return `${tied[0].code} — ${tied[0].name}`;
+  if (lowest.length === 1) {
+    return `${lowest[0].code} — ${lowest[0].name}`;
   }
-  return tied.map((s) => {
-    const abbrev = s.name.includes('(') ? s.name.split('(')[1]?.replace(')', '') : s.name;
-    return `${s.code} (${abbrev})`;
+  return lowest.map((s) => {
+    const nameStr = s.name || s.title || s.code || '';
+    const abbrev = nameStr.includes('(') ? nameStr.split('(')[1]?.replace(')', '') : nameStr;
+    return s.code ? `${s.code} (${abbrev})` : nameStr;
   }).join(' & ');
 }
+
+export const getWeakestSubjects = getWeakSubject;
 
 /**
  * Dispatch global custom event for real-time state synchronization
