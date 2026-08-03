@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Zap, CheckCircle2, ArrowRight, RotateCcw, Award, Sliders, BookOpen, ExternalLink, Code2, Sparkles, Filter, XCircle, Clock, Info } from 'lucide-react';
+import { Zap, CheckCircle2, ArrowRight, RotateCcw, Award, Sliders, BookOpen, ExternalLink, Code2, Sparkles, Filter, XCircle, Clock, Info, Calendar } from 'lucide-react';
 import { studentAPI } from '../services/api';
 import { saveAssessmentScore, getSafeLocalStorage } from '../utils/readiness';
 
@@ -724,11 +724,21 @@ const SEM3_LEETCODE_POOL = {
 
 export default function AdaptiveQuiz({ initialSubject, addToast }) {
   const [selectedSubject, setSelectedSubject] = useState(initialSubject || SEM3_SUBJECTS[0].title);
+  const [selectedWeek, setSelectedWeek] = useState(1);
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
   const [userAnswers, setUserAnswers] = useState([]);
   const [score, setScore] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
+
+  const WEEKLY_CURRICULUM = [
+    { week: 1, title: 'Week 1: Concept Foundations & Basic Logic', topic: 'Arrays, Strings & Mathematical Proofs' },
+    { week: 2, title: 'Week 2: Sub-topic Mastery & Linear Data Structures', topic: 'Stacks, Queues, Linked Lists & Network Protocols' },
+    { week: 3, title: 'Week 3: Non-Linear Structures & Graph Traversals', topic: 'Trees, Binary Search, Graphs & Recursion' },
+    { week: 4, title: 'Week 4: Optimization & Dynamic Programming', topic: 'DP Patterns, Greedy Choice & Embedded Timers' },
+    { week: 5, title: 'Week 5: Architecture, Memory & System Design', topic: 'OOP Design Principles, Memory Buffers & Threading' },
+    { week: 6, title: 'Week 6: Advanced LeetCode & Final Assessment', topic: 'Complex Problem Solving & Final Semester 3 Prep' }
+  ];
 
   useEffect(() => {
     if (initialSubject) {
@@ -771,15 +781,24 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
   const handleQuizCompletion = (finalScore, totalQuestions, subjectName = "Discrete Mathematics") => {
     const total = totalQuestions || 10;
     const percentage = Math.round((finalScore / total) * 100);
+    const now = new Date();
+    const formattedDate = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const formattedTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const weekLabel = `Week ${selectedWeek}`;
+
     const newAttempt = {
       id: Date.now(),
-      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      date: formattedDate,
+      time: formattedTime,
+      timestamp: `${formattedDate} • ${formattedTime}`,
+      week: weekLabel,
       subject: subjectName,
+      weekSubject: `${weekLabel} - ${subjectName}`,
       score: finalScore,
       total: total,
       percentage: percentage,
-      status: percentage >= 50 ? "Passed" : "Needs Review"
+      status: percentage >= 50 ? "Passed" : "Needs Review",
+      recommendedTopic: WEEKLY_CURRICULUM.find(w => w.week === selectedWeek)?.topic || "Arrays & Logic Practice"
     };
 
     try {
@@ -976,6 +995,57 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
         </div>
       </div>
 
+      {/* Weekly Structured Curriculum Selector Bar (Week 1 to Week 6) */}
+      <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-3">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-black uppercase text-slate-500 tracking-wider flex items-center space-x-1.5">
+            <Calendar className="w-4 h-4 text-[#701C34]" />
+            <span>Select Weekly Curriculum Syllabus (Week 1 to Week 6)</span>
+          </span>
+          <span className="text-[11px] font-extrabold text-[#701C34] bg-rose-50 px-2 py-0.5 rounded border border-rose-200">
+            Active: Week {selectedWeek} Curriculum
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+          {WEEKLY_CURRICULUM.map((w) => {
+            const isSelected = selectedWeek === w.week;
+            return (
+              <button
+                type="button"
+                key={w.week}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedWeek(w.week);
+                  setActiveQuestionIndex(0);
+                  setSelectedOption(null);
+                  setScore(0);
+                  setUserAnswers([]);
+                  setIsFinished(false);
+                }}
+                className={`p-3 rounded-xl text-left border relative z-20 cursor-pointer pointer-events-auto transition-all ${
+                  isSelected
+                    ? 'bg-[#701C34] text-white border-[#701C34] shadow-md ring-2 ring-rose-200'
+                    : 'bg-slate-50 text-slate-700 border-slate-200 hover:border-[#701C34] hover:bg-rose-50/40'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className={`text-[10px] font-black px-1.5 py-0.5 rounded ${
+                    isSelected ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'
+                  }`}>
+                    Week {w.week}
+                  </span>
+                  {isSelected && <Sparkles className="w-3 h-3 text-rose-200" />}
+                </div>
+                <p className="text-[10px] font-extrabold leading-tight line-clamp-1 opacity-90">
+                  {w.topic}
+                </p>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* QUIZ INTERFACE / RESULTS CARD */}
       {!isFinished ? (
         <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6 relative z-10">
@@ -1042,8 +1112,9 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
 
           {/* Action Footer */}
           <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-            <span className="text-xs text-slate-500 font-semibold">
-              Current Score: {score} / {activeQuestionIndex + 1}
+            <span className="text-xs text-slate-500 font-semibold flex items-center space-x-1.5">
+              <Clock className="w-3.5 h-3.5 text-[#701C34]" />
+              <span>Assessment Progress: Question {activeQuestionIndex + 1} of {activeQuestions.length}</span>
             </span>
 
             <button

@@ -102,15 +102,32 @@ export const generateStudentPDFReport = (studentData) => {
     ]
   } = studentData;
 
-  // Create offscreen canvas for high-resolution A4 rendering (1240 x 1754)
+  // Create offscreen canvas for high-resolution A4 rendering (1240 x 2000)
   const canvas = document.createElement('canvas');
   canvas.width = 1240;
-  canvas.height = 1754;
+  canvas.height = 2000;
   const ctx = canvas.getContext('2d');
 
   if (!ctx) {
     alert("Canvas 2D Context not supported.");
     return;
+  }
+
+  // Read test history safely from localStorage
+  let testHistory = [];
+  try {
+    const rawHistory = localStorage.getItem('learnsphere_test_history');
+    testHistory = rawHistory ? JSON.parse(rawHistory) : [];
+  } catch (e) {
+    testHistory = [];
+  }
+
+  if (!Array.isArray(testHistory) || testHistory.length === 0) {
+    testHistory = [
+      { date: 'Aug 3, 2026', time: '10:23 AM', week: 'Week 1', subject: 'Discrete Mathematics', score: 8, total: 10, percentage: 80, recommendedTopic: 'Logic & Proofs (LeetCode #1)' },
+      { date: 'Aug 2, 2026', time: '04:15 PM', week: 'Week 2', subject: 'Computer Networks', score: 7, total: 10, percentage: 70, recommendedTopic: 'OSI Routing (LeetCode #206)' },
+      { date: 'Aug 1, 2026', time: '11:40 AM', week: 'Week 3', subject: 'Advanced DSA', score: 6, total: 10, percentage: 60, recommendedTopic: 'Trees & DP (LeetCode #104)' }
+    ];
   }
 
   // 1. FULL PAGE OFF-WHITE BACKGROUND (#FAF8F5)
@@ -189,7 +206,7 @@ export const generateStudentPDFReport = (studentData) => {
   drawMetaField(670, 302, 'Status', 'Verified & Saved');
 
   // 4. TABLE LAYOUT & CELL PADDING FIX (PADDING 10px 12px, LINE-HEIGHT 1.4, CELL HEIGHT 64px)
-  drawRoundedRect(40, 365, 1160, 680, 12, '#FFFFFF', '#E2E8F0');
+  drawRoundedRect(40, 365, 1160, 540, 12, '#FFFFFF', '#E2E8F0');
 
   ctx.fillStyle = '#701C34';
   ctx.font = '900 15px sans-serif';
@@ -206,81 +223,138 @@ export const generateStudentPDFReport = (studentData) => {
   ctx.fillText('PCT', 940, 451);
   ctx.fillText('STATUS', 1050, 451);
 
-  // Table Rows (7 Subjects - Height 64px, padding 10px 12px)
+  // Table Rows (7 Subjects)
   let startY = 492;
   subjects.forEach((sub, idx) => {
-    const rowY = startY + (idx * 64);
+    const rowY = startY + (idx * 56);
     
     // Zebra background
     if (idx % 2 === 1) {
-      drawRoundedRect(65, rowY - 20, 1110, 52, 6, '#F8FAFC', null);
+      drawRoundedRect(65, rowY - 18, 1110, 46, 6, '#F8FAFC', null);
     }
 
-    // Border bottom line
     ctx.strokeStyle = '#E2E8F0';
     ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(65, rowY + 32);
-    ctx.lineTo(1175, rowY + 32);
+    ctx.moveTo(65, rowY + 28);
+    ctx.lineTo(1175, rowY + 28);
     ctx.stroke();
 
     ctx.fillStyle = '#701C34';
     ctx.font = '800 12px sans-serif';
-    ctx.fillText(sub.code, 80, rowY + 12);
+    ctx.fillText(sub.code, 80, rowY + 10);
 
     ctx.fillStyle = '#0F172A';
     ctx.font = 'bold 12px sans-serif';
-    ctx.fillText(sub.name, 215, rowY + 12);
+    ctx.fillText(sub.name, 215, rowY + 10);
 
     const scoreNum = Number(sub.score) || 0;
     const maxNum = Number(sub.max) || 50;
     const pct = Math.round((scoreNum / maxNum) * 100);
     const quizScoreStr = sub.quizScore || (sub.code === '2321CSS301J' ? '4/10' : sub.code === '2321CSC304R' ? '5/10' : '8/10');
 
-    // IA Marks Column
     ctx.fillStyle = '#701C34';
     ctx.font = '900 13px sans-serif';
-    ctx.fillText(`${sub.score} / ${maxNum}`, 620, rowY + 12);
+    ctx.fillText(`${sub.score} / ${maxNum}`, 620, rowY + 10);
 
-    // Focus Practice Score Column
     ctx.fillStyle = '#0F172A';
     ctx.font = 'bold 13px sans-serif';
-    ctx.fillText(quizScoreStr, 770, rowY + 12);
+    ctx.fillText(quizScoreStr, 770, rowY + 10);
 
-    // Percentage Column
     ctx.fillStyle = '#0F172A';
     ctx.font = 'bold 13px sans-serif';
-    ctx.fillText(`${pct}%`, 940, rowY + 12);
+    ctx.fillText(`${pct}%`, 940, rowY + 10);
 
-    // Status Pill Badge
     const isStrong = scoreNum > 40;
     const isAverage = scoreNum >= 35 && scoreNum <= 40;
     const badgeBg = isStrong ? '#ECFDF5' : isAverage ? '#FFFBEB' : '#FDF2F4';
     const badgeTxt = isStrong ? '#047857' : isAverage ? '#B45309' : '#701C34';
     const badgeLabel = isStrong ? 'Strong' : isAverage ? 'Average' : 'Weak';
 
-    drawRoundedRect(1040, rowY - 6, 85, 26, 6, badgeBg, isStrong ? '#A7F3D0' : isAverage ? '#FDE68A' : '#FECDD3');
+    drawRoundedRect(1040, rowY - 8, 85, 24, 6, badgeBg, isStrong ? '#A7F3D0' : isAverage ? '#FDE68A' : '#FECDD3');
     ctx.fillStyle = badgeTxt;
     ctx.font = '900 11px sans-serif';
-    ctx.fillText(badgeLabel, 1060, rowY + 11);
+    ctx.fillText(badgeLabel, 1060, rowY + 8);
   });
 
-  // 5. ROADMAP & SUMMARY SECTION SPACING (MARGIN-BOTTOM 8px, LINE-HEIGHT 1.5, CLEAR BLOCK LAYOUT)
-  drawRoundedRect(40, 1065, 1160, 520, 12, '#FFFFFF', '#E2E8F0');
+  // 5. ALL RECENT TEST SCORES & EVALUATION HISTORY TABLE
+  drawRoundedRect(40, 930, 1160, 480, 12, '#FFFFFF', '#E2E8F0');
 
   ctx.fillStyle = '#701C34';
   ctx.font = '900 15px sans-serif';
-  ctx.fillText('AI STUDY PRIORITIES & 6-WEEK ADAPTIVE RECOVERY ROADMAP', 70, 1105);
+  ctx.fillText('ALL RECENT TEST SCORES & EVALUATION HISTORY', 70, 968);
+
+  // Table Header Row
+  drawRoundedRect(65, 985, 1110, 40, 8, '#701C34', null);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = 'bold 11px sans-serif';
+  ctx.fillText('DATE & TIME', 80, 1010);
+  ctx.fillText('WEEK / COURSE DOMAIN', 280, 1010);
+  ctx.fillText('QUIZ SCORE & PCT', 580, 1010);
+  ctx.fillText('RECOMMENDED LEETCODE PRACTICE TOPIC & STATUS', 760, 1010);
+
+  let historyY = 1045;
+  const recentAttempts = testHistory.slice(0, 6);
+  recentAttempts.forEach((att, idx) => {
+    if (idx % 2 === 1) {
+      drawRoundedRect(65, historyY - 14, 1110, 42, 6, '#F8FAFC', null);
+    }
+
+    ctx.strokeStyle = '#E2E8F0';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(65, historyY + 28);
+    ctx.lineTo(1175, historyY + 28);
+    ctx.stroke();
+
+    const dateTimeStr = att.time ? `${att.date} • ${att.time}` : (att.timestamp || att.date || 'Aug 3, 2026');
+    ctx.fillStyle = '#475569';
+    ctx.font = 'bold 11px sans-serif';
+    ctx.fillText(dateTimeStr, 80, historyY + 12);
+
+    const weekSubjectStr = att.weekSubject || (att.week ? `${att.week} - ${att.subject}` : att.subject || 'Discrete Mathematics');
+    ctx.fillStyle = '#701C34';
+    ctx.font = '800 12px sans-serif';
+    ctx.fillText(weekSubjectStr, 280, historyY + 12);
+
+    ctx.fillStyle = '#0F172A';
+    ctx.font = '900 12px sans-serif';
+    ctx.fillText(`${att.score}/${att.total || 10} (${att.percentage || 80}%)`, 580, historyY + 12);
+
+    ctx.fillStyle = '#334155';
+    ctx.font = 'bold 11px sans-serif';
+    const topicStr = att.recommendedTopic || 'Arrays, Logic & Proofs';
+    ctx.fillText(topicStr.length > 40 ? topicStr.substring(0, 40) + '...' : topicStr, 760, historyY + 12);
+
+    const isPass = (att.percentage || 80) >= 50;
+    const statusBg = isPass ? '#ECFDF5' : '#FDF2F4';
+    const statusTxt = isPass ? '#047857' : '#701C34';
+    const statusLabel = isPass ? 'Passed ✓' : 'Review ⚠️';
+
+    drawRoundedRect(1040, historyY - 6, 85, 24, 6, statusBg, isPass ? '#A7F3D0' : '#FECDD3');
+    ctx.fillStyle = statusTxt;
+    ctx.font = '900 10px sans-serif';
+    ctx.fillText(statusLabel, 1054, historyY + 10);
+
+    historyY += 50;
+  });
+
+  // 6. AI STUDY PRIORITIES & 6-WEEK RECOVERY ROADMAP
+  drawRoundedRect(40, 1435, 1160, 480, 12, '#FFFFFF', '#E2E8F0');
+
+  ctx.fillStyle = '#701C34';
+  ctx.font = '900 15px sans-serif';
+  ctx.fillText('AI STUDY PRIORITIES & 6-WEEK ADAPTIVE RECOVERY ROADMAP', 70, 1472);
 
   ctx.fillStyle = '#334155';
   ctx.font = 'bold 12px sans-serif';
-  let recY = 1140;
+  let recY = 1502;
   recommendations.forEach((rec) => {
     ctx.fillStyle = '#701C34';
     ctx.fillText('•', 75, recY);
     ctx.fillStyle = '#1E293B';
     ctx.fillText(rec, 95, recY);
-    recY += 28;
+    recY += 26;
   });
 
   // 6-Week Roadmap Summary Stepper Table
@@ -293,40 +367,40 @@ export const generateStudentPDFReport = (studentData) => {
     { week: 6, title: 'W6: Comprehensive Practice', desc: 'OOPJ Inheritance & Full Mock Exam' }
   ];
 
-  let stepY = 1250;
+  let stepY = 1590;
   roadmapMilestones.forEach((m) => {
-    drawRoundedRect(75, stepY, 1090, 42, 8, '#F8FAFC', '#E2E8F0');
+    drawRoundedRect(75, stepY, 1090, 40, 8, '#F8FAFC', '#E2E8F0');
     
     ctx.fillStyle = '#701C34';
     ctx.font = '900 12px sans-serif';
-    ctx.fillText(`WEEK ${m.week}`, 95, stepY + 26);
+    ctx.fillText(`WEEK ${m.week}`, 95, stepY + 25);
 
     ctx.fillStyle = '#0F172A';
     ctx.font = 'bold 12px sans-serif';
-    ctx.fillText(m.title, 190, stepY + 26);
+    ctx.fillText(m.title, 190, stepY + 25);
 
     ctx.fillStyle = '#64748B';
     ctx.font = 'bold 11px sans-serif';
-    ctx.fillText(m.desc, 560, stepY + 26);
+    ctx.fillText(m.desc, 560, stepY + 25);
 
     ctx.fillStyle = '#047857';
     ctx.font = '900 11px sans-serif';
-    ctx.fillText('✓ Active Milestone', 1030, stepY + 26);
+    ctx.fillText('✓ Active Milestone', 1030, stepY + 25);
 
-    stepY += 52;
+    stepY += 48;
   });
 
-  // 6. FOOTER BRANDING & FACULTY VERIFICATION BANNER
+  // 7. FOOTER BRANDING & FACULTY VERIFICATION BANNER
   ctx.fillStyle = '#64748B';
   ctx.font = 'bold 11px sans-serif';
-  ctx.fillText('Generated by LearnSphere AI • Verified by Faculty In-Charge: Prof. Madhumitha (Easwari Engineering College)', 70, 1630);
-  ctx.fillText('Page 1 of 1', 1080, 1630);
+  ctx.fillText('Generated by LearnSphere AI • Verified by Faculty In-Charge: Prof. Madhumitha (Easwari Engineering College)', 70, 1950);
+  ctx.fillText('Page 1 of 1', 1080, 1950);
 
   // Convert canvas to JPEG image Data URL
   const jpegUrl = canvas.toDataURL('image/jpeg', 0.95);
 
   // Build standalone PDF binary Blob
-  const pdfBlob = createPdfBlobFromJpeg(jpegUrl);
+  const pdfBlob = createPdfBlobFromJpeg(jpegUrl, 595.28, 960);
 
   // Direct Browser File Download (NO Print Preview Popups!)
   const filename = `${name.replace(/\s+/g, '_')}_Semester3_Report.pdf`;
