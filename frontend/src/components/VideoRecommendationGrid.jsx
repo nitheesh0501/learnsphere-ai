@@ -2,121 +2,192 @@ import React from 'react';
 import { Play, Clock, BookOpen } from 'lucide-react';
 
 export const RECOMMENDED_VIDEOS = [
+  // --- SUBJECT 1: DATA STRUCTURES & ALGORITHMS (2 Videos) ---
   {
     id: "1",
-    title: "Java OOPs Concepts, Interfaces & Abstract Classes",
-    subjectCode: "2321CSC304R • OOPJ",
-    categoryTag: "Fundamental Remedial",
-    focusText: "Focus: Pointers, References & Interface Contracts",
-    source: "freeCodeCamp",
-    duration: "38 mins",
-    thumbnail: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&auto=format&fit=crop&q=80",
-    url: "https://www.youtube.com/watch?v=Ht02t8vZ_Ww"
+    title: "Introduction to Data Structures & Algorithms for Beginners",
+    subjectCode: "2321CSC301 • DSA",
+    categoryTag: "Basics & Arrays",
+    focusText: "Focus: Memory allocation, Arrays, Stacks & Queues",
+    source: "Gate Smashers",
+    duration: "18 mins",
+    thumbnail: "https://img.youtube.com/vi/aAInI-U4sX0/hqdefault.jpg",
+    fallbackThumbnail: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&auto=format&fit=crop&q=80",
+    url: "https://www.youtube.com/watch?v=aAInI-U4sX0"
   },
   {
     id: "2",
-    title: "Embedded Systems & Microcontroller Hardware Architecture",
-    subjectCode: "2321CSS301J • ESD",
-    categoryTag: "Core Hardware Practice",
-    focusText: "Focus: Microprocessors, Timers & SPI Bus Protocols",
-    source: "Neso Academy",
-    duration: "25 mins",
-    thumbnail: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=80",
-    url: "https://www.youtube.com/watch?v=1_A4x-YvVLE"
+    title: "Binary Tree Traversal Techniques (Inorder, Preorder, Postorder)",
+    subjectCode: "2321CSC301 • DSA",
+    categoryTag: "Trees & Graphs",
+    focusText: "Focus: Tree nodes, DFS & BFS Traversal basics",
+    source: "Abdul Bari",
+    duration: "24 mins",
+    thumbnail: "https://img.youtube.com/vi/gm8DUJJhmY4/hqdefault.jpg",
+    fallbackThumbnail: "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=800&auto=format&fit=crop&q=80",
+    url: "https://www.youtube.com/watch?v=gm8DUJJhmY4"
   },
+
+  // --- SUBJECT 2: OPERATING SYSTEMS (2 Videos) ---
   {
     id: "3",
-    title: "Red–Black Tree Insertion & Rotations Complete Guide",
-    subjectCode: "2321CSC302J • ADSA",
-    categoryTag: "Algorithm Mastery",
-    focusText: "Focus: Red–Black Tree Rotations & Balanced BSTs",
-    source: "Jenny's Lectures",
-    duration: "29 mins",
-    thumbnail: "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=800&auto=format&fit=crop&q=80",
-    url: "https://www.youtube.com/watch?v=qA02XWRTBdw"
-  },
-  {
-    id: "4",
-    title: "Introduction to Operating Systems & Kernel Architecture Functions",
-    subjectCode: "2321CSC302T • OS",
-    categoryTag: "System Concepts",
-    focusText: "Focus: System Calls, Process Control Blocks & Kernel Modes",
+    title: "Introduction to Operating System & Its Core Functions",
+    subjectCode: "2321CSC302 • OS",
+    categoryTag: "Kernel Basics",
+    focusText: "Focus: System calls, Process Management & Kernel Modes",
     source: "Gate Smashers",
     duration: "19 mins",
-    thumbnail: "https://images.unsplash.com/photo-1629654297299-c8506221ca97?w=800&auto=format&fit=crop&q=80",
+    thumbnail: "https://img.youtube.com/vi/WJ-UaAaumNA/hqdefault.jpg",
+    fallbackThumbnail: "https://images.unsplash.com/photo-1629654297299-c8506221ca97?w=800&auto=format&fit=crop&q=80",
     url: "https://www.youtube.com/watch?v=WJ-UaAaumNA"
   },
   {
+    id: "4",
+    title: "CPU Scheduling Algorithms: FCFS, SJF & Round Robin",
+    subjectCode: "2321CSC302 • OS",
+    categoryTag: "Process Scheduling",
+    focusText: "Focus: Gantt charts, Waiting time & Context switching",
+    source: "Neso Academy",
+    duration: "21 mins",
+    thumbnail: "https://img.youtube.com/vi/ew9_p5i8vYk/hqdefault.jpg",
+    fallbackThumbnail: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=80",
+    url: "https://www.youtube.com/watch?v=ew9_p5i8vYk"
+  },
+
+  // --- SUBJECT 3: DATABASE MANAGEMENT SYSTEMS (2 Videos) ---
+  {
     id: "5",
-    title: "SQL & Relational Database Design Full University Course",
-    subjectCode: "2321CSC303T • DBMS",
-    categoryTag: "Database Mastery",
-    focusText: "Focus: Entity-Relationship Diagrams, Normalization & Joins",
-    source: "freeCodeCamp",
-    duration: "45 mins",
-    thumbnail: "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=800&auto=format&fit=crop&q=80",
-    url: "https://www.youtube.com/watch?v=HXV3zeQKqGY"
+    title: "Introduction to DBMS & ER Diagrams Made Easy",
+    subjectCode: "2321CSC303 • DBMS",
+    categoryTag: "Database Basics",
+    focusText: "Focus: Entities, Attributes, Keys & Relationships",
+    source: "Gate Smashers",
+    duration: "16 mins",
+    thumbnail: "https://img.youtube.com/vi/c5HAwT4QU8w/hqdefault.jpg",
+    fallbackThumbnail: "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=800&auto=format&fit=crop&q=80",
+    url: "https://www.youtube.com/watch?v=c5HAwT4QU8w"
   },
   {
     id: "6",
-    title: "Computer Networks: OSI 7-Layer Architecture Explained",
-    subjectCode: "2321CSC301T • CN",
-    categoryTag: "Network Protocols",
-    focusText: "Focus: Encapsulation, Packet Headers & Protocol Stacks",
+    title: "SQL Tutorial for Beginners: SELECT, WHERE & JOINS",
+    subjectCode: "2321CSC303 • DBMS",
+    categoryTag: "SQL Queries",
+    focusText: "Focus: Basic SQL queries, INNER JOIN & Filter clauses",
+    source: "freeCodeCamp",
+    duration: "35 mins",
+    thumbnail: "https://img.youtube.com/vi/HXV3zeQKqGY/hqdefault.jpg",
+    fallbackThumbnail: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=800&auto=format&fit=crop&q=80",
+    url: "https://www.youtube.com/watch?v=HXV3zeQKqGY"
+  },
+
+  // --- SUBJECT 4: COMPUTER NETWORKS (2 Videos) ---
+  {
+    id: "7",
+    title: "OSI 7 Layer Model Explained with Real Life Examples",
+    subjectCode: "2321CSC304 • CN",
+    categoryTag: "Network Stacks",
+    focusText: "Focus: Encapsulation, Packet flow & Layer responsibilities",
     source: "Gate Smashers",
     duration: "22 mins",
-    thumbnail: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&auto=format&fit=crop&q=80",
+    thumbnail: "https://img.youtube.com/vi/4D55Cmj2t-A/hqdefault.jpg",
+    fallbackThumbnail: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&auto=format&fit=crop&q=80",
     url: "https://www.youtube.com/watch?v=4D55Cmj2t-A"
   },
   {
-    id: "7",
-    title: "Machine Learning: Gradient Descent, Loss Functions & Neural Nets",
-    subjectCode: "2321CSC303J • FAIML",
-    categoryTag: "Concept Enrichment",
-    focusText: "Focus: Supervised Learning & Binary Cross-Entropy Loss",
-    source: "freeCodeCamp",
-    duration: "35 mins",
-    thumbnail: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=800&auto=format&fit=crop&q=80",
-    url: "https://www.youtube.com/watch?v=i_LwzRVP7bg"
-  },
-  {
     id: "8",
-    title: "Discrete Mathematics Full Course for Computer Science",
-    subjectCode: "2321MAB301T • DM",
-    categoryTag: "Advanced Drills",
-    focusText: "Focus: Propositional Logic, Set Theory & Predicate Calculus",
-    source: "freeCodeCamp",
-    duration: "42 mins",
-    thumbnail: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=800&auto=format&fit=crop&q=80",
-    url: "https://www.youtube.com/watch?v=3I92x23lW84"
+    title: "IP Addressing & Subnetting Basics for Beginners",
+    subjectCode: "2321CSC304 • CN",
+    categoryTag: "IP & Routing",
+    focusText: "Focus: IPv4 classes, Subnet masks & Network ID",
+    source: "Neso Academy",
+    duration: "20 mins",
+    thumbnail: "https://img.youtube.com/vi/vc2U35e1Lno/hqdefault.jpg",
+    fallbackThumbnail: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800&auto=format&fit=crop&q=80",
+    url: "https://www.youtube.com/watch?v=vc2U35e1Lno"
   },
+
+  // --- SUBJECT 5: OBJECT-ORIENTED PROGRAMMING (2 Videos) ---
   {
     id: "9",
-    title: "Dynamic Programming Complete Masterclass & Memoization",
-    subjectCode: "2321CSC302J • ADSA",
-    categoryTag: "Problem Solving",
-    focusText: "Focus: Overlapping Subproblems & Tabulation Optimization",
+    title: "Object-Oriented Programming (OOPs) Fundamentals",
+    subjectCode: "2321CSC305 • OOP",
+    categoryTag: "OOP Pillars",
+    focusText: "Focus: Classes, Objects, Inheritance & Encapsulation",
     source: "freeCodeCamp",
-    duration: "40 mins",
-    thumbnail: "https://images.unsplash.com/photo-1516116211223-4c7141326c6c?w=800&auto=format&fit=crop&q=80",
-    url: "https://www.youtube.com/watch?v=oBt53YbR9Kk"
+    duration: "28 mins",
+    thumbnail: "https://img.youtube.com/vi/pTB0EiLXUC8/hqdefault.jpg",
+    fallbackThumbnail: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&auto=format&fit=crop&q=80",
+    url: "https://www.youtube.com/watch?v=pTB0EiLXUC8"
   },
   {
     id: "10",
-    title: "System Design: Microservices, Load Balancers & Distributed Caching",
-    subjectCode: "2321CSC304T • SD",
+    title: "Polymorphism & Abstraction in Java / C++",
+    subjectCode: "2321CSC305 • OOP",
+    categoryTag: "Method Overloading",
+    focusText: "Focus: Overloading vs Overriding & Abstract classes",
+    source: "Gate Smashers",
+    duration: "18 mins",
+    thumbnail: "https://img.youtube.com/vi/Ht02t8vZ_Ww/hqdefault.jpg",
+    fallbackThumbnail: "https://images.unsplash.com/photo-1516116211223-4c7141326c6c?w=800&auto=format&fit=crop&q=80",
+    url: "https://www.youtube.com/watch?v=Ht02t8vZ_Ww"
+  },
+
+  // --- SUBJECT 6: THEORY OF COMPUTATION & COMPILER DESIGN (2 Videos) ---
+  {
+    id: "11",
+    title: "Introduction to Automata Theory & Finite Automata (DFA/NFA)",
+    subjectCode: "2321CSC306 • TOC",
+    categoryTag: "Automata Basics",
+    focusText: "Focus: Alphabet, Languages & State transitions",
+    source: "Neso Academy",
+    duration: "25 mins",
+    thumbnail: "https://img.youtube.com/vi/405j499EwJ0/hqdefault.jpg",
+    fallbackThumbnail: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=800&auto=format&fit=crop&q=80",
+    url: "https://www.youtube.com/watch?v=405j499EwJ0"
+  },
+  {
+    id: "12",
+    title: "Phases of a Compiler Architecture Simplified",
+    subjectCode: "2321CSC306 • CD",
+    categoryTag: "Compiler Stages",
+    focusText: "Focus: Lexical Analysis, Syntax Trees & Code Generation",
+    source: "Gate Smashers",
+    duration: "17 mins",
+    thumbnail: "https://img.youtube.com/vi/Qkwj65l_96I/hqdefault.jpg",
+    fallbackThumbnail: "https://images.unsplash.com/photo-1516116211223-4c7141326c6c?w=800&auto=format&fit=crop&q=80",
+    url: "https://www.youtube.com/watch?v=Qkwj65l_96I"
+  },
+
+  // --- SUBJECT 7: SOFTWARE ENGINEERING & SYSTEM DESIGN (2 Videos) ---
+  {
+    id: "13",
+    title: "Software Development Life Cycle (SDLC) & Agile Methodology",
+    subjectCode: "2321CSC307 • SE",
+    categoryTag: "SDLC & Process",
+    focusText: "Focus: Waterfall vs Agile, Scrum & Requirements",
+    source: "Gate Smashers",
+    duration: "19 mins",
+    thumbnail: "https://img.youtube.com/vi/7j_mI7T2Nq4/hqdefault.jpg",
+    fallbackThumbnail: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&auto=format&fit=crop&q=80",
+    url: "https://www.youtube.com/watch?v=7j_mI7T2Nq4"
+  },
+  {
+    id: "14",
+    title: "System Design for Beginners: Monolith vs Microservices",
+    subjectCode: "2321CSC307 • SD",
     categoryTag: "System Architecture",
-    focusText: "Focus: Scalability, CAP Theorem & High Availability Systems",
+    focusText: "Focus: Load Balancers, API Gateways & Database scaling",
     source: "Gaurav Sen",
-    duration: "38 mins",
-    thumbnail: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&auto=format&fit=crop&q=80",
+    duration: "26 mins",
+    thumbnail: "https://img.youtube.com/vi/xpDnVSmNfx0/hqdefault.jpg",
+    fallbackThumbnail: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&auto=format&fit=crop&q=80",
     url: "https://www.youtube.com/watch?v=xpDnVSmNfx0"
   }
 ];
 
 export default function VideoRecommendationGrid({ videos = RECOMMENDED_VIDEOS }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {videos.map((vid) => (
         <div
           key={vid.id}
@@ -133,6 +204,12 @@ export default function VideoRecommendationGrid({ videos = RECOMMENDED_VIDEOS })
               <img
                 src={vid.thumbnail}
                 alt={vid.title}
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  if (target.src !== vid.fallbackThumbnail) {
+                    target.src = vid.fallbackThumbnail;
+                  }
+                }}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-90 group-hover:opacity-100"
               />
               {/* Dark Gradient Overlay with Maroon Play Button */}
@@ -160,7 +237,7 @@ export default function VideoRecommendationGrid({ videos = RECOMMENDED_VIDEOS })
 
             {/* 3. Title & Focus Details */}
             <div>
-              <h3 className="font-bold text-slate-900 text-sm sm:text-base leading-snug group-hover:text-[#701C34] transition-colors line-clamp-2">
+              <h3 className="font-bold text-slate-900 text-sm leading-snug group-hover:text-[#701C34] transition-colors line-clamp-2">
                 {vid.title}
               </h3>
               <p className="text-slate-500 text-xs mt-1 font-medium leading-relaxed">
