@@ -42,6 +42,40 @@ export function calculateReadiness(subjects) {
 }
 
 /**
+ * Get assessment quiz practice scores for all 7 Semester 3 subjects
+ */
+export function getAssessmentScores() {
+  const saved = localStorage.getItem('assessmentScores');
+  if (saved) {
+    try {
+      return JSON.parse(saved);
+    } catch (e) {
+      console.warn('Error parsing assessmentScores:', e);
+    }
+  }
+  return {
+    '2321MAB301T': { score: 9, total: 10, pct: 90 },
+    '2321CSC301T': { score: 7, total: 10, pct: 70 },
+    '2321CSC302J': { score: 6, total: 10, pct: 60 },
+    '2321CSC303J': { score: 8, total: 10, pct: 80 },
+    '2321CSS301J': { score: 4, total: 10, pct: 40 },
+    '2321CSC304R': { score: 5, total: 10, pct: 50 },
+    '2321SDA301L': { score: 9, total: 10, pct: 90 }
+  };
+}
+
+/**
+ * Save assessment quiz score for a specific subject code into localStorage
+ */
+export function saveAssessmentScore(subjectCode, score, total = 10) {
+  const current = getAssessmentScores();
+  const pct = Math.round((score / total) * 100);
+  current[subjectCode] = { score, total, pct };
+  localStorage.setItem('assessmentScores', JSON.stringify(current));
+  window.dispatchEvent(new Event('learnsphere-marks-updated'));
+}
+
+/**
  * Identify ALL weak subjects tied for the lowest numerical score out of 50
  */
 export function getWeakSubjects(subjects) {

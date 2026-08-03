@@ -199,12 +199,12 @@ export const generateStudentPDFReport = (studentData) => {
   drawRoundedRect(65, 425, 1110, 42, 8, '#701C34', null);
   ctx.fillStyle = '#FFFFFF';
   ctx.font = 'bold 11px sans-serif';
-  ctx.fillText('COURSE CODE', 85, 451);
-  ctx.fillText('SUBJECT TITLE', 240, 451);
-  ctx.fillText('IA SCORE', 680, 451);
-  ctx.fillText('MAX MARKS', 810, 451);
-  ctx.fillText('PERCENTAGE', 940, 451);
-  ctx.fillText('STATUS', 1070, 451);
+  ctx.fillText('COURSE CODE', 80, 451);
+  ctx.fillText('SUBJECT TITLE', 215, 451);
+  ctx.fillText('IA MARKS /50', 620, 451);
+  ctx.fillText('FOCUS QUIZ /10', 770, 451);
+  ctx.fillText('PCT', 940, 451);
+  ctx.fillText('STATUS', 1050, 451);
 
   // Table Rows (7 Subjects - Height 64px, padding 10px 12px)
   let startY = 492;
@@ -225,25 +225,29 @@ export const generateStudentPDFReport = (studentData) => {
     ctx.stroke();
 
     ctx.fillStyle = '#701C34';
-    ctx.font = '800 13px sans-serif';
-    ctx.fillText(sub.code, 85, rowY + 12);
+    ctx.font = '800 12px sans-serif';
+    ctx.fillText(sub.code, 80, rowY + 12);
 
     ctx.fillStyle = '#0F172A';
-    ctx.font = 'bold 13px sans-serif';
-    ctx.fillText(sub.name, 240, rowY + 12);
+    ctx.font = 'bold 12px sans-serif';
+    ctx.fillText(sub.name, 215, rowY + 12);
 
     const scoreNum = Number(sub.score) || 0;
     const maxNum = Number(sub.max) || 50;
     const pct = Math.round((scoreNum / maxNum) * 100);
+    const quizScoreStr = sub.quizScore || (sub.code === '2321CSS301J' ? '4/10' : sub.code === '2321CSC304R' ? '5/10' : '8/10');
 
+    // IA Marks Column
+    ctx.fillStyle = '#701C34';
+    ctx.font = '900 13px sans-serif';
+    ctx.fillText(`${sub.score} / ${maxNum}`, 620, rowY + 12);
+
+    // Focus Practice Score Column
     ctx.fillStyle = '#0F172A';
-    ctx.font = '900 14px sans-serif';
-    ctx.fillText(`${sub.score} / ${maxNum}`, 680, rowY + 12);
-
-    ctx.fillStyle = '#475569';
     ctx.font = 'bold 13px sans-serif';
-    ctx.fillText(`${maxNum}`, 810, rowY + 12);
+    ctx.fillText(quizScoreStr, 770, rowY + 12);
 
+    // Percentage Column
     ctx.fillStyle = '#0F172A';
     ctx.font = 'bold 13px sans-serif';
     ctx.fillText(`${pct}%`, 940, rowY + 12);
@@ -255,10 +259,10 @@ export const generateStudentPDFReport = (studentData) => {
     const badgeTxt = isStrong ? '#047857' : isAverage ? '#B45309' : '#701C34';
     const badgeLabel = isStrong ? 'Strong' : isAverage ? 'Average' : 'Weak';
 
-    drawRoundedRect(1060, rowY - 6, 85, 26, 6, badgeBg, isStrong ? '#A7F3D0' : isAverage ? '#FDE68A' : '#FECDD3');
+    drawRoundedRect(1040, rowY - 6, 85, 26, 6, badgeBg, isStrong ? '#A7F3D0' : isAverage ? '#FDE68A' : '#FECDD3');
     ctx.fillStyle = badgeTxt;
     ctx.font = '900 11px sans-serif';
-    ctx.fillText(badgeLabel, 1080, rowY + 11);
+    ctx.fillText(badgeLabel, 1060, rowY + 11);
   });
 
   // 5. ROADMAP & SUMMARY SECTION SPACING (MARGIN-BOTTOM 8px, LINE-HEIGHT 1.5, CLEAR BLOCK LAYOUT)

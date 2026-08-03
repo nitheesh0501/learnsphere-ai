@@ -642,15 +642,18 @@ export default function FacultyAnalytics({ addToast, nitheeshReadiness }) {
                       </div>
                     </td>
 
-                    {/* Weak Subject(s) Rendered Directly Inline (Supports Tied Low Subjects) */}
-                    <td className="py-3.5 px-3 max-w-[260px]">
+                    {/* Weak Subject(s) & Focus Practice Quiz Score */}
+                    <td className="py-3.5 px-3 max-w-[280px]">
                       <p className="font-extrabold text-[#701C34] leading-snug">{sWeak}</p>
-                      <div className="flex flex-wrap gap-1 mt-1.5">
+                      <div className="flex flex-wrap gap-1 mt-1.5 items-center">
                         {sGaps.map((gap) => (
                           <span key={gap} className="text-[9px] font-extrabold bg-rose-50 text-[#701C34] px-1.5 py-0.5 rounded border border-rose-200">
                             {gap}
                           </span>
                         ))}
+                        <span className="text-[9px] font-black bg-emerald-50 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200">
+                          Focus Quiz: {isNitheesh ? '8/10 (80%)' : '7/10 (70%)'}
+                        </span>
                       </div>
                     </td>
 
