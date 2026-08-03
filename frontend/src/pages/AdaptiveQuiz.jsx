@@ -811,7 +811,30 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
   };
 
   const activeLeetCodeSet = SEM3_LEETCODE_POOL[selectedSubject] || SEM3_LEETCODE_POOL["Discrete Mathematics"];
-  const accuracyPct = Math.round((score / activeQuestions.length) * 100);
+
+  // Defensive, null-safe final score & accuracy calculator
+  const calculateFinalScore = () => {
+    if (!activeQuestions || !Array.isArray(activeQuestions) || activeQuestions.length === 0) {
+      return { score: 0, total: 0, percentage: 0 };
+    }
+
+    let correctCount = 0;
+    activeQuestions.forEach((q, idx) => {
+      const ansObj = userAnswers.find((a) => a && (a.questionId === q?.id || a.question === q?.question));
+      const selected = ansObj ? ansObj.userOption : (Array.isArray(userAnswers) ? userAnswers[idx]?.userOption : undefined);
+      if (selected !== undefined && selected !== null && q && (selected === q.correct || selected === q.correctAnswerIndex)) {
+        correctCount++;
+      }
+    });
+
+    const total = activeQuestions.length;
+    const percentage = Math.round((correctCount / total) * 100);
+
+    return { score: Math.max(score, correctCount), total, percentage };
+  };
+
+  const finalStats = calculateFinalScore();
+  const accuracyPct = finalStats.percentage;
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto px-2 sm:px-4">
@@ -995,18 +1018,18 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
             <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl text-center space-y-1">
               <span className="text-[10px] text-slate-500 font-extrabold uppercase">Total Score</span>
               <div className="text-2xl font-black text-slate-900">
-                {score} <span className="text-xs text-slate-400 font-bold">/ {activeQuestions.length}</span>
+                {finalStats.score} <span className="text-xs text-slate-400 font-bold">/ {finalStats.total}</span>
               </div>
-              <span className="text-[10px] font-bold text-slate-600 block">{score} Correct Answers</span>
+              <span className="text-[10px] font-bold text-slate-600 block">{finalStats.score} Correct Answers</span>
             </div>
 
             <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl text-center space-y-1">
               <span className="text-[10px] text-slate-500 font-extrabold uppercase">Accuracy Rate</span>
               <div className="text-2xl font-black text-[#701C34]">
-                {accuracyPct}%
+                {finalStats.percentage}%
               </div>
               <span className="text-[10px] font-bold text-slate-600 block">
-                {accuracyPct >= 70 ? 'Mastery Achieved' : accuracyPct >= 50 ? 'Average Pacing' : 'Remedial Rec.'}
+                {finalStats.percentage >= 70 ? 'Mastery Achieved' : finalStats.percentage >= 50 ? 'Average Pacing' : 'Remedial Rec.'}
               </span>
             </div>
 
@@ -1030,45 +1053,47 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
                 <span>Question Breakdown & Concept Answer Key</span>
               </h3>
               <span className="text-[10px] font-bold text-slate-500">
-                {userAnswers.length > 0 ? `${userAnswers.length} Questions Evaluated` : 'Assessment Summary'}
+                {userAnswers && userAnswers.length > 0 ? `${userAnswers.length} Questions Evaluated` : 'Assessment Summary'}
               </span>
             </div>
 
             <div className="space-y-3 max-h-[380px] overflow-y-auto pr-1">
-              {(userAnswers.length > 0 ? userAnswers : activeQuestions.map(q => ({
-                questionId: q.id,
-                question: q.question,
-                userOption: q.correct,
-                correctOption: q.correct,
+              {(userAnswers && userAnswers.length > 0 ? userAnswers : activeQuestions.map(q => ({
+                questionId: q?.id,
+                question: q?.question,
+                userOption: q?.correct,
+                correctOption: q?.correct,
                 isCorrect: true,
-                options: q.options,
-                difficulty: q.difficulty
+                options: q?.options || [],
+                difficulty: q?.difficulty || 'Medium'
               }))).map((ans, idx) => {
-                const userChoiceText = ans.options[ans.userOption] || 'Not Selected';
-                const correctChoiceText = ans.options[ans.correctOption];
+                const safeOptions = (ans && Array.isArray(ans.options)) ? ans.options : [];
+                const userChoiceText = (ans && ans.userOption !== undefined && ans.userOption !== null && safeOptions[ans.userOption]) ? safeOptions[ans.userOption] : 'Not Selected';
+                const correctChoiceText = (ans && ans.correctOption !== undefined && ans.correctOption !== null && safeOptions[ans.correctOption]) ? safeOptions[ans.correctOption] : (safeOptions[0] || 'Correct Choice');
+                const isItemCorrect = Boolean(ans && ans.isCorrect);
 
                 return (
                   <div key={idx} className="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
                     <div className="flex items-start justify-between gap-2">
                       <p className="text-xs font-extrabold text-slate-900">
-                        {idx + 1}. {ans.question}
+                        {idx + 1}. {ans?.question || `Question ${idx + 1}`}
                       </p>
                       <span className={`px-2 py-0.5 rounded text-[9px] font-black shrink-0 border ${
-                        ans.isCorrect ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-rose-100 text-[#701C34] border-rose-200'
+                        isItemCorrect ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-rose-100 text-[#701C34] border-rose-200'
                       }`}>
-                        {ans.isCorrect ? 'Correct (+1)' : 'Incorrect (0)'}
+                        {isItemCorrect ? 'Correct (+1)' : 'Incorrect (0)'}
                       </span>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-1">
                       <div className={`p-2 rounded-lg border ${
-                        ans.isCorrect ? 'bg-emerald-50/50 border-emerald-200 text-emerald-900 font-bold' : 'bg-rose-50/50 border-rose-200 text-rose-900 font-bold'
+                        isItemCorrect ? 'bg-emerald-50/50 border-emerald-200 text-emerald-900 font-bold' : 'bg-rose-50/50 border-rose-200 text-rose-900 font-bold'
                       }`}>
                         <span className="text-[10px] font-black text-slate-500 block uppercase">Your Selection:</span>
                         <span>{userChoiceText}</span>
                       </div>
 
-                      {!ans.isCorrect && (
+                      {!isItemCorrect && (
                         <div className="p-2 rounded-lg bg-emerald-50/50 border border-emerald-200 text-emerald-900 font-bold">
                           <span className="text-[10px] font-black text-emerald-700 block uppercase">Correct Answer:</span>
                           <span>{correctChoiceText}</span>
