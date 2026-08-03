@@ -771,24 +771,39 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
   };
 
   const forceNextQuestion = () => {
+    const safeUserAnswers = Array.isArray(userAnswers) ? userAnswers : [];
+
+    // Assign safe null value for unanswered question if no option selected
     if (selectedOption === null || selectedOption === undefined) {
-      setValidationError("Please choose an answer option before proceeding!");
-      return;
+      const updatedAnswers = [...safeUserAnswers];
+      if (!updatedAnswers[activeQuestionIndex]) {
+        updatedAnswers[activeQuestionIndex] = {
+          questionId: currentQ?.id,
+          question: currentQ?.question,
+          userOption: null, // Safe null answer log
+          correctOption: currentQ?.correct,
+          isCorrect: false,
+          options: currentQ?.options || [],
+          difficulty: currentQ?.difficulty || 'Medium'
+        };
+        setUserAnswers(updatedAnswers);
+      }
     }
 
     setValidationError(null);
 
-    if (activeQuestionIndex < activeQuestions.length - 1) {
+    const totalQuestions = activeQuestions?.length || 10;
+    if (activeQuestionIndex < totalQuestions - 1) {
       setActiveQuestionIndex((prev) => prev + 1);
-      setSelectedOption(null); // Clear selected option for the next question
+      setSelectedOption(null); // Reset choice for next question
     } else {
-      setIsFinished(true); // Complete quiz and show score summary
+      setIsFinished(true); // Open results screen
       if (currentQ && currentQ.code) {
-        saveAssessmentScore(currentQ.code, score, activeQuestions.length);
+        saveAssessmentScore(currentQ.code, score, totalQuestions);
       }
-      studentAPI.submitQuiz(score, activeQuestions.length).catch(() => null);
+      studentAPI.submitQuiz(score, totalQuestions).catch(() => null);
       if (addToast) {
-        addToast('Sem 3 Assessment Complete!', `Scored ${score} / ${activeQuestions.length} in ${selectedSubject}.`, 'success');
+        addToast('Sem 3 Assessment Complete!', `Scored ${score} / ${totalQuestions} in ${selectedSubject}.`, 'success');
       }
     }
   };
