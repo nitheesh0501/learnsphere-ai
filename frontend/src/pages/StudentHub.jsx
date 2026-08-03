@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { generateStudentPDFReport } from '../utils/pdfExport';
 import { calculateReadiness, notifyMarksUpdated, getWeakSubject, getWeakSubjects, getAssessmentScores, getSafeLocalStorage } from '../utils/readiness';
+import VideoRecommendationGrid from '../components/VideoRecommendationGrid';
 
 // OFFICIAL SEMESTER 3 PREDEFINED SUBJECT DATASET (STRICTLY 7 COURSES - LOCKED STRUCTURE)
 const DEFAULT_SUBJECTS = [
@@ -922,80 +923,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
         </div>
 
         {/* Video Recommendations Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[
-            {
-              title: "GPIO Timers & PWM Generation in ESD",
-              course: "2321CSS301J — ESD",
-              platform: "NPTEL / YouTube",
-              duration: "24 mins",
-              weakTopic: "GPIO Timers",
-              link: "https://www.youtube.com/results?search_query=embedded+system+design+gpio+timers+pwm",
-              bg: "bg-rose-50/70 border-rose-200"
-            },
-            {
-              title: "Red-Black Trees & Dynamic Programming",
-              course: "2321CSC302J — ADSA",
-              platform: "MIT OpenCourseWare",
-              duration: "32 mins",
-              weakTopic: "Red-Black Trees",
-              link: "https://www.youtube.com/results?search_query=red+black+trees+dynamic+programming+adsa",
-              bg: "bg-amber-50/70 border-amber-200"
-            },
-            {
-              title: "TCP 3-Way Handshake & Subnetting",
-              course: "2321CSC301T — CN",
-              platform: "NPTEL Video Series",
-              duration: "28 mins",
-              weakTopic: "TCP Handshake",
-              link: "https://www.youtube.com/results?search_query=computer+networks+tcp+three+way+handshake",
-              bg: "bg-slate-50 border-slate-200"
-            },
-            {
-              title: "Set Theory, Logic & Recurrence Relations",
-              course: "2321MAB301T — DM",
-              platform: "NPTEL Mathematics",
-              duration: "30 mins",
-              weakTopic: "Logic & Recurrence",
-              link: "https://www.youtube.com/results?search_query=discrete+mathematics+recurrence+relations",
-              bg: "bg-emerald-50/70 border-emerald-200"
-            }
-          ].map((vid, idx) => (
-            <div
-              key={idx}
-              className={`p-4 rounded-2xl border ${vid.bg} flex flex-col justify-between space-y-3 shadow-2xs hover:shadow-md transition-all`}
-            >
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-[9px] font-black uppercase tracking-wider text-[#701C34] bg-white px-2 py-0.5 rounded border border-slate-200">
-                    {vid.course}
-                  </span>
-                  <span className="text-[10px] font-bold text-slate-500 flex items-center space-x-1">
-                    <Clock className="w-3 h-3 text-slate-400" />
-                    <span>{vid.duration}</span>
-                  </span>
-                </div>
-                <h4 className="text-xs font-black text-slate-900 leading-snug">{vid.title}</h4>
-                <p className="text-[10px] font-semibold text-slate-500">{vid.platform}</p>
-              </div>
-
-              <div className="pt-2 border-t border-slate-200/80 flex items-center justify-between">
-                <span className="text-[9px] font-extrabold text-[#701C34] bg-white px-1.5 py-0.5 rounded border border-rose-200">
-                  Target: {vid.weakTopic}
-                </span>
-                <a
-                  href={vid.link}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="px-2.5 py-1 bg-[#701C34] hover:bg-[#581427] text-white rounded-lg text-[11px] font-bold transition-all flex items-center space-x-1 shadow-2xs"
-                >
-                  <span>Watch</span>
-                  <ExternalLink className="w-3 h-3" />
-                </a>
-              </div>
-            </div>
-          ))}
-        </div>
+        <VideoRecommendationGrid />
       </section>
 
       {/* CARD 4: AI SUGGESTED STUDY PRIORITIES */}
