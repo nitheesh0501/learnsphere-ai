@@ -728,6 +728,7 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
   const [selectedOption, setSelectedOption] = useState(null);
   const [score, setScore] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
+  const [validationError, setValidationError] = useState(null);
 
   useEffect(() => {
     if (initialSubject) {
@@ -745,6 +746,8 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
 
   const handleSelectOption = (idx) => {
     setSelectedOption(idx);
+    setValidationError(null); // Clear validation warning on option click
+    
     const isCorrect = idx === currentQ.correct;
     
     // Log user answer choice cleanly
@@ -766,9 +769,16 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
   };
 
   const forceNextQuestion = () => {
+    if (selectedOption === null || selectedOption === undefined) {
+      setValidationError("Please choose an answer option before proceeding!");
+      return;
+    }
+
+    setValidationError(null);
+
     if (activeQuestionIndex < activeQuestions.length - 1) {
       setActiveQuestionIndex((prev) => prev + 1);
-      setSelectedOption(null); // Clear selected option for the new question
+      setSelectedOption(null); // Clear selected option for the next question
     } else {
       setIsFinished(true); // Complete quiz and show score summary
       if (currentQ && currentQ.code) {
@@ -784,6 +794,7 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
   const handleResetQuiz = () => {
     setActiveQuestionIndex(0);
     setSelectedOption(null);
+    setValidationError(null);
     setScore(0);
     setUserAnswers([]);
     setIsFinished(false);
@@ -793,6 +804,7 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
     setSelectedSubject(subjectTitle);
     setActiveQuestionIndex(0);
     setSelectedOption(null);
+    setValidationError(null);
     setScore(0);
     setUserAnswers([]);
     setIsFinished(false);
@@ -902,6 +914,13 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
 
           {/* Question Body */}
           <div className="space-y-4">
+            {validationError && (
+              <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl flex items-center space-x-2 text-xs text-[#701C34] font-black shadow-2xs">
+                <AlertCircle className="w-4 h-4 text-[#701C34] shrink-0" />
+                <span>{validationError}</span>
+              </div>
+            )}
+
             <p className="text-sm sm:text-base font-extrabold text-slate-900 leading-relaxed">
               {currentQ.question}
             </p>
