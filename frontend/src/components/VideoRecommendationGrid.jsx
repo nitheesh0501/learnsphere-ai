@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, Clock, BookOpen, ExternalLink, Video } from 'lucide-react';
+import { Play, Clock, BookOpen } from 'lucide-react';
 
 export const RECOMMENDED_VIDEOS = [
   {
@@ -10,8 +10,9 @@ export const RECOMMENDED_VIDEOS = [
     focusText: "Focus: Pointers, References & Interface Contracts",
     source: "NPTEL • IIT Kharagpur",
     duration: "24 mins",
-    thumbnail: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&auto=format&fit=crop&q=60",
-    url: "https://www.youtube.com/watch?v=a1A4XW4W010"
+    videoId: "hdI2bkO3458",
+    thumbnail: "https://img.youtube.com/vi/hdI2bkO3458/hqdefault.jpg",
+    url: "https://www.youtube.com/watch?v=hdI2bkO3458"
   },
   {
     id: "2",
@@ -21,8 +22,9 @@ export const RECOMMENDED_VIDEOS = [
     focusText: "Focus: GPIO Timers & SPI Protocols",
     source: "MIT OpenCourseWare",
     duration: "32 mins",
-    thumbnail: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&auto=format&fit=crop&q=60",
-    url: "https://ocw.mit.edu/"
+    videoId: "3V9EQ3yS2d0",
+    thumbnail: "https://img.youtube.com/vi/3V9EQ3yS2d0/hqdefault.jpg",
+    url: "https://www.youtube.com/watch?v=3V9EQ3yS2d0"
   },
   {
     id: "3",
@@ -32,8 +34,9 @@ export const RECOMMENDED_VIDEOS = [
     focusText: "Focus: Red–Black Tree Rotations & DP Memoization",
     source: "Stanford Computer Science",
     duration: "28 mins",
-    thumbnail: "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=600&auto=format&fit=crop&q=60",
-    url: "https://www.youtube.com/watch?v=qA0YBf2kE2o"
+    videoId: "v6i2O5_S_6M",
+    thumbnail: "https://img.youtube.com/vi/v6i2O5_S_6M/hqdefault.jpg",
+    url: "https://www.youtube.com/watch?v=v6i2O5_S_6M"
   },
   {
     id: "4",
@@ -43,8 +46,9 @@ export const RECOMMENDED_VIDEOS = [
     focusText: "Focus: TCP 3-Way Handshake & Subnet Masking",
     source: "NPTEL",
     duration: "21 mins",
-    thumbnail: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&auto=format&fit=crop&q=60",
-    url: "https://nptel.ac.in/"
+    videoId: "rL8RFIiylyo",
+    thumbnail: "https://img.youtube.com/vi/rL8RFIiylyo/hqdefault.jpg",
+    url: "https://www.youtube.com/watch?v=rL8RFIiylyo"
   },
   {
     id: "5",
@@ -54,7 +58,8 @@ export const RECOMMENDED_VIDEOS = [
     focusText: "Focus: Supervised Learning & Binary Cross-Entropy Loss",
     source: "MIT OpenCourseWare",
     duration: "35 mins",
-    thumbnail: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=600&auto=format&fit=crop&q=60",
+    videoId: "aircAruvnKk",
+    thumbnail: "https://img.youtube.com/vi/aircAruvnKk/hqdefault.jpg",
     url: "https://www.youtube.com/watch?v=aircAruvnKk"
   },
   {
@@ -65,8 +70,9 @@ export const RECOMMENDED_VIDEOS = [
     focusText: "Focus: Logic, Set Theory & Recurrence Relations",
     source: "Stanford Computer Science",
     duration: "19 mins",
-    thumbnail: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=60",
-    url: "https://www.youtube.com/watch?v=12345678"
+    videoId: "tyDKR4fg3Yw",
+    thumbnail: "https://img.youtube.com/vi/tyDKR4fg3Yw/hqdefault.jpg",
+    url: "https://www.youtube.com/watch?v=tyDKR4fg3Yw"
   }
 ];
 
@@ -92,7 +98,7 @@ export default function VideoRecommendationGrid({ videos = RECOMMENDED_VIDEOS })
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-90 group-hover:opacity-100"
                 onError={(e) => {
                   e.target.onerror = null;
-                  e.target.src = "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&auto=format&fit=crop&q=60";
+                  e.target.src = `https://img.youtube.com/vi/${vid.videoId}/hqdefault.jpg`;
                 }}
               />
               {/* Dark Gradient Overlay with Maroon Play Button */}
