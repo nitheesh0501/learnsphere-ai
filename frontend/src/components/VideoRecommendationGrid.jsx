@@ -4,39 +4,39 @@ import { Play, Clock, BookOpen } from 'lucide-react';
 export const RECOMMENDED_VIDEOS = [
   {
     id: "1",
-    title: "Java Interfaces, Polymorphism & Abstract Classes Complete Guide",
+    title: "Java OOPs Concepts, Interfaces & Abstract Classes",
     subjectCode: "2321CSC304R • OOPJ",
     categoryTag: "Fundamental Remedial",
     focusText: "Focus: Pointers, References & Interface Contracts",
-    source: "NPTEL • IIT Kharagpur",
-    duration: "24 mins",
-    thumbnail: "https://i3.ytimg.com/vi/hdI2bkO3458/maxresdefault.jpg",
+    source: "freeCodeCamp",
+    duration: "38 mins",
+    thumbnail: "https://i3.ytimg.com/vi/Ht02t8vZ_Ww/hqdefault.jpg",
     fallbackThumbnail: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&auto=format&fit=crop",
-    url: "https://www.youtube.com/watch?v=hdI2bkO3458"
+    url: "https://www.youtube.com/watch?v=Ht02t8vZ_Ww"
   },
   {
     id: "2",
-    title: "Embedded Systems: Microcontroller Timers, Counters & SPI Waveforms",
+    title: "Embedded Systems & Microcontroller Fundamentals",
     subjectCode: "2321CSS301J • ESD",
     categoryTag: "Core Hardware Practice",
-    focusText: "Focus: GPIO Timers & SPI Protocols",
-    source: "MIT OpenCourseWare",
-    duration: "32 mins",
-    thumbnail: "https://i3.ytimg.com/vi/3V9EQ3yS2d0/hqdefault.jpg",
+    focusText: "Focus: GPIO Timers, Counters & SPI Protocols",
+    source: "Neso Academy",
+    duration: "25 mins",
+    thumbnail: "https://i3.ytimg.com/vi/1_A4x-YvVLE/hqdefault.jpg",
     fallbackThumbnail: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&auto=format&fit=crop",
-    url: "https://www.youtube.com/watch?v=3V9EQ3yS2d0"
+    url: "https://www.youtube.com/watch?v=1_A4x-YvVLE"
   },
   {
     id: "3",
-    title: "Red–Black Trees Insertion, Deletion & Height Proof Derivations",
+    title: "Red–Black Tree Insertion & Rotations Complete Guide",
     subjectCode: "2321CSC302J • ADSA",
     categoryTag: "Algorithm Mastery",
-    focusText: "Focus: Red–Black Tree Rotations & DP Memoization",
-    source: "Stanford Computer Science",
-    duration: "28 mins",
-    thumbnail: "https://i3.ytimg.com/vi/v6i2O5_S_6M/hqdefault.jpg",
+    focusText: "Focus: Red–Black Tree Rotations & Balanced BSTs",
+    source: "Abdul Bari",
+    duration: "29 mins",
+    thumbnail: "https://i3.ytimg.com/vi/qA02XWRTBdw/hqdefault.jpg",
     fallbackThumbnail: "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=600&auto=format&fit=crop",
-    url: "https://www.youtube.com/watch?v=v6i2O5_S_6M"
+    url: "https://www.youtube.com/watch?v=qA02XWRTBdw"
   },
   {
     id: "4",
@@ -80,23 +80,23 @@ export const RECOMMENDED_VIDEOS = [
     subjectCode: "2321CSC303J • FAIML",
     categoryTag: "Concept Enrichment",
     focusText: "Focus: Supervised Learning & Binary Cross-Entropy Loss",
-    source: "MIT OpenCourseWare",
+    source: "freeCodeCamp",
     duration: "35 mins",
-    thumbnail: "https://i3.ytimg.com/vi/aircAruvnKk/hqdefault.jpg",
+    thumbnail: "https://i3.ytimg.com/vi/i_LwzRVP7bg/hqdefault.jpg",
     fallbackThumbnail: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=600&auto=format&fit=crop",
-    url: "https://www.youtube.com/watch?v=aircAruvnKk"
+    url: "https://www.youtube.com/watch?v=i_LwzRVP7bg"
   },
   {
     id: "8",
-    title: "Discrete Math: Propositional Logic Proofs & Recurrence Relations",
+    title: "Discrete Mathematics & Logic Proofs for Computer Science",
     subjectCode: "2321MAB301T • DM",
     categoryTag: "Advanced Drills",
     focusText: "Focus: Propositional Logic, Truth Tables & Mathematical Proofs",
-    source: "Stanford Computer Science",
-    duration: "19 mins",
-    thumbnail: "https://i3.ytimg.com/vi/tyDKR4fg3Yw/hqdefault.jpg",
+    source: "freeCodeCamp",
+    duration: "42 mins",
+    thumbnail: "https://i3.ytimg.com/vi/3I92x23lW84/hqdefault.jpg",
     fallbackThumbnail: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop",
-    url: "https://www.youtube.com/watch?v=tyDKR4fg3Yw"
+    url: "https://www.youtube.com/watch?v=3I92x23lW84"
   },
   {
     id: "9",
