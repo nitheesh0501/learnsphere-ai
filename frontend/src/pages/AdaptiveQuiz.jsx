@@ -772,28 +772,76 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
     }
   };
 
-  const forceNextQuestion = () => {
-    if (selectedOption === null || selectedOption === undefined) {
-      setValidationError("Please select an option before proceeding!");
-      setWarningMessage("Please select an option before proceeding!");
-      return;
-    }
+  const forceNextQuestion = (e) => {
+    if (e && typeof e.preventDefault === 'function') e.preventDefault();
+    if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
 
-    setValidationError("");
-    setWarningMessage("");
-
-    const totalQuestions = activeQuestions?.length || 10;
-    if (activeQuestionIndex < totalQuestions - 1) {
-      setActiveQuestionIndex((prev) => prev + 1);
-      setSelectedOption(null); // Reset selection for next question
-    } else {
-      setIsFinished(true); // Complete quiz and show score summary
-      if (currentQ && currentQ.code) {
-        saveAssessmentScore(currentQ.code, score, totalQuestions);
+    try {
+      // 1. Check if an option is selected
+      if (selectedOption === null || selectedOption === undefined) {
+        if (typeof setValidationError === 'function') {
+          setValidationError("Please select an option before proceeding!");
+        }
+        if (typeof setWarningMessage === 'function') {
+          setWarningMessage("Please select an option before proceeding!");
+        }
+        return;
       }
-      studentAPI.submitQuiz(score, totalQuestions).catch(() => null);
-      if (addToast) {
-        addToast('Sem 3 Assessment Complete!', `Scored ${score} / ${totalQuestions} in ${selectedSubject}.`, 'success');
+
+      // 2. Clear error safely
+      if (typeof setValidationError === 'function') setValidationError("");
+      if (typeof setWarningMessage === 'function') setWarningMessage("");
+
+      // 3. Save user answer safely
+      const safeUserAnswers = Array.isArray(userAnswers) ? userAnswers : [];
+      const isCorrect = currentQ && selectedOption === currentQ.correct;
+      const updatedAnswers = [...safeUserAnswers];
+      updatedAnswers[activeQuestionIndex || 0] = {
+        questionId: currentQ?.id,
+        question: currentQ?.question,
+        userOption: selectedOption,
+        correctOption: currentQ?.correct,
+        isCorrect: Boolean(isCorrect),
+        options: currentQ?.options || [],
+        difficulty: currentQ?.difficulty || 'Medium'
+      };
+
+      if (typeof setUserAnswers === 'function') {
+        setUserAnswers(updatedAnswers);
+      }
+
+      // 4. Advance or complete safely
+      const total = (activeQuestions && Array.isArray(activeQuestions)) ? activeQuestions.length : 10;
+      const currentIdx = activeQuestionIndex || 0;
+
+      if (currentIdx < total - 1) {
+        if (typeof setActiveQuestionIndex === 'function') {
+          setActiveQuestionIndex((prev) => (prev || 0) + 1);
+        }
+        if (typeof setSelectedOption === 'function') {
+          setSelectedOption(null);
+        }
+      } else {
+        if (typeof setIsFinished === 'function') {
+          setIsFinished(true);
+        }
+        if (currentQ && currentQ.code) {
+          saveAssessmentScore(currentQ.code, score, total);
+        }
+        if (studentAPI && typeof studentAPI.submitQuiz === 'function') {
+          studentAPI.submitQuiz(score, total).catch(() => null);
+        }
+        if (typeof addToast === 'function') {
+          addToast('Sem 3 Assessment Complete!', `Scored ${score} / ${total} in ${selectedSubject}.`, 'success');
+        }
+      }
+    } catch (err) {
+      console.error("Safely caught quiz navigation error:", err);
+      if (typeof setValidationError === 'function') {
+        setValidationError("Please select an answer to continue.");
+      }
+      if (typeof setWarningMessage === 'function') {
+        setWarningMessage("Please select an answer to continue.");
       }
     }
   };
