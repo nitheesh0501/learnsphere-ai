@@ -5,12 +5,16 @@
  */
 
 /**
- * Safe localStorage read & JSON deserialization with fallback
+ * Bulletproof safe localStorage read & JSON deserialization with fallback
  */
 export const getSafeLocalStorage = (key, fallback) => {
   try {
     const item = localStorage.getItem(key);
-    return item ? JSON.parse(item) : fallback;
+    if (!item || item === 'undefined' || item === 'null' || item === 'NaN') {
+      return fallback;
+    }
+    const parsed = JSON.parse(item);
+    return parsed !== null && parsed !== undefined ? parsed : fallback;
   } catch (e) {
     console.error(`Error loading ${key} from localStorage:`, e);
     return fallback;

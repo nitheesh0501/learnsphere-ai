@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { GraduationCap, BookOpen, Zap, BarChart3, Bell, Check, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import ProfileDrawer from './ProfileDrawer';
+import { getSafeLocalStorage } from '../utils/readiness';
 
 const DEFAULT_NOTIFICATIONS = [
   {
@@ -38,15 +39,7 @@ export default function Header({ activeTab, setActiveTab, readinessScore = 78.0 
 
   // Initialize notification state from localStorage or default list
   const [notifications, setNotifications] = useState(() => {
-    const saved = localStorage.getItem('learnsphere_notifications');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.warn('Error parsing saved notifications:', e);
-      }
-    }
-    return DEFAULT_NOTIFICATIONS;
+    return getSafeLocalStorage('learnsphere_notifications', DEFAULT_NOTIFICATIONS);
   });
 
   // Auto-save notifications state to localStorage whenever it changes
