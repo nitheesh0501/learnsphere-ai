@@ -301,59 +301,7 @@ export default function FacultyAnalytics({ addToast, nitheeshReadiness }) {
     };
   }, []);
 
-  const [assignedRemedials, setAssignedRemedials] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem('learnsphere_assigned_remedials') || '{}');
-    } catch {
-      return {};
-    }
-  });
-  const [toastMessage, setToastMessage] = useState("");
-
-  const handleAssignRemedial = (studentId, studentName, topicName) => {
-    try {
-      const isAlreadyAssigned = assignedRemedials[studentId]?.assigned;
-      const updated = {
-        ...assignedRemedials,
-        [studentId]: {
-          assigned: !isAlreadyAssigned,
-          topic: topicName || "Weak Concepts Review",
-          assignedAt: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-        }
-      };
-
-      setAssignedRemedials(updated);
-      localStorage.setItem('learnsphere_assigned_remedials', JSON.stringify(updated));
-
-      // Update student status in roster
-      setStudents((prev) => prev.map(s => {
-        if (s.id === studentId || s.rollNo === studentId || s.name === studentName) {
-          return {
-            ...s,
-            interventionStatus: !isAlreadyAssigned ? 'Remedial Assigned' : 'On Track',
-            status: !isAlreadyAssigned ? 'Remedial Assigned' : 'On Track'
-          };
-        }
-        return s;
-      }));
-
-      // Show temporary notification toast
-      const msg = !isAlreadyAssigned 
-        ? `Remedial module assigned to ${studentName}!`
-        : `Remedial assignment unassigned for ${studentName}.`;
-
-      setToastMessage(msg);
-      setTimeout(() => setToastMessage(""), 3000);
-
-      if (typeof addToast === 'function') {
-        addToast(!isAlreadyAssigned ? 'Remedial Assigned' : 'Remedial Unassigned', msg, 'success');
-      }
-    } catch (err) {
-      console.error("Failed to assign remedial module:", err);
-    }
-  };
-
-  // DIRECT ACTION 2: FACULTY INDIVIDUAL STUDENT PDF REPORT DOWNLOAD HANDLER
+  // DIRECT ACTION 1: FACULTY INDIVIDUAL STUDENT PDF REPORT DOWNLOAD HANDLER
   const handleDownloadStudentPDF = (stu) => {
     let numScore = typeof stu.readinessScore === 'string' 
       ? parseFloat(stu.readinessScore) 
@@ -702,36 +650,18 @@ export default function FacultyAnalytics({ addToast, nitheeshReadiness }) {
                       </span>
                     </td>
 
-                    {/* CLEAN & SIMPLE ACTION COLUMN: 2 DIRECT ACTION BUTTONS (NO POPUPS AT ALL) */}
+                    {/* ACTION COLUMN: DIRECT PDF REPORT DOWNLOAD */}
                     <td className="py-3.5 px-3 text-right">
-                      <div className="flex items-center justify-end space-x-2">
-                        
-                        {/* BUTTON 1: REMEDIAL ASSIGNMENT WITH PERSISTENT TOGGLE & TOAST */}
-                        <button
-                          type="button"
-                          onClick={() => handleAssignRemedial(stu.id, sName, sWeak)}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center space-x-1 shadow-xs active:scale-95 ${
-                            assignedRemedials[stu.id]?.assigned
-                              ? "bg-emerald-600/10 text-emerald-600 border border-emerald-500/30 font-extrabold"
-                              : "bg-[#701C34] hover:bg-[#581628] text-white shadow-md hover:shadow-lg"
-                          }`}
-                          title={`Assign Remedial Roadmap to ${sName}`}
-                        >
-                          <Zap className="w-3.5 h-3.5" />
-                          <span>{assignedRemedials[stu.id]?.assigned ? "✓ Remedial Assigned" : "Assign Remedial"}</span>
-                        </button>
-
-                        {/* BUTTON 2: DIRECT PDF REPORT DOWNLOAD */}
+                      <div className="flex items-center justify-end">
                         <button
                           type="button"
                           onClick={() => handleDownloadStudentPDF(stu)}
-                          className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 rounded-lg text-xs font-bold transition-all flex items-center space-x-1 active:scale-95"
+                          className="px-3 py-1.5 bg-[#701C34] hover:bg-[#581427] text-white rounded-lg text-xs font-bold transition-all shadow-xs flex items-center space-x-1 cursor-pointer active:scale-95"
                           title={`Download Printable PDF Report for ${sName}`}
                         >
-                          <FileText className="w-3.5 h-3.5 text-[#701C34]" />
+                          <FileText className="w-3.5 h-3.5 text-white" />
                           <span>PDF Report</span>
                         </button>
-
                       </div>
                     </td>
 
@@ -743,14 +673,6 @@ export default function FacultyAnalytics({ addToast, nitheeshReadiness }) {
         </div>
 
       </div>
-
-      {/* FLOATING TOAST NOTIFICATION BANNER */}
-      {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border border-slate-700 animate-bounce">
-          <span className="text-emerald-400 font-bold text-base">✓</span>
-          <span className="text-sm font-medium">{toastMessage}</span>
-        </div>
-      )}
 
     </div>
   );
