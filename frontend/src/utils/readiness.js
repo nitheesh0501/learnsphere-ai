@@ -4,6 +4,19 @@
  * Shared between Student Hub, App.jsx, and Faculty Analytics.
  */
 
+/**
+ * Safe localStorage read & JSON deserialization with fallback
+ */
+export const getSafeLocalStorage = (key, fallback) => {
+  try {
+    const item = localStorage.getItem(key);
+    return item ? JSON.parse(item) : fallback;
+  } catch (e) {
+    console.error(`Error loading ${key} from localStorage:`, e);
+    return fallback;
+  }
+};
+
 export function calculateReadiness(subjects) {
   if (!subjects || !Array.isArray(subjects) || subjects.length === 0) {
     return 51;
@@ -41,27 +54,21 @@ export function calculateReadiness(subjects) {
   return Math.round(totalPct / subjects.length);
 }
 
+const DEFAULT_ASSESSMENT_SCORES = {
+  '2321MAB301T': { score: 9, total: 10, pct: 90 },
+  '2321CSC301T': { score: 7, total: 10, pct: 70 },
+  '2321CSC302J': { score: 6, total: 10, pct: 60 },
+  '2321CSC303J': { score: 8, total: 10, pct: 80 },
+  '2321CSS301J': { score: 4, total: 10, pct: 40 },
+  '2321CSC304R': { score: 5, total: 10, pct: 50 },
+  '2321SDA301L': { score: 9, total: 10, pct: 90 }
+};
+
 /**
  * Get assessment quiz practice scores for all 7 Semester 3 subjects
  */
 export function getAssessmentScores() {
-  const saved = localStorage.getItem('assessmentScores');
-  if (saved) {
-    try {
-      return JSON.parse(saved);
-    } catch (e) {
-      console.warn('Error parsing assessmentScores:', e);
-    }
-  }
-  return {
-    '2321MAB301T': { score: 9, total: 10, pct: 90 },
-    '2321CSC301T': { score: 7, total: 10, pct: 70 },
-    '2321CSC302J': { score: 6, total: 10, pct: 60 },
-    '2321CSC303J': { score: 8, total: 10, pct: 80 },
-    '2321CSS301J': { score: 4, total: 10, pct: 40 },
-    '2321CSC304R': { score: 5, total: 10, pct: 50 },
-    '2321SDA301L': { score: 9, total: 10, pct: 90 }
-  };
+  return getSafeLocalStorage('assessmentScores', DEFAULT_ASSESSMENT_SCORES);
 }
 
 /**

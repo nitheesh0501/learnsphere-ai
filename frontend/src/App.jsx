@@ -6,6 +6,7 @@ import FacultyAnalytics from './pages/FacultyAnalytics';
 import Toast from './components/Toast';
 import { AuthProvider } from './context/AuthContext';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { getSafeLocalStorage } from './utils/readiness';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('hub'); // 'hub' | 'quiz' | 'analytics'
@@ -13,21 +14,13 @@ export default function App() {
 
   // Initialize readinessScore state from localStorage or default fallback 51.0
   const [readinessScore, setReadinessScore] = useState(() => {
-    try {
-      const saved = localStorage.getItem('learnsphere_readiness');
-      if (saved && !isNaN(Number(saved))) return Number(saved);
-      
-      // Calculate initial baseline readiness from localStorage subjects if available
-      const savedSubjects = localStorage.getItem('learnsphere_subjects') || localStorage.getItem('studentMarks');
-      if (savedSubjects) {
-        const parsed = JSON.parse(savedSubjects);
-        if (Array.isArray(parsed) && parsed.length === 7) {
-          const totalPct = parsed.reduce((acc, sub) => acc + ((Number(sub.internalMarks) || 0) / (Number(sub.maxMarks) || 50)) * 100, 0);
-          return Math.round(totalPct / 7);
-        }
-      }
-    } catch (e) {
-      console.warn("Safe localStorage parse in App.jsx:", e);
+    const saved = localStorage.getItem('learnsphere_readiness');
+    if (saved && !isNaN(Number(saved))) return Number(saved);
+    
+    const parsedSubjects = getSafeLocalStorage('learnsphere_subjects', getSafeLocalStorage('studentMarks', null));
+    if (Array.isArray(parsedSubjects) && parsedSubjects.length === 7) {
+      const totalPct = parsedSubjects.reduce((acc, sub) => acc + ((Number(sub.internalMarks) || 0) / (Number(sub.maxMarks) || 50)) * 100, 0);
+      return Math.round(totalPct / 7);
     }
     return 51.0;
   });

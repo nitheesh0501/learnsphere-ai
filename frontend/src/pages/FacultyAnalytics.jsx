@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Users, AlertCircle, CheckCircle2, Search, Shield, Activity, FileText, Zap } from 'lucide-react';
 import { generateStudentPDFReport } from '../utils/pdfExport';
-import { calculateReadiness, getWeakSubject, getWeakSubjects } from '../utils/readiness';
+import { calculateReadiness, getWeakSubject, getWeakSubjects, getSafeLocalStorage } from '../utils/readiness';
 
 // HARDCODED VALID FACULTY ROSTER DATA (8 DISTINCT STUDENTS INCLUDING NITHEESH)
 const facultyRosterData = [
@@ -257,15 +257,8 @@ const facultyRosterData = [
 
 export default function FacultyAnalytics({ addToast, nitheeshReadiness }) {
   const [students, setStudents] = useState(() => {
-    const saved = localStorage.getItem('learnsphere_roster');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length === 8) return parsed;
-      } catch (e) {
-        console.warn('Error parsing saved roster:', e);
-      }
-    }
+    const parsed = getSafeLocalStorage('learnsphere_roster', null);
+    if (Array.isArray(parsed) && parsed.length === 8) return parsed;
     return facultyRosterData;
   });
 
@@ -278,26 +271,20 @@ export default function FacultyAnalytics({ addToast, nitheeshReadiness }) {
 
   // REAL-TIME LOCALSTORAGE + EVENT LISTENER SYNC FOR NITHEESH READINESS SCORE
   const [nitheeshReadinessVal, setNitheeshReadinessVal] = useState(() => {
-    const savedMarks = localStorage.getItem('studentMarks') || localStorage.getItem('learnsphere_subjects');
-    if (savedMarks) {
-      try {
-        const parsed = JSON.parse(savedMarks);
-        const score = calculateReadiness(parsed);
-        if (score !== null) return score;
-      } catch (e) {}
+    const parsedMarks = getSafeLocalStorage('studentMarks', getSafeLocalStorage('learnsphere_subjects', null));
+    if (parsedMarks) {
+      const score = calculateReadiness(parsedMarks);
+      if (score !== null) return score;
     }
     return nitheeshReadiness !== undefined ? Math.round(Number(nitheeshReadiness)) : 51;
   });
 
   useEffect(() => {
     const syncStudentData = () => {
-      const savedMarks = localStorage.getItem('studentMarks') || localStorage.getItem('learnsphere_subjects');
-      if (savedMarks) {
-        try {
-          const parsed = JSON.parse(savedMarks);
-          const recalculatedReadiness = calculateReadiness(parsed);
-          setNitheeshReadinessVal(recalculatedReadiness);
-        } catch (e) {}
+      const parsedMarks = getSafeLocalStorage('studentMarks', getSafeLocalStorage('learnsphere_subjects', null));
+      if (parsedMarks) {
+        const recalculatedReadiness = calculateReadiness(parsedMarks);
+        setNitheeshReadinessVal(recalculatedReadiness);
       } else {
         const savedReadiness = localStorage.getItem('learnsphere_readiness');
         if (savedReadiness && !isNaN(Number(savedReadiness))) {
@@ -591,12 +578,9 @@ export default function FacultyAnalytics({ addToast, nitheeshReadiness }) {
                 // Dynamic multi-subject weak course calculation for Nitheesh when tied
                 let sWeak = stu.weakSubject || stu.weak_subject;
                 if (isNitheesh) {
-                  const savedMarks = localStorage.getItem('studentMarks') || localStorage.getItem('learnsphere_subjects');
-                  if (savedMarks) {
-                    try {
-                      const parsed = JSON.parse(savedMarks);
-                      sWeak = getWeakSubject(parsed);
-                    } catch (e) {}
+                  const parsedMarks = getSafeLocalStorage('studentMarks', getSafeLocalStorage('learnsphere_subjects', null));
+                  if (parsedMarks) {
+                    sWeak = getWeakSubject(parsedMarks);
                   }
                 }
 

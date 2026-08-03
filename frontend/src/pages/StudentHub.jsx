@@ -19,7 +19,7 @@ import {
   FileText
 } from 'lucide-react';
 import { generateStudentPDFReport } from '../utils/pdfExport';
-import { calculateReadiness, notifyMarksUpdated, getWeakSubject, getWeakSubjects, getAssessmentScores } from '../utils/readiness';
+import { calculateReadiness, notifyMarksUpdated, getWeakSubject, getWeakSubjects, getAssessmentScores, getSafeLocalStorage } from '../utils/readiness';
 
 // OFFICIAL SEMESTER 3 PREDEFINED SUBJECT DATASET (STRICTLY 7 COURSES - LOCKED STRUCTURE)
 const DEFAULT_SUBJECTS = [
@@ -35,15 +35,8 @@ const DEFAULT_SUBJECTS = [
 export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadinessScore, addToast }) {
   // Initialize subjects state from localStorage or fall back to 7 predefined Semester 3 courses
   const [subjects, setSubjects] = useState(() => {
-    const saved = localStorage.getItem('studentMarks') || localStorage.getItem('learnsphere_subjects');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length === 7) return parsed;
-      } catch (e) {
-        console.warn('Error parsing localStorage subjects:', e);
-      }
-    }
+    const parsed = getSafeLocalStorage('studentMarks', getSafeLocalStorage('learnsphere_subjects', null));
+    if (Array.isArray(parsed) && parsed.length === 7) return parsed;
     return DEFAULT_SUBJECTS;
   });
 
@@ -52,14 +45,8 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
 
   // Interactive 6-Week Recovery Roadmap completed weeks state
   const [completedWeeks, setCompletedWeeks] = useState(() => {
-    const saved = localStorage.getItem('learnsphere_completed_weeks');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) return parsed;
-      } catch (e) {}
-    }
-    return [1]; // Default Week 1 is completed
+    const parsed = getSafeLocalStorage('learnsphere_completed_weeks', [1]);
+    return Array.isArray(parsed) ? parsed : [1];
   });
 
   const toggleWeekCompleted = (weekNum) => {
