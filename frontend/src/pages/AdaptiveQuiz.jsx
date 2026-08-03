@@ -743,48 +743,42 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
   const activeQuestions = SEM3_QUESTION_BANK[selectedSubject] || SEM3_QUESTION_BANK["Discrete Mathematics"];
   const currentQ = activeQuestions[activeQuestionIndex % activeQuestions.length];
 
-  const handleNext = () => {
-    const isCorrect = selectedOption === currentQ.correct;
-    const newScore = score + (isCorrect ? 1 : 0);
+  const handleSelectOption = (idx) => {
+    setSelectedOption(idx);
+    const isCorrect = idx === currentQ.correct;
+    
+    // Log user answer choice cleanly
+    const updatedAnswers = [...userAnswers];
+    updatedAnswers[activeQuestionIndex] = {
+      questionId: currentQ.id,
+      question: currentQ.question,
+      userOption: idx,
+      correctOption: currentQ.correct,
+      isCorrect,
+      options: currentQ.options,
+      difficulty: currentQ.difficulty
+    };
+    setUserAnswers(updatedAnswers);
 
-    const newAnswerLog = [
-      ...userAnswers,
-      {
-        questionId: currentQ.id,
-        question: currentQ.question,
-        userOption: selectedOption,
-        correctOption: currentQ.correct,
-        isCorrect,
-        options: currentQ.options,
-        difficulty: currentQ.difficulty
-      }
-    ];
-
-    setUserAnswers(newAnswerLog);
-
-    if (isCorrect) {
-      setScore(newScore);
+    if (isCorrect && (!userAnswers[activeQuestionIndex] || !userAnswers[activeQuestionIndex].isCorrect)) {
+      setScore((prev) => prev + 1);
     }
+  };
 
-    setSelectedOption(null);
-
-    // Functional state update ensures smooth question advancement
-    setActiveQuestionIndex((prevIndex) => {
-      const nextIndex = prevIndex + 1;
-      if (nextIndex < activeQuestions.length) {
-        return nextIndex;
-      } else {
-        setIsFinished(true);
-        if (currentQ.code) {
-          saveAssessmentScore(currentQ.code, newScore, activeQuestions.length);
-        }
-        studentAPI.submitQuiz(newScore, activeQuestions.length).catch(() => null);
-        if (addToast) {
-          addToast('Sem 3 Assessment Complete!', `Scored ${newScore} / ${activeQuestions.length} in ${selectedSubject}.`, 'success');
-        }
-        return prevIndex;
+  const forceNextQuestion = () => {
+    if (activeQuestionIndex < activeQuestions.length - 1) {
+      setActiveQuestionIndex((prev) => prev + 1);
+      setSelectedOption(null); // Clear selected option for the new question
+    } else {
+      setIsFinished(true); // Complete quiz and show score summary
+      if (currentQ && currentQ.code) {
+        saveAssessmentScore(currentQ.code, score, activeQuestions.length);
       }
-    });
+      studentAPI.submitQuiz(score, activeQuestions.length).catch(() => null);
+      if (addToast) {
+        addToast('Sem 3 Assessment Complete!', `Scored ${score} / ${activeQuestions.length} in ${selectedSubject}.`, 'success');
+      }
+    }
   };
 
   const handleResetQuiz = () => {
@@ -922,9 +916,9 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
                     key={oIdx}
                     onClick={(e) => {
                       e.stopPropagation();
-                      setSelectedOption(oIdx);
+                      handleSelectOption(oIdx);
                     }}
-                    className={`w-full text-left p-4 rounded-xl border text-xs sm:text-sm font-bold relative z-20 cursor-pointer pointer-events-auto transition-all flex items-center justify-between ${
+                    className={`w-full text-left p-4 rounded-xl border text-xs sm:text-sm font-bold relative z-30 cursor-pointer pointer-events-auto transition-all flex items-center justify-between ${
                       isSelected
                         ? 'bg-rose-50 border-[#701C34] text-[#701C34] ring-2 ring-rose-200 shadow-sm'
                         : 'bg-slate-50 border-slate-200 text-slate-800 hover:border-[#701C34] hover:bg-rose-50/40'
@@ -945,19 +939,18 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
           {/* Action Footer */}
           <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
             <span className="text-xs text-slate-500 font-semibold">
-              Current Score: {score} / {activeQuestionIndex}
+              Current Score: {score} / {activeQuestionIndex + 1}
             </span>
 
             <button
               type="button"
-              disabled={selectedOption === null}
               onClick={(e) => {
                 e.stopPropagation();
-                handleNext();
+                forceNextQuestion();
               }}
-              className="px-6 py-2.5 bg-[#701C34] hover:bg-[#581427] text-white disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed rounded-xl text-xs font-extrabold relative z-20 cursor-pointer pointer-events-auto transition-all shadow-md flex items-center space-x-2"
+              className="bg-[#701C34] text-white px-6 py-3 rounded-xl font-semibold cursor-pointer hover:bg-[#581628] transition-all relative z-30 pointer-events-auto shadow-md flex items-center space-x-2"
             >
-              <span>{activeQuestionIndex + 1 === activeQuestions.length ? 'Finish Assessment' : 'Next Question'}</span>
+              <span>{activeQuestionIndex === activeQuestions.length - 1 ? "Submit & View Results" : "Next Question →"}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
