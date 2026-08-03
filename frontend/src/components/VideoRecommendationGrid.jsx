@@ -10,8 +10,7 @@ export const RECOMMENDED_VIDEOS = [
     focusText: "Focus: Pointers, References & Interface Contracts",
     source: "freeCodeCamp",
     duration: "38 mins",
-    thumbnail: "https://img.youtube.com/vi/Ht02t8vZ_Ww/hqdefault.jpg",
-    fallbackThumbnail: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&auto=format&fit=crop",
+    thumbnail: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&auto=format&fit=crop&q=80",
     url: "https://www.youtube.com/watch?v=Ht02t8vZ_Ww"
   },
   {
@@ -22,9 +21,8 @@ export const RECOMMENDED_VIDEOS = [
     focusText: "Focus: Microprocessors, Timers & SPI Bus Protocols",
     source: "Neso Academy",
     duration: "25 mins",
-    thumbnail: "https://img.youtube.com/vi/3V9EQ3yS2d0/hqdefault.jpg",
-    fallbackThumbnail: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&auto=format&fit=crop",
-    url: "https://www.youtube.com/watch?v=3V9EQ3yS2d0"
+    thumbnail: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=80",
+    url: "https://www.youtube.com/watch?v=1_A4x-YvVLE"
   },
   {
     id: "3",
@@ -32,10 +30,9 @@ export const RECOMMENDED_VIDEOS = [
     subjectCode: "2321CSC302J • ADSA",
     categoryTag: "Algorithm Mastery",
     focusText: "Focus: Red–Black Tree Rotations & Balanced BSTs",
-    source: "Abdul Bari",
+    source: "Jenny's Lectures",
     duration: "29 mins",
-    thumbnail: "https://img.youtube.com/vi/qA02XWRTBdw/hqdefault.jpg",
-    fallbackThumbnail: "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=600&auto=format&fit=crop",
+    thumbnail: "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=800&auto=format&fit=crop&q=80",
     url: "https://www.youtube.com/watch?v=qA02XWRTBdw"
   },
   {
@@ -46,8 +43,7 @@ export const RECOMMENDED_VIDEOS = [
     focusText: "Focus: System Calls, Process Control Blocks & Kernel Modes",
     source: "Gate Smashers",
     duration: "19 mins",
-    thumbnail: "https://img.youtube.com/vi/WJ-UaAaumNA/hqdefault.jpg",
-    fallbackThumbnail: "https://images.unsplash.com/photo-1629654297299-c8506221ca97?w=600&auto=format&fit=crop",
+    thumbnail: "https://images.unsplash.com/photo-1629654297299-c8506221ca97?w=800&auto=format&fit=crop&q=80",
     url: "https://www.youtube.com/watch?v=WJ-UaAaumNA"
   },
   {
@@ -58,8 +54,7 @@ export const RECOMMENDED_VIDEOS = [
     focusText: "Focus: Entity-Relationship Diagrams, Normalization & Joins",
     source: "freeCodeCamp",
     duration: "45 mins",
-    thumbnail: "https://img.youtube.com/vi/HXV3zeQKqGY/hqdefault.jpg",
-    fallbackThumbnail: "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=600&auto=format&fit=crop",
+    thumbnail: "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=800&auto=format&fit=crop&q=80",
     url: "https://www.youtube.com/watch?v=HXV3zeQKqGY"
   },
   {
@@ -70,8 +65,7 @@ export const RECOMMENDED_VIDEOS = [
     focusText: "Focus: Encapsulation, Packet Headers & Protocol Stacks",
     source: "Gate Smashers",
     duration: "22 mins",
-    thumbnail: "https://img.youtube.com/vi/4D55Cmj2t-A/hqdefault.jpg",
-    fallbackThumbnail: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&auto=format&fit=crop",
+    thumbnail: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&auto=format&fit=crop&q=80",
     url: "https://www.youtube.com/watch?v=4D55Cmj2t-A"
   },
   {
@@ -82,8 +76,7 @@ export const RECOMMENDED_VIDEOS = [
     focusText: "Focus: Supervised Learning & Binary Cross-Entropy Loss",
     source: "freeCodeCamp",
     duration: "35 mins",
-    thumbnail: "https://img.youtube.com/vi/i_LwzRVP7bg/hqdefault.jpg",
-    fallbackThumbnail: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=600&auto=format&fit=crop",
+    thumbnail: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=800&auto=format&fit=crop&q=80",
     url: "https://www.youtube.com/watch?v=i_LwzRVP7bg"
   },
   {
@@ -94,8 +87,7 @@ export const RECOMMENDED_VIDEOS = [
     focusText: "Focus: Propositional Logic, Set Theory & Predicate Calculus",
     source: "freeCodeCamp",
     duration: "42 mins",
-    thumbnail: "https://img.youtube.com/vi/3I92x23lW84/hqdefault.jpg",
-    fallbackThumbnail: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop",
+    thumbnail: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=800&auto=format&fit=crop&q=80",
     url: "https://www.youtube.com/watch?v=3I92x23lW84"
   },
   {
@@ -106,8 +98,7 @@ export const RECOMMENDED_VIDEOS = [
     focusText: "Focus: Overlapping Subproblems & Tabulation Optimization",
     source: "Abdul Bari",
     duration: "30 mins",
-    thumbnail: "https://img.youtube.com/vi/nLmhmB6NzcM/hqdefault.jpg",
-    fallbackThumbnail: "https://images.unsplash.com/photo-1516116211223-4c7141326c6c?w=600&auto=format&fit=crop",
+    thumbnail: "https://images.unsplash.com/photo-1516116211223-4c7141326c6c?w=800&auto=format&fit=crop&q=80",
     url: "https://www.youtube.com/watch?v=nLmhmB6NzcM"
   },
   {
@@ -118,8 +109,7 @@ export const RECOMMENDED_VIDEOS = [
     focusText: "Focus: Scalability, CAP Theorem & High Availability Systems",
     source: "Gaurav Sen",
     duration: "38 mins",
-    thumbnail: "https://img.youtube.com/vi/xpDnVSmNfx0/hqdefault.jpg",
-    fallbackThumbnail: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&auto=format&fit=crop",
+    thumbnail: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&auto=format&fit=crop&q=80",
     url: "https://www.youtube.com/watch?v=xpDnVSmNfx0"
   }
 ];
@@ -143,12 +133,6 @@ export default function VideoRecommendationGrid({ videos = RECOMMENDED_VIDEOS })
               <img
                 src={vid.thumbnail}
                 alt={vid.title}
-                onError={(e) => {
-                  const target = e.currentTarget;
-                  if (target.src !== vid.fallbackThumbnail) {
-                    target.src = vid.fallbackThumbnail;
-                  }
-                }}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-90 group-hover:opacity-100"
               />
               {/* Dark Gradient Overlay with Maroon Play Button */}
