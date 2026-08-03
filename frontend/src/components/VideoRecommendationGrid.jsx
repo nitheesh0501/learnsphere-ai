@@ -92,14 +92,14 @@ export const RECOMMENDED_VIDEOS = [
   },
   {
     id: "9",
-    title: "0/1 Knapsack Problem Using Dynamic Programming & Memoization",
+    title: "Dynamic Programming Complete Masterclass & Memoization",
     subjectCode: "2321CSC302J • ADSA",
     categoryTag: "Problem Solving",
     focusText: "Focus: Overlapping Subproblems & Tabulation Optimization",
-    source: "Abdul Bari",
-    duration: "30 mins",
+    source: "freeCodeCamp",
+    duration: "40 mins",
     thumbnail: "https://images.unsplash.com/photo-1516116211223-4c7141326c6c?w=800&auto=format&fit=crop&q=80",
-    url: "https://www.youtube.com/watch?v=nLmhmB6NzcM"
+    url: "https://www.youtube.com/watch?v=oBt53YbR9Kk"
   },
   {
     id: "10",
