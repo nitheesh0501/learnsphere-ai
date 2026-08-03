@@ -362,23 +362,18 @@ export default function FacultyAnalytics({ addToast, nitheeshReadiness }) {
                           sWeak.toLowerCase().includes(searchTerm.toLowerCase());
     
     let matchesFilter = true;
-    const currentStatus = s.interventionStatus || s.status || '';
-
     if (filterStatus === 'Flagged / At-Risk') {
-      matchesFilter = currentStatus === 'Flagged' || s.riskStatus === 'High Risk';
-    } else if (filterStatus === 'Remedial Assigned') {
-      matchesFilter = currentStatus === 'Remedial Assigned';
-    } else if (filterStatus === 'Performance Improved / Resolved') {
-      matchesFilter = currentStatus === 'Resolved' || currentStatus === 'On Track';
+      matchesFilter = s.riskStatus === 'High Risk' || s.riskStatus === 'Needs Review' || s.risk_level === 'Needs Review';
+    } else if (filterStatus === 'Low Risk') {
+      matchesFilter = s.riskStatus === 'Low Risk' || s.risk_level === 'Low Risk';
     }
 
     return matchesSearch && matchesFilter;
   });
 
   const totalEnrolled = 128;
-  const atRiskCount = students.filter((s) => (s.interventionStatus || s.status) === 'Flagged' || s.riskStatus === 'High Risk').length;
-  const remedialAssignedCount = students.filter((s) => (s.interventionStatus || s.status) === 'Remedial Assigned').length;
-  const resolvedCount = students.filter((s) => (s.interventionStatus || s.status) === 'Resolved' || (s.interventionStatus || s.status) === 'On Track').length;
+  const atRiskCount = students.filter((s) => s.riskStatus === 'High Risk' || s.riskStatus === 'Needs Review' || s.risk_level === 'Needs Review').length;
+  const resolvedCount = students.filter((s) => s.riskStatus === 'Low Risk' || s.risk_level === 'Low Risk').length;
 
   // SAFE CLASS AVERAGE READINESS CALCULATION (DYNAMIC FOR NITHEESH)
   const validReadinesses = students.map(s => {
@@ -438,12 +433,12 @@ export default function FacultyAnalytics({ addToast, nitheeshReadiness }) {
           </div>
         </div>
 
-        {/* KPI 3: Remedial Assigned & Performance Improved */}
+        {/* KPI 3: Low Risk / On Track */}
         <div className="bg-white rounded-2xl border border-slate-200 p-5 flex items-center justify-between shadow-sm sm:col-span-2 lg:col-span-1">
           <div>
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Remedial Active / Resolved</p>
-            <p className="text-3xl font-black text-emerald-600 mt-1">{remedialAssignedCount + resolvedCount}</p>
-            <p className="text-[11px] text-emerald-700 font-bold mt-1">{remedialAssignedCount} Assigned • {resolvedCount} Resolved/Track</p>
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Low Risk / On Track</p>
+            <p className="text-3xl font-black text-emerald-600 mt-1">{resolvedCount} Students</p>
+            <p className="text-[11px] text-emerald-700 font-bold mt-1">High Readiness Baseline</p>
           </div>
           <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 shrink-0">
             <CheckCircle2 className="w-6 h-6" />
@@ -517,7 +512,7 @@ export default function FacultyAnalytics({ addToast, nitheeshReadiness }) {
 
             {/* STATUS FILTER TABS */}
             <div className="flex items-center space-x-1 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-bold overflow-x-auto no-scrollbar">
-              {['All Students', 'Flagged / At-Risk', 'Remedial Assigned', 'Performance Improved / Resolved'].map((st) => (
+              {['All Students', 'Flagged / At-Risk', 'Low Risk'].map((st) => (
                 <button
                   key={st}
                   onClick={() => setFilterStatus(st)}
@@ -541,7 +536,6 @@ export default function FacultyAnalytics({ addToast, nitheeshReadiness }) {
                 <th className="py-3 px-3">Sem 3 Weak Course(s) & Sub-Topics</th>
                 <th className="py-3 px-3">Readiness</th>
                 <th className="py-3 px-3">Risk Status</th>
-                <th className="py-3 px-3">Intervention Status</th>
                 <th className="py-3 px-3 text-right">PDF & Actions</th>
               </tr>
             </thead>
@@ -576,7 +570,6 @@ export default function FacultyAnalytics({ addToast, nitheeshReadiness }) {
                   }
                 }
 
-                const iStatus = stu.interventionStatus || stu.status;
                 const sAvatar = stu.avatar || sName.substring(0, 2).toUpperCase();
 
                 return (
@@ -634,19 +627,6 @@ export default function FacultyAnalytics({ addToast, nitheeshReadiness }) {
                           : 'bg-emerald-50 text-emerald-800 border-emerald-200'
                       }`}>
                         {rRisk}
-                      </span>
-                    </td>
-
-                    {/* Status Tag */}
-                    <td className="py-3.5 px-3">
-                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-black border inline-flex items-center space-x-1 ${
-                        iStatus === 'Flagged'
-                          ? 'bg-rose-100 text-[#701C34] border-rose-200'
-                          : iStatus === 'Remedial Assigned'
-                          ? 'bg-amber-50 text-amber-800 border-amber-200'
-                          : 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                      }`}>
-                        <span>{iStatus}</span>
                       </span>
                     </td>
 
