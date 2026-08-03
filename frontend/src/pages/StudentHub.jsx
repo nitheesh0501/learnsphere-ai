@@ -16,7 +16,9 @@ import {
   Lock,
   Download,
   Info,
-  FileText
+  FileText,
+  BookOpen,
+  ExternalLink
 } from 'lucide-react';
 import { generateStudentPDFReport } from '../utils/pdfExport';
 import { calculateReadiness, notifyMarksUpdated, getWeakSubject, getWeakSubjects, getAssessmentScores, getSafeLocalStorage } from '../utils/readiness';
