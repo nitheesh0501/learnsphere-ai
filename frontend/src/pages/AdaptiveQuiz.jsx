@@ -722,6 +722,90 @@ const SEM3_LEETCODE_POOL = {
   ]
 };
 
+// WEEK 1 QUESTION BANK (100% EASY) - Basic Syntax, Variables, Array Fundamentals, Time Complexity Intro
+const WEEK1_QUESTIONS = [
+  { id: 1, code: '2321CSC302J', subject: 'Week 1 - Foundations', difficulty: 'Easy', question: 'What is the time complexity of accessing an element in an array by its index?', options: ['O(1)', 'O(N)', 'O(log N)', 'O(N^2)'], correct: 0 },
+  { id: 2, code: '2321CSC302J', subject: 'Week 1 - Foundations', difficulty: 'Easy', question: 'Which data structure stores elements sequentially in contiguous memory locations?', options: ['Linked List', 'Array', 'Tree', 'Graph'], correct: 1 },
+  { id: 3, code: '2321CSC302J', subject: 'Week 1 - Foundations', difficulty: 'Easy', question: 'What is the space complexity of creating a 1D array of size N?', options: ['O(1)', 'O(N)', 'O(N^2)', 'O(2^N)'], correct: 1 },
+  { id: 4, code: '2321MAB301T', subject: 'Week 1 - Foundations', difficulty: 'Easy', question: 'In Big-O notation, what does O(1) denote?', options: ['Linear execution time', 'Constant execution time', 'Logarithmic execution time', 'Exponential execution time'], correct: 1 },
+  { id: 5, code: '2321CSC304R', subject: 'Week 1 - Foundations', difficulty: 'Easy', question: 'Which loop construct is guaranteed to execute its code block at least once before testing the condition?', options: ['for loop', 'while loop', 'do-while loop', 'enhanced for loop'], correct: 2 },
+  { id: 6, code: '2321CSS301J', subject: 'Week 1 - Foundations', difficulty: 'Easy', question: 'In standard C/Java primitive types, how many bytes does a standard 32-bit integer occupy?', options: ['1 Byte', '2 Bytes', '4 Bytes', '8 Bytes'], correct: 2 },
+  { id: 7, code: '2321CSC302J', subject: 'Week 1 - Foundations', difficulty: 'Easy', question: 'What is the 0-based index of the last element in an array of length N?', options: ['N', 'N - 1', 'N + 1', '0'], correct: 1 },
+  { id: 8, code: '2321CSC302J', subject: 'Week 1 - Foundations', difficulty: 'Easy', question: 'What is the average-case time complexity of Linear Search across an unsorted array of size N?', options: ['O(1)', 'O(log N)', 'O(N)', 'O(N log N)'], correct: 2 },
+  { id: 9, code: '2321MAB301T', subject: 'Week 1 - Foundations', difficulty: 'Easy', question: 'Which logical operation P && Q evaluates to True only when both operands are True?', options: ['Disjunction (OR)', 'Conjunction (AND)', 'Exclusive OR (XOR)', 'Implication'], correct: 1 },
+  { id: 10, code: '2321CSC304R', subject: 'Week 1 - Foundations', difficulty: 'Easy', question: 'What runtime error is thrown when trying to access array[N] for an array of size N in Java?', options: ['NullPointerException', 'ArrayIndexOutOfBoundsException', 'ClassCastException', 'StackOverflowError'], correct: 1 }
+];
+
+// WEEK 2 QUESTION BANK (80% EASY, 20% MEDIUM) - Linked Lists, Basic Recursion, Searching & Sorting
+const WEEK2_QUESTIONS = [
+  { id: 11, code: '2321CSC302J', subject: 'Week 2 - Data Structures', difficulty: 'Easy', question: 'In a Singly Linked List, what does the next pointer of the tail node store?', options: ['Head node pointer', 'Null / None', 'Previous node pointer', 'Root pointer'], correct: 1 },
+  { id: 12, code: '2321CSC302J', subject: 'Week 2 - Data Structures', difficulty: 'Easy', question: 'What is the time complexity of inserting a new node at the head (beginning) of a linked list?', options: ['O(1)', 'O(N)', 'O(log N)', 'O(N^2)'], correct: 0 },
+  { id: 13, code: '2321CSC302J', subject: 'Week 2 - Data Structures', difficulty: 'Easy', question: 'What is the prerequisite condition for performing Binary Search on an array?', options: ['Array must be empty', 'Array elements must be sorted', 'Array must be stored in a linked list', 'Array size must be even'], correct: 1 },
+  { id: 14, code: '2321CSC302J', subject: 'Week 2 - Data Structures', difficulty: 'Easy', question: 'What is the best-case time complexity of optimized Bubble Sort on an already sorted array?', options: ['O(1)', 'O(N)', 'O(N log N)', 'O(N^2)'], correct: 1 },
+  { id: 15, code: '2321CSC302J', subject: 'Week 2 - Data Structures', difficulty: 'Easy', question: 'For a sorted array of 1,000,000 items, maximum how many comparisons does Binary Search take?', options: ['1,000,000', '500,000', '20', '1,000'], correct: 2 },
+  { id: 16, code: '2321CSC304R', subject: 'Week 2 - Data Structures', difficulty: 'Easy', question: 'What essential component must every recursive function possess to stop infinite execution?', options: ['Iterative loop', 'Base Case', 'Try-Catch block', 'Static counter'], correct: 1 },
+  { id: 17, code: '2321CSC302J', subject: 'Week 2 - Data Structures', difficulty: 'Easy', question: 'Which sorting algorithm repeatedly picks the minimum element from unsorted sublist and moves it to start?', options: ['Insertion Sort', 'Selection Sort', 'Merge Sort', 'Heap Sort'], correct: 1 },
+  { id: 18, code: '2321CSC302J', subject: 'Week 2 - Data Structures', difficulty: 'Easy', question: 'How many pointer/reference fields does each node in a Doubly Linked List contain?', options: ['1', '2', '3', '0'], correct: 1 },
+  { id: 19, code: '2321CSC304R', subject: 'Week 2 - Data Structures', difficulty: 'Medium', question: 'What exception is thrown by the JVM when a recursive method executes without reaching a base case?', options: ['OutOfMemoryError', 'StackOverflowError', 'IllegalArgumentException', 'IllegalStateException'], correct: 1 },
+  { id: 20, code: '2321CSC302J', subject: 'Week 2 - Data Structures', difficulty: 'Medium', question: 'What is the worst-case time complexity of QuickSort when bad pivot selection occurs (e.g. sorted input)?', options: ['O(N)', 'O(N log N)', 'O(N^2)', 'O(2^N)'], correct: 2 }
+];
+
+// WEEK 3 QUESTION BANK (60% EASY, 40% MEDIUM) - Stacks, Queues, Binary Search Trees, Hashing
+const WEEK3_QUESTIONS = [
+  { id: 21, code: '2321CSC302J', subject: 'Week 3 - Non-Linear Structures', difficulty: 'Easy', question: 'Which data structure operates on a Last-In, First-Out (LIFO) principle?', options: ['Queue', 'Stack', 'Array', 'Heap'], correct: 1 },
+  { id: 22, code: '2321CSC302J', subject: 'Week 3 - Non-Linear Structures', difficulty: 'Easy', question: 'Which data structure operates on a First-In, First-Out (FIFO) principle?', options: ['Stack', 'Queue', 'Tree', 'Graph'], correct: 1 },
+  { id: 23, code: '2321CSC302J', subject: 'Week 3 - Non-Linear Structures', difficulty: 'Easy', question: 'In a Binary Search Tree (BST), what is true about values in the left subtree relative to the root node?', options: ['All left values are greater than root', 'All left values are smaller than root', 'Left values are equal to root', 'Left values are unsorted'], correct: 1 },
+  { id: 24, code: '2321CSC302J', subject: 'Week 3 - Non-Linear Structures', difficulty: 'Easy', question: 'What operation pushes a new element onto the top of a Stack?', options: ['pop()', 'push()', 'peek()', 'enqueue()'], correct: 1 },
+  { id: 25, code: '2321CSC302J', subject: 'Week 3 - Non-Linear Structures', difficulty: 'Easy', question: 'What is the average-case time complexity of searching for a key in a Hash Table?', options: ['O(1)', 'O(log N)', 'O(N)', 'O(N log N)'], correct: 0 },
+  { id: 26, code: '2321CSC302J', subject: 'Week 3 - Non-Linear Structures', difficulty: 'Easy', question: 'Which Tree traversal method visits nodes in strictly ascending numerical order for a BST?', options: ['Preorder Traversal', 'Inorder Traversal', 'Postorder Traversal', 'Level Order Traversal'], correct: 1 },
+  { id: 27, code: '2321CSC302J', subject: 'Week 3 - Non-Linear Structures', difficulty: 'Medium', question: 'How are hash collisions resolved in the Separate Chaining hash table collision resolution strategy?', options: ['Linear Probing', 'Quadric Probing', 'Linked List buckets at hash slots', 'Re-hashing with second function'], correct: 2 },
+  { id: 28, code: '2321CSC302J', subject: 'Week 3 - Non-Linear Structures', difficulty: 'Medium', question: 'What is the worst-case search time complexity in a skewed (unbalanced) Binary Search Tree?', options: ['O(1)', 'O(log N)', 'O(N)', 'O(N log N)'], correct: 2 },
+  { id: 29, code: '2321CSC302J', subject: 'Week 3 - Non-Linear Structures', difficulty: 'Medium', question: 'Which tree traversal sequence visits Root node -> Left Subtree -> Right Subtree in order?', options: ['Inorder', 'Preorder', 'Postorder', 'Level-order'], correct: 1 },
+  { id: 30, code: '2321CSC302J', subject: 'Week 3 - Non-Linear Structures', difficulty: 'Medium', question: 'In a Circular Queue of capacity N, what formula calculates the next write index after rear?', options: ['(rear + 1) % N', '(rear - 1) % N', 'rear + N', 'rear % 2'], correct: 0 }
+];
+
+// WEEK 4 QUESTION BANK (40% EASY, 60% MEDIUM) - Graph Traversal, Heaps, Greedy Algorithms
+const WEEK4_QUESTIONS = [
+  { id: 31, code: '2321CSC302J', subject: 'Week 4 - Graph & Optimization', difficulty: 'Easy', question: 'Which data structure is primarily used to implement Breadth-First Search (BFS) on a graph?', options: ['Stack', 'Queue', 'Priority Queue', 'Heap'], correct: 1 },
+  { id: 32, code: '2321CSC302J', subject: 'Week 4 - Graph & Optimization', difficulty: 'Easy', question: 'Which data structure is used to implement iterative Depth-First Search (DFS) on a graph?', options: ['Queue', 'Stack', 'Array', 'Hash Map'], correct: 1 },
+  { id: 33, code: '2321CSC302J', subject: 'Week 4 - Graph & Optimization', difficulty: 'Easy', question: 'In a Max Heap binary tree, what is true about the value stored at the root node?', options: ['Root contains minimum element', 'Root contains maximum element', 'Root contains average element', 'Root is always null'], correct: 1 },
+  { id: 34, code: '2321CSC302J', subject: 'Week 4 - Graph & Optimization', difficulty: 'Easy', question: 'What is the time complexity of extracting the minimum element from a Min-Heap of N elements?', options: ['O(1)', 'O(log N)', 'O(N)', 'O(N^2)'], correct: 1 },
+  { id: 35, code: '2321CSC302J', subject: 'Week 4 - Graph & Optimization', difficulty: 'Medium', question: 'Which greedy algorithm calculates the Single-Source Shortest Path in non-negative weighted graphs?', options: ['Prim Algorithm', 'Dijkstra Algorithm', 'Kruskal Algorithm', 'Floyd-Warshall Algorithm'], correct: 1 },
+  { id: 36, code: '2321CSC302J', subject: 'Week 4 - Graph & Optimization', difficulty: 'Medium', question: 'What is the time complexity of building a heap (Heapify) from an unsorted array of N elements?', options: ['O(N log N)', 'O(N)', 'O(N^2)', 'O(log N)'], correct: 1 },
+  { id: 37, code: '2321CSC302J', subject: 'Week 4 - Graph & Optimization', difficulty: 'Medium', question: 'Which algorithm computes a Minimum Spanning Tree (MST) by greedily adding smallest weight edges that form no cycles?', options: ['Dijkstra', 'Kruskal Algorithm', 'Bellman-Ford', 'Tarjan Algorithm'], correct: 1 },
+  { id: 38, code: '2321CSC302J', subject: 'Week 4 - Graph & Optimization', difficulty: 'Medium', question: 'What is the maximum number of edges in a simple undirected connected graph with V vertices?', options: ['V - 1', 'V * (V - 1) / 2', 'V^2', '2 * V'], correct: 1 },
+  { id: 39, code: '2321CSC302J', subject: 'Week 4 - Graph & Optimization', difficulty: 'Medium', question: 'Which search strategy uses a Priority Queue to expand nodes with the lowest cumulative path cost?', options: ['DFS', 'BFS', 'Uniform Cost Search / Dijkstra', 'Greedy Best-First Search'], correct: 2 },
+  { id: 40, code: '2321CSC302J', subject: 'Week 4 - Graph & Optimization', difficulty: 'Medium', question: 'In the Fractional Knapsack Problem, which greedy criteria guarantees optimal total value?', options: ['Highest weight first', 'Highest value first', 'Highest value-to-weight ratio (v/w)', 'Lowest weight first'], correct: 2 }
+];
+
+// WEEK 5 QUESTION BANK (20% EASY, 60% MEDIUM, 20% HARD) - Dynamic Programming, Backtracking, System Design
+const WEEK5_QUESTIONS = [
+  { id: 41, code: '2321CSC303J', subject: 'Week 5 - DP & System Design', difficulty: 'Easy', question: 'What two properties must a problem satisfy to be efficiently solvable via Dynamic Programming?', options: ['LIFO and FIFO properties', 'Optimal Substructure & Overlapping Subproblems', 'Greedy choice & Linear ordering', 'Deterministic & Finite Automata'], correct: 1 },
+  { id: 42, code: '2321CSC303J', subject: 'Week 5 - DP & System Design', difficulty: 'Easy', question: 'Dynamic Programming implemented using Memoization is known as which approach?', options: ['Bottom-Up Approach', 'Top-Down Approach', 'Greedy Approach', 'Divide and Conquer'], correct: 1 },
+  { id: 43, code: '2321CSC303J', subject: 'Week 5 - DP & System Design', difficulty: 'Medium', question: 'Dynamic Programming implemented using iterative Tabulation tables is known as which approach?', options: ['Top-Down Approach', 'Bottom-Up Approach', 'Recursive Backtracking', 'Depth-First Search'], correct: 1 },
+  { id: 44, code: '2321CSC303J', subject: 'Week 5 - DP & System Design', difficulty: 'Medium', question: 'In 0/1 Knapsack with N items and capacity W, what is the DP time complexity?', options: ['O(N log N)', 'O(N * W)', 'O(2^N)', 'O(N^2 * W)'], correct: 1 },
+  { id: 45, code: '2321CSC303J', subject: 'Week 5 - DP & System Design', difficulty: 'Medium', question: 'Which algorithmic paradigm systematically explores candidate choices and backtracks when constraints fail?', options: ['Greedy Method', 'Backtracking', 'Branch and Bound', 'Brute Force'], correct: 1 },
+  { id: 46, code: '2321CSC303J', subject: 'Week 5 - DP & System Design', difficulty: 'Medium', question: 'What is the time complexity of calculating the N-th Fibonacci number using Memoized DP?', options: ['O(2^N)', 'O(N)', 'O(N^2)', 'O(log N)'], correct: 1 },
+  { id: 47, code: '2321CSC301T', subject: 'Week 5 - DP & System Design', difficulty: 'Medium', question: 'In System Design, what primary benefit does a Load Balancer provide?', options: ['Encrypts database tables', 'Distributes client traffic evenly across multiple server instances', 'Compiles source code faster', 'Generates SSL certificates'], correct: 1 },
+  { id: 48, code: '2321CSS301J', subject: 'Week 5 - DP & System Design', difficulty: 'Medium', question: 'Which caching strategy writes data simultaneously to both the cache and persistent database storage?', options: ['Write-Back Caching', 'Write-Through Caching', 'Cache-Aside', 'Write-Around'], correct: 1 },
+  { id: 49, code: '2321CSC303J', subject: 'Week 5 - DP & System Design', difficulty: 'Hard', question: 'What is the worst-case time complexity of solving the N-Queens problem using Backtracking?', options: ['O(N)', 'O(N^2)', 'O(N!)', 'O(2^N)'], correct: 2 },
+  { id: 50, code: '2321CSC303J', subject: 'Week 5 - DP & System Design', difficulty: 'Hard', question: 'What is the time complexity of solving Longest Common Subsequence (LCS) for strings of lengths M and N via DP?', options: ['O(M + N)', 'O(M * N)', 'O(2^(M+N))', 'O(M^2 * N)'], correct: 1 }
+];
+
+// WEEK 6 QUESTION BANK (50% MEDIUM, 50% HARD) - Advanced DP, Trie Structures, Graph Algorithms & Optimization
+const WEEK6_QUESTIONS = [
+  { id: 51, code: '2321CSC302J', subject: 'Week 6 - Advanced Practice', difficulty: 'Medium', question: 'Which prefix tree data structure enables string insertion and prefix searches in O(L) time where L is string length?', options: ['Binary Search Tree', 'Trie (Prefix Tree)', 'B-Tree', 'AVL Tree'], correct: 1 },
+  { id: 52, code: '2321CSC302J', subject: 'Week 6 - Advanced Practice', difficulty: 'Medium', question: 'In Disjoint Set Union (DSU), what optimization flattens tree structure during find operations?', options: ['Union by Rank', 'Path Compression', 'Tree Rotation', 'Splaying'], correct: 1 },
+  { id: 53, code: '2321CSC302J', subject: 'Week 6 - Advanced Practice', difficulty: 'Medium', question: 'What is the amortized time complexity per operation in DSU with Path Compression and Union by Rank?', options: ['O(log N)', 'O(α(N)) (Inverse Ackermann)', 'O(N)', 'O(1)'], correct: 1 },
+  { id: 54, code: '2321CSC302J', subject: 'Week 6 - Advanced Practice', difficulty: 'Medium', question: 'Which graph shortest path algorithm correctly handles negative edge weights and detects negative cycles?', options: ['Dijkstra Algorithm', 'Bellman-Ford Algorithm', 'BFS', 'Prim Algorithm'], correct: 1 },
+  { id: 55, code: '2321CSC302J', subject: 'Week 6 - Advanced Practice', difficulty: 'Medium', question: 'What is the time complexity of the Floyd-Warshall All-Pairs Shortest Path algorithm for V vertices?', options: ['O(V^2)', 'O(V^3)', 'O(V * E)', 'O(E log V)'], correct: 1 },
+  { id: 56, code: '2321CSC302J', subject: 'Week 6 - Advanced Practice', difficulty: 'Hard', question: 'In DP Optimization, what technique reduces state transition search from O(N^2) to O(N) using line geometry?', options: ['Divide & Conquer DP', 'Convex Hull Trick / Monotone Queue', 'Bitmask DP', 'Digit DP'], correct: 1 },
+  { id: 57, code: '2321CSC302J', subject: 'Week 6 - Advanced Practice', difficulty: 'Hard', question: 'What is the time complexity of finding Strongly Connected Components (SCCs) using Tarjan’s Algorithm on G(V, E)?', options: ['O(V * E)', 'O(V + E)', 'O(V^2)', 'O(E log V)'], correct: 1 },
+  { id: 58, code: '2321CSC302J', subject: 'Week 6 - Advanced Practice', difficulty: 'Hard', question: 'What maximum network flow algorithm uses BFS augmenting paths to achieve O(V * E^2) time complexity?', options: ['Ford-Fulkerson', 'Edmonds-Karp Algorithm', 'Dinic Algorithm', 'Push-Relabel Algorithm'], correct: 1 },
+  { id: 59, code: '2321CSC302J', subject: 'Week 6 - Advanced Practice', difficulty: 'Hard', question: 'Which DP pattern solves Matrix Chain Multiplication by evaluating subproblems on subsegments [i...j]?', options: ['Bitmask DP', 'Interval / Range DP', 'Tree DP', 'Digit DP'], correct: 1 },
+  { id: 60, code: '2321CSC302J', subject: 'Week 6 - Advanced Practice', difficulty: 'Hard', question: 'In Trie nodes over an alphabet Σ storing N words of max length L, what is the worst-case node space complexity?', options: ['O(N * L * Σ)', 'O(N + L)', 'O(Σ^2)', 'O(N^2)'], correct: 0 }
+];
+
 export default function AdaptiveQuiz({ initialSubject, addToast }) {
   const [selectedSubject, setSelectedSubject] = useState(initialSubject || SEM3_SUBJECTS[0].title);
   const [selectedWeek, setSelectedWeek] = useState(1);
@@ -740,6 +824,18 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
     { week: 6, title: 'Week 6: Advanced LeetCode & Final Assessment', topic: 'Complex Problem Solving & Final Semester 3 Prep' }
   ];
 
+  const getQuestionsForWeek = (weekNum, subjectTitle) => {
+    switch (Number(weekNum)) {
+      case 1: return WEEK1_QUESTIONS;
+      case 2: return WEEK2_QUESTIONS;
+      case 3: return WEEK3_QUESTIONS;
+      case 4: return WEEK4_QUESTIONS;
+      case 5: return WEEK5_QUESTIONS;
+      case 6: return WEEK6_QUESTIONS;
+      default: return WEEK1_QUESTIONS;
+    }
+  };
+
   useEffect(() => {
     if (initialSubject) {
       const matched = SEM3_SUBJECTS.find(
@@ -751,7 +847,7 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
     }
   }, [initialSubject]);
 
-  const activeQuestions = SEM3_QUESTION_BANK[selectedSubject] || SEM3_QUESTION_BANK["Discrete Mathematics"];
+  const activeQuestions = getQuestionsForWeek(selectedWeek, selectedSubject);
   const currentQ = activeQuestions[activeQuestionIndex % activeQuestions.length];
 
   const handleSelectOption = (idx) => {
