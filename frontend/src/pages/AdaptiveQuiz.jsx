@@ -1199,9 +1199,14 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
     }
   };
 
+  const isOptionSelected = selectedOption !== null && selectedOption !== undefined;
+
   const forceNextQuestion = (e) => {
     if (e && typeof e.preventDefault === 'function') e.preventDefault();
     if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
+
+    // Early return guard if no option is selected
+    if (!isOptionSelected) return;
 
     try {
       // Record answer (selected index or null if skipped/unselected)
@@ -1502,13 +1507,18 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
 
             <button
               type="button"
+              disabled={!isOptionSelected}
               onClick={(e) => {
                 e.stopPropagation();
                 forceNextQuestion(e);
               }}
-              className="bg-[#701C34] text-white px-6 py-3 rounded-xl font-semibold cursor-pointer hover:bg-[#581628] transition-all relative z-30 pointer-events-auto shadow-md flex items-center justify-center space-x-2"
+              className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center space-x-2 relative z-30 pointer-events-auto ${
+                !isOptionSelected
+                  ? "bg-slate-300 dark:bg-slate-700 text-slate-500 dark:text-slate-400 cursor-not-allowed opacity-70 shadow-none"
+                  : "bg-[#701C34] hover:bg-[#581628] text-white shadow-md hover:shadow-lg cursor-pointer active:scale-95"
+              }`}
             >
-              <span>{activeQuestionIndex === activeQuestions.length - 1 ? "Submit & View Results" : "Next Question →"}</span>
+              <span>{activeQuestionIndex === activeQuestions.length - 1 ? "Submit & View Results" : "Next Question"}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
