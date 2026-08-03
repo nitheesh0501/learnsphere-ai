@@ -50,9 +50,43 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
   // Assessment Quiz Practice scores state (real-time sync)
   const [assessmentScores, setAssessmentScores] = useState(getAssessmentScores);
 
+  // Interactive 6-Week Recovery Roadmap completed weeks state
+  const [completedWeeks, setCompletedWeeks] = useState(() => {
+    const saved = localStorage.getItem('learnsphere_completed_weeks');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      } catch (e) {}
+    }
+    return [1]; // Default Week 1 is completed
+  });
+
+  const toggleWeekCompleted = (weekNum) => {
+    let updated;
+    if (completedWeeks.includes(weekNum)) {
+      updated = completedWeeks.filter((w) => w !== weekNum);
+    } else {
+      updated = [...completedWeeks, weekNum];
+    }
+    setCompletedWeeks(updated);
+    localStorage.setItem('learnsphere_completed_weeks', JSON.stringify(updated));
+    window.dispatchEvent(new Event('learnsphere-marks-updated'));
+    if (addToast) {
+      addToast('Study Plan Re-balanced', `Week ${weekNum} status updated & roadmap dynamically recalculated.`, 'success');
+    }
+  };
+
   useEffect(() => {
     const syncQuizScores = () => {
       setAssessmentScores(getAssessmentScores());
+      const savedWeeks = localStorage.getItem('learnsphere_completed_weeks');
+      if (savedWeeks) {
+        try {
+          const parsed = JSON.parse(savedWeeks);
+          if (Array.isArray(parsed)) setCompletedWeeks(parsed);
+        } catch (e) {}
+      }
     };
     window.addEventListener('storage', syncQuizScores);
     window.addEventListener('learnsphere-marks-updated', syncQuizScores);
@@ -218,7 +252,7 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
     }
   };
 
-  // REACTIVE 6-WEEK RECOVERY ROADMAP (SORTED BY LOWEST MARKS FIRST)
+  // REACTIVE 6-WEEK RECOVERY ROADMAP (LOGICAL STAGES & INTERACTIVE RE-BALANCING)
   const dynamicRoadmap = useMemo(() => {
     if (hasInvalidMarks) return [];
 
@@ -232,35 +266,63 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
 
     const activeList = sortedByLowest.length > 0 ? sortedByLowest : subjects;
 
-    return [
-      { week: 1, title: "Discrete Math Foundations", desc: "Logic & Set Theory Baseline", status: "Done" },
+    const basePlan = [
+      {
+        week: 1,
+        stage: "Concept Foundations",
+        title: `W1: Concept Foundations — ${activeList[0] ? activeList[0].code : 'ESD'}`,
+        desc: `Core concepts & formula derivations in ${activeList[0] ? activeList[0].name.split('(')[0] : 'ESD'}`
+      },
       {
         week: 2,
-        title: activeList[0] ? activeList[0].name : "Computer Networks",
-        desc: activeList[0] ? `Code: ${activeList[0].code} • Marks: ${activeList[0].internalMarks || 0}/50` : "OSI & Subnetting",
-        status: "Current"
+        stage: "Sub-topic Mastery",
+        title: `W2: Sub-topic Mastery — ${activeList[0] ? activeList[0].code : 'ESD'} Key Modules`,
+        desc: activeList[0] ? `GPIO Timers & PWM drills (${activeList[0].internalMarks}/50)` : "Sub-topic practice"
       },
       {
         week: 3,
-        title: activeList[1] ? activeList[1].name : "Advanced DSA",
-        desc: activeList[1] ? `Code: ${activeList[1].code} • Marks: ${activeList[1].internalMarks || 0}/50` : "Red-Black Trees & DP",
-        status: "Upcoming"
+        stage: "Sub-topic Mastery",
+        title: `W3: Sub-topic Mastery — ${activeList[1] ? activeList[1].code : 'ADSA'} Intensive`,
+        desc: activeList[1] ? `Red-Black Trees & DP Memoization (${activeList[1].internalMarks}/50)` : "Advanced data structures"
       },
       {
         week: 4,
-        title: activeList[2] ? activeList[2].name : "AI & Machine Learning",
-        desc: activeList[2] ? `Code: ${activeList[2].code} • Marks: ${activeList[2].internalMarks || 0}/50` : "Supervised Algorithms",
-        status: "Upcoming"
+        stage: "Sub-topic Mastery",
+        title: `W4: Sub-topic Mastery — ${activeList[2] ? activeList[2].code : 'CN'} Deep Dive`,
+        desc: activeList[2] ? `TCP 3-Way Handshake & Subnetting (${activeList[2].internalMarks}/50)` : "Network protocol drills"
       },
       {
         week: 5,
-        title: activeList[3] ? activeList[3].name : "Embedded System Design",
-        desc: activeList[3] ? `Code: ${activeList[3].code} • Marks: ${activeList[3].internalMarks || 0}/50` : "Microcontrollers & GPIO",
-        status: "Upcoming"
+        stage: "LeetCode Practice",
+        title: "W5: LeetCode Practice — Algorithms & DSA",
+        desc: "Solve 10 algorithm problem sets for ADSA, CN & OOPJ"
       },
-      { week: 6, title: "Semester 3 Final Mock Exam", desc: "Full Comprehensive Evaluation", status: "Upcoming" }
+      {
+        week: 6,
+        stage: "Final Assessment",
+        title: "W6: Final Assessment — Comprehensive Mock Exam",
+        desc: "Full 50-mark Semester 3 mock assessment evaluation"
+      }
     ];
-  }, [subjects, hasInvalidMarks]);
+
+    // Find first incomplete week
+    let currentWeekNum = 1;
+    for (let w = 1; w <= 6; w++) {
+      if (!completedWeeks.includes(w)) {
+        currentWeekNum = w;
+        break;
+      }
+    }
+
+    return basePlan.map((w) => {
+      const isDone = completedWeeks.includes(w.week);
+      const isCurrent = !isDone && w.week === currentWeekNum;
+      return {
+        ...w,
+        status: isDone ? 'Done' : isCurrent ? 'Current' : 'Upcoming'
+      };
+    });
+  }, [subjects, hasInvalidMarks, completedWeeks]);
 
   // REACTIVE AI STUDY PRIORITIES QUEUE (SORTED BY LOWEST SCORE FIRST)
   const dynamicPriorities = useMemo(() => {
@@ -776,54 +838,175 @@ export default function StudentHub({ onNavigateToQuiz, readinessScore, setReadin
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 relative z-10">
-              {dynamicRoadmap.map((step) => (
-                <div
-                  key={step.week}
-                  className={`flex flex-col items-start lg:items-center text-left lg:text-center group p-3 lg:p-0 rounded-xl lg:rounded-none transition-all ${
-                    step.status === 'Current'
-                      ? 'bg-rose-50/50 lg:bg-transparent'
-                      : 'bg-slate-50 lg:bg-transparent'
-                  }`}
-                >
-                  <div className={`relative z-10 w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-white border-2 p-1 flex items-center justify-center shadow-md ${
-                    step.status === 'Done'
-                      ? 'border-emerald-500'
-                      : step.status === 'Current'
-                      ? 'border-[#701C34] ring-4 ring-rose-100'
-                      : 'border-slate-300'
-                  }`}>
-                    <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-slate-900 font-black text-sm">
-                      {step.status === 'Done' ? (
-                        <CheckCircle2 className="w-6 h-6 text-emerald-600" />
-                      ) : step.week === 6 ? (
-                        <Award className="w-6 h-6 text-slate-700" />
-                      ) : (
-                        <span className={step.status === 'Current' ? 'text-[#701C34] font-black text-base' : 'text-slate-700 font-bold text-xs'}>
-                          W{step.week}
-                        </span>
-                      )}
+              {dynamicRoadmap.map((step) => {
+                const isCompleted = step.status === 'Done';
+                return (
+                  <div
+                    key={step.week}
+                    className={`flex flex-col items-start lg:items-center text-left lg:text-center group p-3 lg:p-0 rounded-xl lg:rounded-none transition-all ${
+                      step.status === 'Current'
+                        ? 'bg-rose-50/50 lg:bg-transparent'
+                        : 'bg-slate-50 lg:bg-transparent'
+                    }`}
+                  >
+                    <div className={`relative z-10 w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-white border-2 p-1 flex items-center justify-center shadow-md ${
+                      step.status === 'Done'
+                        ? 'border-emerald-500'
+                        : step.status === 'Current'
+                        ? 'border-[#701C34] ring-4 ring-rose-100'
+                        : 'border-slate-300'
+                    }`}>
+                      <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-slate-900 font-black text-sm">
+                        {step.status === 'Done' ? (
+                          <CheckCircle2 className="w-6 h-6 text-emerald-600" />
+                        ) : step.week === 6 ? (
+                          <Award className="w-6 h-6 text-slate-700" />
+                        ) : (
+                          <span className={step.status === 'Current' ? 'text-[#701C34] font-black text-base' : 'text-slate-700 font-bold text-xs'}>
+                            W{step.week}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="mt-3 space-y-1.5 w-full flex flex-col items-start lg:items-center">
+                      <span className={`text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded border ${
+                        step.status === 'Done'
+                          ? 'text-emerald-800 bg-emerald-100 border-emerald-200'
+                          : step.status === 'Current'
+                          ? 'text-[#701C34] bg-rose-100 border-rose-200'
+                          : 'text-slate-600 bg-slate-100 border-slate-200'
+                      }`}>
+                        Wk {step.week} • {step.status}
+                      </span>
+                      <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#701C34] transition-colors line-clamp-1">
+                        {step.title}
+                      </h4>
+                      <p className="text-[10px] text-slate-500 font-medium line-clamp-1">{step.desc}</p>
+                      
+                      {/* INTERACTIVE TOPIC COMPLETION BUTTON (REAL-TIME RE-BALANCING) */}
+                      <button
+                        onClick={() => toggleWeekCompleted(step.week)}
+                        className={`mt-2 w-full lg:w-auto px-2.5 py-1 rounded-lg text-[10px] font-black transition-all flex items-center justify-center space-x-1 border shadow-2xs ${
+                          isCompleted
+                            ? 'bg-emerald-50 text-emerald-800 border-emerald-200 hover:bg-emerald-100'
+                            : 'bg-white text-slate-700 border-slate-300 hover:bg-rose-50 hover:text-[#701C34] hover:border-rose-200'
+                        }`}
+                        title={`Click to mark Week ${step.week} as ${isCompleted ? 'Incomplete' : 'Completed'}`}
+                      >
+                        <CheckCircle2 className={`w-3 h-3 ${isCompleted ? 'text-emerald-600' : 'text-slate-400'}`} />
+                        <span>{isCompleted ? 'Completed' : 'Mark as Done'}</span>
+                      </button>
                     </div>
                   </div>
-                  <div className="mt-3 space-y-1">
-                    <span className={`text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded border ${
-                      step.status === 'Done'
-                        ? 'text-emerald-800 bg-emerald-100 border-emerald-200'
-                        : step.status === 'Current'
-                        ? 'text-[#701C34] bg-rose-100 border-rose-200'
-                        : 'text-slate-600 bg-slate-100 border-slate-200'
-                    }`}>
-                      Wk {step.week} • {step.status}
-                    </span>
-                    <h4 className="text-xs font-bold text-slate-900 group-hover:text-[#701C34] transition-colors line-clamp-1">
-                      {step.title}
-                    </h4>
-                    <p className="text-[10px] text-slate-500 font-medium line-clamp-1">{step.desc}</p>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
+      </section>
+
+      {/* SECTION: Recommended Resources & Practice */}
+      <section className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-8 shadow-sm space-y-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-4 border-b border-slate-100 gap-2">
+          <div>
+            <div className="flex items-center space-x-2">
+              <BookOpen className="w-5 h-5 text-[#701C34]" />
+              <h2 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight">
+                Recommended Resources & Practice
+              </h2>
+              <span className="bg-rose-50 text-[#701C34] text-[10px] uppercase font-extrabold px-2.5 py-0.5 rounded border border-rose-200">
+                Curated Tutorials & Focus Mode
+              </span>
+            </div>
+            <p className="text-slate-500 text-xs mt-1">
+              Curated NPTEL & video lecture tutorials mapped directly to identified weak topics, paired with 10-question Focus Mode diagnostic quizzes.
+            </p>
+          </div>
+
+          <button
+            onClick={() => onNavigateToQuiz && onNavigateToQuiz()}
+            className="px-4 py-2 bg-[#701C34] hover:bg-[#581427] text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center space-x-1.5 shrink-0"
+          >
+            <Zap className="w-4 h-4" />
+            <span>Launch Focus Mode Quiz</span>
+          </button>
+        </div>
+
+        {/* Video Recommendations Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            {
+              title: "GPIO Timers & PWM Generation in ESD",
+              course: "2321CSS301J — ESD",
+              platform: "NPTEL / YouTube",
+              duration: "24 mins",
+              weakTopic: "GPIO Timers",
+              link: "https://www.youtube.com/results?search_query=embedded+system+design+gpio+timers+pwm",
+              bg: "bg-rose-50/70 border-rose-200"
+            },
+            {
+              title: "Red-Black Trees & Dynamic Programming",
+              course: "2321CSC302J — ADSA",
+              platform: "MIT OpenCourseWare",
+              duration: "32 mins",
+              weakTopic: "Red-Black Trees",
+              link: "https://www.youtube.com/results?search_query=red+black+trees+dynamic+programming+adsa",
+              bg: "bg-amber-50/70 border-amber-200"
+            },
+            {
+              title: "TCP 3-Way Handshake & Subnetting",
+              course: "2321CSC301T — CN",
+              platform: "NPTEL Video Series",
+              duration: "28 mins",
+              weakTopic: "TCP Handshake",
+              link: "https://www.youtube.com/results?search_query=computer+networks+tcp+three+way+handshake",
+              bg: "bg-slate-50 border-slate-200"
+            },
+            {
+              title: "Set Theory, Logic & Recurrence Relations",
+              course: "2321MAB301T — DM",
+              platform: "NPTEL Mathematics",
+              duration: "30 mins",
+              weakTopic: "Logic & Recurrence",
+              link: "https://www.youtube.com/results?search_query=discrete+mathematics+recurrence+relations",
+              bg: "bg-emerald-50/70 border-emerald-200"
+            }
+          ].map((vid, idx) => (
+            <div
+              key={idx}
+              className={`p-4 rounded-2xl border ${vid.bg} flex flex-col justify-between space-y-3 shadow-2xs hover:shadow-md transition-all`}
+            >
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[9px] font-black uppercase tracking-wider text-[#701C34] bg-white px-2 py-0.5 rounded border border-slate-200">
+                    {vid.course}
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-500 flex items-center space-x-1">
+                    <Clock className="w-3 h-3 text-slate-400" />
+                    <span>{vid.duration}</span>
+                  </span>
+                </div>
+                <h4 className="text-xs font-black text-slate-900 leading-snug">{vid.title}</h4>
+                <p className="text-[10px] font-semibold text-slate-500">{vid.platform}</p>
+              </div>
+
+              <div className="pt-2 border-t border-slate-200/80 flex items-center justify-between">
+                <span className="text-[9px] font-extrabold text-[#701C34] bg-white px-1.5 py-0.5 rounded border border-rose-200">
+                  Target: {vid.weakTopic}
+                </span>
+                <a
+                  href={vid.link}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="px-2.5 py-1 bg-[#701C34] hover:bg-[#581427] text-white rounded-lg text-[11px] font-bold transition-all flex items-center space-x-1 shadow-2xs"
+                >
+                  <span>Watch</span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* CARD 4: AI SUGGESTED STUDY PRIORITIES */}
