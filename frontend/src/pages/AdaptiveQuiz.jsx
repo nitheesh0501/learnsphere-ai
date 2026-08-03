@@ -3,15 +3,16 @@ import { Zap, CheckCircle2, ArrowRight, RotateCcw, Award, Sliders, BookOpen, Ext
 import { studentAPI } from '../services/api';
 import { saveAssessmentScore, getSafeLocalStorage } from '../utils/readiness';
 
-// OFFICIAL SEMESTER 3 SUBJECT LIST (7 EXACT COURSES)
-const SEM3_SUBJECTS = [
-  { code: '2321MAB301T', title: 'Discrete Mathematics', mne: 'DM', dept: 'Maths' },
+// OFFICIAL CORE COMPUTER SCIENCE SUBJECTS (ALL 7 CSE CORE SUBJECTS + DISCRETE MATHS)
+const CORE_CSE_SUBJECTS = [
+  { code: '2321CSC302J', title: 'Data Structures & Algorithms', mne: 'DSA', dept: 'CSE' },
+  { code: '2321CSC305T', title: 'Operating Systems', mne: 'OS', dept: 'CSE' },
+  { code: '2321CSC306T', title: 'Database Management Systems', mne: 'DBMS', dept: 'CSE' },
   { code: '2321CSC301T', title: 'Computer Networks', mne: 'CN', dept: 'CSE' },
-  { code: '2321CSC302J', title: 'Advanced Data Structures & Algorithms', mne: 'ADSA', dept: 'CSE' },
-  { code: '2321CSC303J', title: 'Fundamentals of AI & Machine Learning', mne: 'FAIML', dept: 'CSE' },
-  { code: '2321CSS301J', title: 'Embedded System Design', mne: 'ESD', dept: 'ECE' },
-  { code: '2321CSC304R', title: 'Object Oriented Programming using Java', mne: 'OOPJ', dept: 'CSE' },
-  { code: '2321SDA301L', title: 'Career Skill Development III', mne: 'CSD', dept: 'CSE' }
+  { code: '2321CSC304R', title: 'Object Oriented Programming', mne: 'OOP', dept: 'CSE' },
+  { code: '2321CSC307T', title: 'Theory of Computation & Compiler Design', mne: 'TOC/CD', dept: 'CSE' },
+  { code: '2321CSC308T', title: 'Software Engineering & System Design', mne: 'System Design', dept: 'CSE' },
+  { code: '2321MAB301T', title: 'Discrete Mathematics', mne: 'DM', dept: 'Maths' }
 ];
 
 // MANDATORY EXPANDED QUESTION BANK: MINIMUM 10 UNIQUE QUESTIONS PER SEMESTER 3 COURSE (70 TOTAL)
@@ -806,8 +807,129 @@ const WEEK6_QUESTIONS = [
   { id: 60, code: '2321CSC302J', subject: 'Week 6 - Advanced Practice', difficulty: 'Hard', question: 'In Trie nodes over an alphabet Σ storing N words of max length L, what is the worst-case node space complexity?', options: ['O(N * L * Σ)', 'O(N + L)', 'O(Σ^2)', 'O(N^2)'], correct: 0 }
 ];
 
+const SUBJECT_CURRICULUM_MAP = {
+  "Data Structures & Algorithms": {
+    weeks: [
+      { week: 1, title: 'W1: Arrays, Strings & Complexity Analysis', topic: 'Arrays, Strings & Time Complexity Analysis (100% Easy)' },
+      { week: 2, title: 'W2: Linked Lists & Recursion', topic: 'Linked Lists, Pointers & Basic Recursion (80% Easy, 20% Medium)' },
+      { week: 3, title: 'W3: Stacks, Queues & BSTs', topic: 'Stacks, Queues & Binary Search Trees (60% Easy, 40% Medium)' },
+      { week: 4, title: 'W4: Graphs & Priority Queues', topic: 'Graphs (BFS/DFS), Heaps & Priority Queues (40% Easy, 60% Medium)' },
+      { week: 5, title: 'W5: Dynamic Programming & Backtracking', topic: 'Dynamic Programming & Backtracking (20% Easy, 60% Medium, 20% Hard)' },
+      { week: 6, title: 'W6: Tries & Advanced Graphs', topic: 'Tries, Dijkstra & Disjoint Set Union (50% Medium, 50% Hard)' }
+    ],
+    leetcode: [
+      { id: 1, title: "Two Sum (Array Hash Table)", difficulty: "Easy", slug: "two-sum", tags: ["Array", "Hash Table"] },
+      { id: 206, title: "Reverse Linked List", difficulty: "Easy", slug: "reverse-linked-list", tags: ["Linked List"] },
+      { id: 20, title: "Valid Parentheses (Stack)", difficulty: "Easy", slug: "valid-parentheses", tags: ["Stack", "String"] },
+      { id: 200, title: "Number of Islands (BFS/DFS)", difficulty: "Medium", slug: "number-of-islands", tags: ["BFS", "DFS", "Graph"] },
+      { id: 322, title: "Coin Change (Dynamic Programming)", difficulty: "Medium", slug: "coin-change", tags: ["DP", "Breadth-First Search"] },
+      { id: 208, title: "Implement Trie (Prefix Tree)", difficulty: "Medium", slug: "implement-trie-prefix-tree", tags: ["Trie", "Design"] }
+    ]
+  },
+  "Operating Systems": {
+    weeks: [
+      { week: 1, title: 'W1: OS Structures & Process Management', topic: 'OS Structures, System Calls & Process Management (100% Easy)' },
+      { week: 2, title: 'W2: CPU Scheduling Algorithms', topic: 'FCFS, SJF, Round Robin & Multi-Level Queue (80% Easy, 20% Medium)' },
+      { week: 3, title: 'W3: Synchronization & Deadlocks', topic: 'Process Synchronization, Mutex, Semaphores & Deadlocks (60% Easy, 40% Medium)' },
+      { week: 4, title: 'W4: Main Memory & Paging', topic: 'Main Memory Management, Paging & Segmentation (40% Easy, 60% Medium)' },
+      { week: 5, title: 'W5: Virtual Memory & Page Replacement', topic: 'Virtual Memory, Demand Paging & Page Replacement (LRU, FIFO) (20% Easy, 60% Medium, 20% Hard)' },
+      { week: 6, title: 'W6: File Systems & Disk Scheduling', topic: 'File System Implementation, I/O Subsystems & Disk Scheduling (50% Medium, 50% Hard)' }
+    ],
+    leetcode: [
+      { id: 1114, title: "Print in Order (Thread Concurrency)", difficulty: "Easy", slug: "print-in-order", tags: ["Concurrency", "Multithreading"] },
+      { id: 1115, title: "Print FooBar Alternately (Semaphores)", difficulty: "Medium", slug: "print-foobar-alternately", tags: ["Semaphores", "OS"] },
+      { id: 146, title: "LRU Cache Implementation", difficulty: "Medium", slug: "lru-cache", tags: ["Hash Table", "Doubly Linked List", "Virtual Memory"] }
+    ]
+  },
+  "Database Management Systems": {
+    weeks: [
+      { week: 1, title: 'W1: Relational Model & ER Diagrams', topic: 'Relational Model, ER Diagrams & Relational Algebra (100% Easy)' },
+      { week: 2, title: 'W2: SQL Fundamentals & Joins', topic: 'SQL Queries, INNER/LEFT Joins, Subqueries & Aggregates (80% Easy, 20% Medium)' },
+      { week: 3, title: 'W3: Database Normalization', topic: 'Functional Dependencies, 1NF, 2NF, 3NF & BCNF Normalization (60% Easy, 40% Medium)' },
+      { week: 4, title: 'W4: Transactions & ACID Properties', topic: 'Transaction Processing, ACID Properties & Concurrency (40% Easy, 60% Medium)' },
+      { week: 5, title: 'W5: Indexing Techniques & B-Trees', topic: 'B-Trees, B+ Trees, Indexing & Query Optimization (20% Easy, 60% Medium, 20% Hard)' },
+      { week: 6, title: 'W6: NoSQL & Distributed DBs', topic: 'NoSQL Document Stores, Database Sharding & Distributed ACID (50% Medium, 50% Hard)' }
+    ],
+    leetcode: [
+      { id: 175, title: "Combine Two Tables (SQL Join)", difficulty: "Easy", slug: "combine-two-tables", tags: ["Database", "SQL"] },
+      { id: 184, title: "Department Highest Salary (Subquery)", difficulty: "Medium", slug: "department-highest-salary", tags: ["SQL", "DBMS"] },
+      { id: 178, title: "Rank Scores (Window Functions)", difficulty: "Medium", slug: "rank-scores", tags: ["SQL Windowing"] }
+    ]
+  },
+  "Computer Networks": {
+    weeks: [
+      { week: 1, title: 'W1: OSI & TCP/IP Reference Models', topic: 'OSI 7-Layer & TCP/IP Reference Models, Physical Layer (100% Easy)' },
+      { week: 2, title: 'W2: Data Link Layer & Ethernet', topic: 'Data Link Layer, Ethernet CSMA/CD, Framing & Error Control (80% Easy, 20% Medium)' },
+      { week: 3, title: 'W3: Network Layer & Subnetting', topic: 'Network Layer, IPv4/IPv6 Addressing, CIDR Subnetting & NAT (60% Easy, 40% Medium)' },
+      { week: 4, title: 'W4: Routing Protocols (RIP, OSPF, BGP)', topic: 'Distance Vector, Link State, OSPF & BGP Routing Protocols (40% Easy, 60% Medium)' },
+      { week: 5, title: 'W5: Transport Layer & TCP Handshake', topic: 'TCP 3-Way Handshake, Flow Control & UDP Protocols (20% Easy, 60% Medium, 20% Hard)' },
+      { week: 6, title: 'W6: Application Layer Protocols', topic: 'HTTP/S, DNS Resolution, SMTP, FTP & Socket Programming (50% Medium, 50% Hard)' }
+    ],
+    leetcode: [
+      { id: 93, title: "Restore IP Addresses (IPv4 Subnetting)", difficulty: "Medium", slug: "restore-ip-addresses", tags: ["String", "Backtracking"] },
+      { id: 743, title: "Network Delay Time (Dijkstra Routing)", difficulty: "Medium", slug: "network-delay-time", tags: ["Graph", "Shortest Path"] }
+    ]
+  },
+  "Object Oriented Programming": {
+    weeks: [
+      { week: 1, title: 'W1: Classes, Objects & Access Modifiers', topic: 'Classes, Objects, Public/Private Access & Memory Allocation (100% Easy)' },
+      { week: 2, title: 'W2: Encapsulation & Constructors', topic: 'Encapsulation, Data Hiding, Default/Copy Constructors (80% Easy, 20% Medium)' },
+      { week: 3, title: 'W3: Inheritance & Polymorphism', topic: 'Single/Multiple Inheritance, Method Overloading & Overriding (60% Easy, 40% Medium)' },
+      { week: 4, title: 'W4: Virtual Functions & Interfaces', topic: 'Pure Virtual Functions, Abstract Classes & Java Interfaces (40% Easy, 60% Medium)' },
+      { week: 5, title: 'W5: Exception Handling & File I/O', topic: 'Try-Catch-Finally, Custom Exceptions & File Stream I/O (20% Easy, 60% Medium, 20% Hard)' },
+      { week: 6, title: 'W6: Design Patterns & Generics', topic: 'Singleton, Factory, Observer Patterns & Generic Classes (50% Medium, 50% Hard)' }
+    ],
+    leetcode: [
+      { id: 355, title: "Design Twitter (Object-Oriented Architecture)", difficulty: "Medium", slug: "design-twitter", tags: ["OOP", "Design", "Hash Table"] },
+      { id: 211, title: "Design Add and Search Words", difficulty: "Medium", slug: "design-add-and-search-words-data-structure", tags: ["Trie", "OOP"] }
+    ]
+  },
+  "Theory of Computation & Compiler Design": {
+    weeks: [
+      { week: 1, title: 'W1: Finite Automata (DFA / NFA)', topic: 'Deterministic & Non-Deterministic Finite Automata (100% Easy)' },
+      { week: 2, title: 'W2: Regular Expressions & CFG', topic: 'Regular Expressions, Pumping Lemma & Context-Free Grammars (80% Easy, 20% Medium)' },
+      { week: 3, title: 'W3: Pushdown Automata & Turing Machines', topic: 'Pushdown Automata, Turing Machines & Decidability (60% Easy, 40% Medium)' },
+      { week: 4, title: 'W4: Lexical Analysis & Parsing', topic: 'Lexical Analysis, LL(1), LR(0), SLR(1) Parsing Tables (40% Easy, 60% Medium)' },
+      { week: 5, title: 'W5: Intermediate Code & Syntax Trees', topic: 'Abstract Syntax Trees, 3-Address Code & Quadruples (20% Easy, 60% Medium, 20% Hard)' },
+      { week: 6, title: 'W6: Code Optimization & Machine Code', topic: 'Loop Optimization, Register Allocation & Machine Code (50% Medium, 50% Hard)' }
+    ],
+    leetcode: [
+      { id: 10, title: "Regular Expression Matching (NFA / DP)", difficulty: "Hard", slug: "regular-expression-matching", tags: ["DP", "Compiler Design"] },
+      { id: 227, title: "Basic Calculator II (Lexing & Parsing)", difficulty: "Medium", slug: "basic-calculator-ii", tags: ["Stack", "Compiler Parsing"] }
+    ]
+  },
+  "Software Engineering & System Design": {
+    weeks: [
+      { week: 1, title: 'W1: SDLC & Agile Methodology', topic: 'SDLC Waterfall, Agile Scrum Frameworks & User Stories (100% Easy)' },
+      { week: 2, title: 'W2: Requirements & UML Modeling', topic: 'Requirements Engineering, UML Class & Sequence Diagrams (80% Easy, 20% Medium)' },
+      { week: 3, title: 'W3: System Architecture (Monolith vs Microservices)', topic: 'Monolithic vs Microservices Architecture & Event Brokers (60% Easy, 40% Medium)' },
+      { week: 4, title: 'W4: Software Testing & QA', topic: 'Unit Testing, Integration Testing, Black/White Box Testing (40% Easy, 60% Medium)' },
+      { week: 5, title: 'W5: Load Balancing, Caching & API Gateways', topic: 'Load Balancers, Redis Caching Strategies & API Gateways (20% Easy, 60% Medium, 20% Hard)' },
+      { week: 6, title: 'W6: High Availability & Database Sharding', topic: 'Database Sharding, Replication, CAP Theorem & High Availability (50% Medium, 50% Hard)' }
+    ],
+    leetcode: [
+      { id: 146, title: "Design LRU Cache (System Caching)", difficulty: "Medium", slug: "lru-cache", tags: ["Design", "Caching"] },
+      { id: 622, title: "Design Circular Queue (Buffer Design)", difficulty: "Medium", slug: "design-circular-queue", tags: ["Queue", "System Design"] }
+    ]
+  },
+  "Discrete Mathematics": {
+    weeks: [
+      { week: 1, title: 'W1: Propositional Logic & Set Theory', topic: 'Logical Connectives, Truth Tables & Power Sets (100% Easy)' },
+      { week: 2, title: 'W2: Relations, Functions & Induction', topic: 'Equivalence Relations, Functions & Mathematical Induction (80% Easy, 20% Medium)' },
+      { week: 3, title: 'W3: Counting & Combinatorics', topic: 'Permutations, Combinations & Pigeonhole Principle (60% Easy, 40% Medium)' },
+      { week: 4, title: 'W4: Graph Theory Basics', topic: 'Handshaking Lemma, Isomorphism & Euler/Hamilton Paths (40% Easy, 60% Medium)' },
+      { week: 5, title: 'W5: Recurrence Relations & Lattice Theory', topic: 'Master Theorem, Generating Functions & Lattices (20% Easy, 60% Medium, 20% Hard)' },
+      { week: 6, title: 'W6: Algebraic Structures & Group Theory', topic: 'Groups, Rings, Fields & Boolean Algebra Optimization (50% Medium, 50% Hard)' }
+    ],
+    leetcode: [
+      { id: 70, title: "Climbing Stairs (Fibonacci Recurrence)", difficulty: "Easy", slug: "climbing-stairs", tags: ["DP", "Math"] },
+      { id: 62, title: "Unique Paths (Combinatorics)", difficulty: "Medium", slug: "unique-paths", tags: ["Combinatorics", "Math"] }
+    ]
+  }
+};
+
 export default function AdaptiveQuiz({ initialSubject, addToast }) {
-  const [selectedSubject, setSelectedSubject] = useState(initialSubject || SEM3_SUBJECTS[0].title);
+  const [selectedSubject, setSelectedSubject] = useState(initialSubject || CORE_CSE_SUBJECTS[0].title);
   const [selectedWeek, setSelectedWeek] = useState(1);
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
@@ -815,14 +937,9 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
   const [score, setScore] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
 
-  const WEEKLY_CURRICULUM = [
-    { week: 1, title: 'Week 1: Concept Foundations & Basic Logic', topic: 'Arrays, Strings & Mathematical Proofs' },
-    { week: 2, title: 'Week 2: Sub-topic Mastery & Linear Data Structures', topic: 'Stacks, Queues, Linked Lists & Network Protocols' },
-    { week: 3, title: 'Week 3: Non-Linear Structures & Graph Traversals', topic: 'Trees, Binary Search, Graphs & Recursion' },
-    { week: 4, title: 'Week 4: Optimization & Dynamic Programming', topic: 'DP Patterns, Greedy Choice & Embedded Timers' },
-    { week: 5, title: 'Week 5: Architecture, Memory & System Design', topic: 'OOP Design Principles, Memory Buffers & Threading' },
-    { week: 6, title: 'Week 6: Advanced LeetCode & Final Assessment', topic: 'Complex Problem Solving & Final Semester 3 Prep' }
-  ];
+  const currentSubjectMeta = SUBJECT_CURRICULUM_MAP[selectedSubject] || SUBJECT_CURRICULUM_MAP["Data Structures & Algorithms"];
+  const WEEKLY_CURRICULUM = currentSubjectMeta.weeks;
+  const activeLeetCodeSet = currentSubjectMeta.leetcode;
 
   const getQuestionsForWeek = (weekNum, subjectTitle) => {
     switch (Number(weekNum)) {
@@ -838,7 +955,7 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
 
   useEffect(() => {
     if (initialSubject) {
-      const matched = SEM3_SUBJECTS.find(
+      const matched = CORE_CSE_SUBJECTS.find(
         s => s.title.toLowerCase().includes(initialSubject.toLowerCase()) ||
              s.mne.toLowerCase() === initialSubject.toLowerCase() ||
              s.code.toLowerCase() === initialSubject.toLowerCase()
@@ -986,14 +1103,13 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
 
   const handleSubjectChange = (subjectTitle) => {
     setSelectedSubject(subjectTitle);
+    setSelectedWeek(1);
     setActiveQuestionIndex(0);
     setSelectedOption(null);
     setScore(0);
     setUserAnswers([]);
     setIsFinished(false);
   };
-
-  const activeLeetCodeSet = SEM3_LEETCODE_POOL[selectedSubject] || SEM3_LEETCODE_POOL["Discrete Mathematics"];
 
   // Defensive, null-safe final score & accuracy calculator
   const calculateFinalScore = () => {
@@ -1057,8 +1173,8 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
           </span>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
-          {SEM3_SUBJECTS.map((sub) => {
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
+          {CORE_CSE_SUBJECTS.map((sub) => {
             const isSelected = selectedSubject === sub.title;
             return (
               <button
