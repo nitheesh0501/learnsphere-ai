@@ -726,6 +726,7 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
   const [selectedSubject, setSelectedSubject] = useState(initialSubject || SEM3_SUBJECTS[0].title);
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
+  const [userAnswers, setUserAnswers] = useState([]);
   const [score, setScore] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
   const [validationError, setValidationError] = useState(null);
@@ -749,9 +750,10 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
     setValidationError(null); // Clear validation warning on option click
     
     const isCorrect = idx === currentQ.correct;
+    const safeUserAnswers = Array.isArray(userAnswers) ? userAnswers : [];
     
     // Log user answer choice cleanly
-    const updatedAnswers = [...userAnswers];
+    const updatedAnswers = [...safeUserAnswers];
     updatedAnswers[activeQuestionIndex] = {
       questionId: currentQ.id,
       question: currentQ.question,
@@ -763,7 +765,7 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
     };
     setUserAnswers(updatedAnswers);
 
-    if (isCorrect && (!userAnswers[activeQuestionIndex] || !userAnswers[activeQuestionIndex].isCorrect)) {
+    if (isCorrect && (!safeUserAnswers[activeQuestionIndex] || !safeUserAnswers[activeQuestionIndex].isCorrect)) {
       setScore((prev) => prev + 1);
     }
   };
@@ -814,14 +816,15 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
 
   // Defensive, null-safe final score & accuracy calculator
   const calculateFinalScore = () => {
+    const safeUserAnswers = Array.isArray(userAnswers) ? userAnswers : [];
     if (!activeQuestions || !Array.isArray(activeQuestions) || activeQuestions.length === 0) {
       return { score: 0, total: 0, percentage: 0 };
     }
 
     let correctCount = 0;
     activeQuestions.forEach((q, idx) => {
-      const ansObj = userAnswers.find((a) => a && (a.questionId === q?.id || a.question === q?.question));
-      const selected = ansObj ? ansObj.userOption : (Array.isArray(userAnswers) ? userAnswers[idx]?.userOption : undefined);
+      const ansObj = safeUserAnswers.find((a) => a && (a.questionId === q?.id || a.question === q?.question));
+      const selected = ansObj ? ansObj.userOption : safeUserAnswers[idx]?.userOption;
       if (selected !== undefined && selected !== null && q && (selected === q.correct || selected === q.correctAnswerIndex)) {
         correctCount++;
       }
