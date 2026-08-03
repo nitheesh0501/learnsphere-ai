@@ -40,18 +40,42 @@ export const RECOMMENDED_VIDEOS = [
   },
   {
     id: "4",
-    title: "Computer Networks: TCP Connection Establishment & Subnet Calculations",
-    subjectCode: "2321CSC301T • CN",
-    categoryTag: "Network Protocols",
-    focusText: "Focus: TCP 3-Way Handshake & Subnet Masking",
-    source: "NPTEL",
-    duration: "21 mins",
-    videoId: "rL8RFIiylyo",
-    thumbnail: "https://img.youtube.com/vi/rL8RFIiylyo/hqdefault.jpg",
-    url: "https://www.youtube.com/watch?v=rL8RFIiylyo"
+    title: "Introduction to Operating Systems & Kernel Architecture Functions",
+    subjectCode: "2321CSC302T • OS",
+    categoryTag: "System Concepts",
+    focusText: "Focus: System Calls, Process Control Blocks & Kernel Modes",
+    source: "Gate Smashers",
+    duration: "19 mins",
+    videoId: "WJ-UaAaumNA",
+    thumbnail: "https://img.youtube.com/vi/WJ-UaAaumNA/hqdefault.jpg",
+    url: "https://www.youtube.com/watch?v=WJ-UaAaumNA"
   },
   {
     id: "5",
+    title: "SQL & Relational Database Design Full University Course",
+    subjectCode: "2321CSC303T • DBMS",
+    categoryTag: "Database Mastery",
+    focusText: "Focus: Entity-Relationship Diagrams, Normalization & Joins",
+    source: "freeCodeCamp",
+    duration: "45 mins",
+    videoId: "HXV3zeQKqGY",
+    thumbnail: "https://img.youtube.com/vi/HXV3zeQKqGY/hqdefault.jpg",
+    url: "https://www.youtube.com/watch?v=HXV3zeQKqGY"
+  },
+  {
+    id: "6",
+    title: "Computer Networks: OSI 7-Layer Architecture Explained",
+    subjectCode: "2321CSC301T • CN",
+    categoryTag: "Network Protocols",
+    focusText: "Focus: Encapsulation, Packet Headers & Protocol Stacks",
+    source: "Gate Smashers",
+    duration: "22 mins",
+    videoId: "4D55Cmj2t-A",
+    thumbnail: "https://img.youtube.com/vi/4D55Cmj2t-A/hqdefault.jpg",
+    url: "https://www.youtube.com/watch?v=4D55Cmj2t-A"
+  },
+  {
+    id: "7",
     title: "Machine Learning: Gradient Descent, Loss Functions & Neural Nets",
     subjectCode: "2321CSC303J • FAIML",
     categoryTag: "Concept Enrichment",
@@ -63,16 +87,39 @@ export const RECOMMENDED_VIDEOS = [
     url: "https://www.youtube.com/watch?v=aircAruvnKk"
   },
   {
-    id: "6",
-    title: "Discrete Math: Propositional Logic Proofs & Homogeneous Recurrences",
+    id: "8",
+    title: "Discrete Math: Propositional Logic Proofs & Recurrence Relations",
     subjectCode: "2321MAB301T • DM",
     categoryTag: "Advanced Drills",
-    focusText: "Focus: Logic, Set Theory & Recurrence Relations",
+    focusText: "Focus: Propositional Logic, Truth Tables & Mathematical Proofs",
     source: "Stanford Computer Science",
     duration: "19 mins",
     videoId: "tyDKR4fg3Yw",
     thumbnail: "https://img.youtube.com/vi/tyDKR4fg3Yw/hqdefault.jpg",
     url: "https://www.youtube.com/watch?v=tyDKR4fg3Yw"
+  },
+  {
+    id: "9",
+    title: "0/1 Knapsack Problem Using Dynamic Programming & Memoization",
+    subjectCode: "2321CSC302J • ADSA",
+    categoryTag: "Problem Solving",
+    focusText: "Focus: Overlapping Subproblems & Tabulation Optimization",
+    source: "Abdul Bari",
+    duration: "30 mins",
+    videoId: "nLmhmB6NzcM",
+    thumbnail: "https://img.youtube.com/vi/nLmhmB6NzcM/hqdefault.jpg",
+    url: "https://www.youtube.com/watch?v=nLmhmB6NzcM"
+  },
+  {
+    id: "10",
+    title: "System Design: Microservices, Load Balancers & Distributed Caching",
+    subjectCode: "2321CSC304T • SD",
+    categoryTag: "System Architecture",
+    focusText: "Focus: Scalability, CAP Theorem & High Availability Systems",
+    source: "Gaurav Sen",
+    duration: "38 mins",
+    thumbnail: "https://img.youtube.com/vi/xpDnVSmNfx0/hqdefault.jpg",
+    url: "https://www.youtube.com/watch?v=xpDnVSmNfx0"
   }
 ];
 
