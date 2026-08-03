@@ -844,9 +844,13 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
             const isSelected = selectedSubject === sub.title;
             return (
               <button
+                type="button"
                 key={sub.code}
-                onClick={() => handleSubjectChange(sub.title)}
-                className={`p-2.5 rounded-xl text-left border transition-all ${
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleSubjectChange(sub.title);
+                }}
+                className={`p-2.5 rounded-xl text-left border relative z-20 cursor-pointer pointer-events-auto transition-all ${
                   isSelected
                     ? 'bg-[#701C34] text-white border-[#701C34] shadow-md ring-2 ring-rose-200'
                     : 'bg-slate-50 text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-100'
@@ -871,7 +875,7 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
 
       {/* QUIZ INTERFACE / RESULTS CARD */}
       {!isFinished ? (
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
+        <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6 relative z-10">
           
           {/* Question Header */}
           <div className="flex items-center justify-between border-b border-slate-100 pb-4">
@@ -909,12 +913,16 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
                 const isSelected = selectedOption === oIdx;
                 return (
                   <button
+                    type="button"
                     key={oIdx}
-                    onClick={() => setSelectedOption(oIdx)}
-                    className={`w-full text-left p-4 rounded-xl border text-xs sm:text-sm font-bold transition-all flex items-center justify-between ${
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedOption(oIdx);
+                    }}
+                    className={`w-full text-left p-4 rounded-xl border text-xs sm:text-sm font-bold relative z-20 cursor-pointer pointer-events-auto transition-all flex items-center justify-between ${
                       isSelected
                         ? 'bg-rose-50 border-[#701C34] text-[#701C34] ring-2 ring-rose-200 shadow-sm'
-                        : 'bg-slate-50 border-slate-200 text-slate-800 hover:border-slate-300 hover:bg-slate-100'
+                        : 'bg-slate-50 border-slate-200 text-slate-800 hover:border-[#701C34] hover:bg-rose-50/40'
                     }`}
                   >
                     <span>{opt}</span>
@@ -936,9 +944,13 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
             </span>
 
             <button
+              type="button"
               disabled={selectedOption === null}
-              onClick={handleNext}
-              className="px-6 py-2.5 bg-[#701C34] hover:bg-[#581427] text-white disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed rounded-xl text-xs font-extrabold transition-all shadow-md flex items-center space-x-2"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (selectedOption !== null) handleNext();
+              }}
+              className="px-6 py-2.5 bg-[#701C34] hover:bg-[#581427] text-white disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed rounded-xl text-xs font-extrabold relative z-20 cursor-pointer pointer-events-auto transition-all shadow-md flex items-center space-x-2"
             >
               <span>{activeQuestionIndex + 1 === activeQuestions.length ? 'Finish Assessment' : 'Next Question'}</span>
               <ArrowRight className="w-4 h-4" />
