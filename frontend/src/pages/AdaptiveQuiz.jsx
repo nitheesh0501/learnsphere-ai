@@ -768,18 +768,23 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
 
     setSelectedOption(null);
 
-    if (activeQuestionIndex + 1 < activeQuestions.length) {
-      setActiveQuestionIndex(activeQuestionIndex + 1);
-    } else {
-      setIsFinished(true);
-      if (currentQ.code) {
-        saveAssessmentScore(currentQ.code, newScore, activeQuestions.length);
+    // Functional state update ensures smooth question advancement
+    setActiveQuestionIndex((prevIndex) => {
+      const nextIndex = prevIndex + 1;
+      if (nextIndex < activeQuestions.length) {
+        return nextIndex;
+      } else {
+        setIsFinished(true);
+        if (currentQ.code) {
+          saveAssessmentScore(currentQ.code, newScore, activeQuestions.length);
+        }
+        studentAPI.submitQuiz(newScore, activeQuestions.length).catch(() => null);
+        if (addToast) {
+          addToast('Sem 3 Assessment Complete!', `Scored ${newScore} / ${activeQuestions.length} in ${selectedSubject}.`, 'success');
+        }
+        return prevIndex;
       }
-      studentAPI.submitQuiz(newScore, activeQuestions.length).catch(() => null);
-      if (addToast) {
-        addToast('Sem 3 Assessment Complete!', `Scored ${newScore} / ${activeQuestions.length} in ${selectedSubject}.`, 'success');
-      }
-    }
+    });
   };
 
   const handleResetQuiz = () => {
@@ -948,7 +953,7 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
               disabled={selectedOption === null}
               onClick={(e) => {
                 e.stopPropagation();
-                if (selectedOption !== null) handleNext();
+                handleNext();
               }}
               className="px-6 py-2.5 bg-[#701C34] hover:bg-[#581427] text-white disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed rounded-xl text-xs font-extrabold relative z-20 cursor-pointer pointer-events-auto transition-all shadow-md flex items-center space-x-2"
             >
