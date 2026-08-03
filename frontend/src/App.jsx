@@ -5,6 +5,7 @@ import AdaptiveQuiz from './pages/AdaptiveQuiz';
 import FacultyAnalytics from './pages/FacultyAnalytics';
 import Toast from './components/Toast';
 import { AuthProvider } from './context/AuthContext';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('hub'); // 'hub' | 'quiz' | 'analytics'
@@ -12,19 +13,21 @@ export default function App() {
 
   // Initialize readinessScore state from localStorage or default fallback 51.0
   const [readinessScore, setReadinessScore] = useState(() => {
-    const saved = localStorage.getItem('learnsphere_readiness');
-    if (saved && !isNaN(Number(saved))) return Number(saved);
-    
-    // Calculate initial baseline readiness from localStorage subjects if available
-    const savedSubjects = localStorage.getItem('learnsphere_subjects');
-    if (savedSubjects) {
-      try {
+    try {
+      const saved = localStorage.getItem('learnsphere_readiness');
+      if (saved && !isNaN(Number(saved))) return Number(saved);
+      
+      // Calculate initial baseline readiness from localStorage subjects if available
+      const savedSubjects = localStorage.getItem('learnsphere_subjects') || localStorage.getItem('studentMarks');
+      if (savedSubjects) {
         const parsed = JSON.parse(savedSubjects);
         if (Array.isArray(parsed) && parsed.length === 7) {
           const totalPct = parsed.reduce((acc, sub) => acc + ((Number(sub.internalMarks) || 0) / (Number(sub.maxMarks) || 50)) * 100, 0);
           return Math.round(totalPct / 7);
         }
-      } catch (e) {}
+      }
+    } catch (e) {
+      console.warn("Safe localStorage parse in App.jsx:", e);
     }
     return 51.0;
   });
@@ -66,28 +69,30 @@ export default function App() {
           readinessScore={readinessScore} 
         />
 
-        {/* Main View Area Container: Very Light Sky Blue (#F0F9FF) for clean contrast */}
+        {/* Main View Area Container */}
         <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
-          {activeTab === 'hub' && (
-            <StudentHub
-              onNavigateToQuiz={handleNavigateToQuiz}
-              readinessScore={readinessScore}
-              setReadinessScore={setReadinessScore}
-              addToast={addToast}
-            />
-          )}
-          {activeTab === 'quiz' && (
-            <AdaptiveQuiz
-              initialSubject={quizSubject}
-              addToast={addToast}
-            />
-          )}
-          {activeTab === 'analytics' && (
-            <FacultyAnalytics
-              addToast={addToast}
-              nitheeshReadiness={readinessScore}
-            />
-          )}
+          <ErrorBoundary>
+            {activeTab === 'hub' && (
+              <StudentHub
+                onNavigateToQuiz={handleNavigateToQuiz}
+                readinessScore={readinessScore}
+                setReadinessScore={setReadinessScore}
+                addToast={addToast}
+              />
+            )}
+            {activeTab === 'quiz' && (
+              <AdaptiveQuiz
+                initialSubject={quizSubject}
+                addToast={addToast}
+              />
+            )}
+            {activeTab === 'analytics' && (
+              <FacultyAnalytics
+                addToast={addToast}
+                nitheeshReadiness={readinessScore}
+              />
+            )}
+          </ErrorBoundary>
         </main>
 
         {/* Footer */}
