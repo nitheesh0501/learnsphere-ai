@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Zap, CheckCircle2, ArrowRight, RotateCcw, Award, Sliders, BookOpen, ExternalLink, Code2, Sparkles, Filter, XCircle, Clock, Info } from 'lucide-react';
 import { studentAPI } from '../services/api';
-import { saveAssessmentScore } from '../utils/readiness';
+import { saveAssessmentScore, getSafeLocalStorage } from '../utils/readiness';
 
 // OFFICIAL SEMESTER 3 SUBJECT LIST (7 EXACT COURSES)
 const SEM3_SUBJECTS = [
@@ -768,6 +768,34 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
     }
   };
 
+  const handleQuizCompletion = (finalScore, totalQuestions, subjectName = "Discrete Mathematics") => {
+    const total = totalQuestions || 10;
+    const percentage = Math.round((finalScore / total) * 100);
+    const newAttempt = {
+      id: Date.now(),
+      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      subject: subjectName,
+      score: finalScore,
+      total: total,
+      percentage: percentage,
+      status: percentage >= 50 ? "Passed" : "Needs Review"
+    };
+
+    try {
+      const existingHistory = getSafeLocalStorage('learnsphere_test_history', []);
+      const updatedHistory = [newAttempt, ...(Array.isArray(existingHistory) ? existingHistory : [])];
+      
+      localStorage.setItem('learnsphere_test_history', JSON.stringify(updatedHistory));
+      localStorage.setItem('learnsphere_latest_score', JSON.stringify(newAttempt));
+
+      // Dispatch global event so all open tabs update instantly
+      window.dispatchEvent(new Event('learnsphere-marks-updated'));
+    } catch (e) {
+      console.error("Failed to save test score:", e);
+    }
+  };
+
   const forceNextQuestion = (e) => {
     if (e && typeof e.preventDefault === 'function') e.preventDefault();
     if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
@@ -807,6 +835,10 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
         if (typeof setIsFinished === 'function') {
           setIsFinished(true); // Open results screen
         }
+
+        // Save each completed test into localStorage history & latest score
+        handleQuizCompletion(score, total, selectedSubject);
+
         if (currentQ && currentQ.code) {
           saveAssessmentScore(currentQ.code, score, total);
         }
