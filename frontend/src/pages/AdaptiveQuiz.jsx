@@ -729,8 +729,6 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
   const [userAnswers, setUserAnswers] = useState([]);
   const [score, setScore] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
-  const [validationError, setValidationError] = useState("");
-  const [warningMessage, setWarningMessage] = useState("");
 
   useEffect(() => {
     if (initialSubject) {
@@ -748,8 +746,6 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
 
   const handleSelectOption = (idx) => {
     setSelectedOption(idx);
-    setValidationError("");
-    setWarningMessage(""); // Clear warnings whenever student clicks any option button
     
     const isCorrect = idx === currentQ.correct;
     const safeUserAnswers = Array.isArray(userAnswers) ? userAnswers : [];
@@ -777,29 +773,16 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
     if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
 
     try {
-      // 1. Check if an option is selected
-      if (selectedOption === null || selectedOption === undefined) {
-        if (typeof setValidationError === 'function') {
-          setValidationError("Please select an option before proceeding!");
-        }
-        if (typeof setWarningMessage === 'function') {
-          setWarningMessage("Please select an option before proceeding!");
-        }
-        return;
-      }
-
-      // 2. Clear error safely
-      if (typeof setValidationError === 'function') setValidationError("");
-      if (typeof setWarningMessage === 'function') setWarningMessage("");
-
-      // 3. Save user answer safely
+      // Record answer (selected index or null if skipped/unselected)
       const safeUserAnswers = Array.isArray(userAnswers) ? userAnswers : [];
+      const currentIdx = activeQuestionIndex || 0;
       const isCorrect = currentQ && selectedOption === currentQ.correct;
+
       const updatedAnswers = [...safeUserAnswers];
-      updatedAnswers[activeQuestionIndex || 0] = {
+      updatedAnswers[currentIdx] = {
         questionId: currentQ?.id,
         question: currentQ?.question,
-        userOption: selectedOption,
+        userOption: selectedOption, // Selected option index or null if skipped
         correctOption: currentQ?.correct,
         isCorrect: Boolean(isCorrect),
         options: currentQ?.options || [],
@@ -810,20 +793,19 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
         setUserAnswers(updatedAnswers);
       }
 
-      // 4. Advance or complete safely
+      // Advance immediately to next question or show results
       const total = (activeQuestions && Array.isArray(activeQuestions)) ? activeQuestions.length : 10;
-      const currentIdx = activeQuestionIndex || 0;
 
       if (currentIdx < total - 1) {
         if (typeof setActiveQuestionIndex === 'function') {
           setActiveQuestionIndex((prev) => (prev || 0) + 1);
         }
         if (typeof setSelectedOption === 'function') {
-          setSelectedOption(null);
+          setSelectedOption(null); // Reset choice for next question
         }
       } else {
         if (typeof setIsFinished === 'function') {
-          setIsFinished(true);
+          setIsFinished(true); // Open results screen
         }
         if (currentQ && currentQ.code) {
           saveAssessmentScore(currentQ.code, score, total);
@@ -836,12 +818,13 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
         }
       }
     } catch (err) {
-      console.error("Safely caught quiz navigation error:", err);
-      if (typeof setValidationError === 'function') {
-        setValidationError("Please select an answer to continue.");
+      console.error("Error during quiz navigation:", err);
+      // Fallback transition
+      if (typeof setActiveQuestionIndex === 'function') {
+        setActiveQuestionIndex((prev) => (prev || 0) + 1);
       }
-      if (typeof setWarningMessage === 'function') {
-        setWarningMessage("Please select an answer to continue.");
+      if (typeof setSelectedOption === 'function') {
+        setSelectedOption(null);
       }
     }
   };
@@ -849,8 +832,6 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
   const handleResetQuiz = () => {
     setActiveQuestionIndex(0);
     setSelectedOption(null);
-    setValidationError("");
-    setWarningMessage("");
     setScore(0);
     setUserAnswers([]);
     setIsFinished(false);
@@ -860,8 +841,6 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
     setSelectedSubject(subjectTitle);
     setActiveQuestionIndex(0);
     setSelectedOption(null);
-    setValidationError("");
-    setWarningMessage("");
     setScore(0);
     setUserAnswers([]);
     setIsFinished(false);
@@ -995,13 +974,6 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
 
           {/* Question Body */}
           <div className="space-y-4">
-            {validationError && (
-              <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl flex items-center space-x-2 text-xs text-[#701C34] font-black shadow-2xs">
-                <AlertCircle className="w-4 h-4 text-[#701C34] shrink-0" />
-                <span>{validationError}</span>
-              </div>
-            )}
-
             <p className="text-sm sm:text-base font-extrabold text-slate-900 leading-relaxed">
               {currentQ.question}
             </p>
@@ -1037,31 +1009,22 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
           </div>
 
           {/* Action Footer */}
-          <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
             <span className="text-xs text-slate-500 font-semibold">
               Current Score: {score} / {activeQuestionIndex + 1}
             </span>
 
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-              {warningMessage && (
-                <div className="p-2.5 bg-rose-100/80 border border-rose-300 text-[#701C34] rounded-xl text-xs font-black flex items-center space-x-2 animate-bounce shadow-2xs">
-                  <AlertCircle className="w-4 h-4 text-[#701C34] shrink-0" />
-                  <span>⚠️ {warningMessage}</span>
-                </div>
-              )}
-
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  forceNextQuestion();
-                }}
-                className="bg-[#701C34] text-white px-6 py-3 rounded-xl font-semibold cursor-pointer hover:bg-[#581628] transition-all relative z-30 pointer-events-auto shadow-md flex items-center justify-center space-x-2"
-              >
-                <span>{activeQuestionIndex === activeQuestions.length - 1 ? "Submit & View Results" : "Next Question →"}</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                forceNextQuestion(e);
+              }}
+              className="bg-[#701C34] text-white px-6 py-3 rounded-xl font-semibold cursor-pointer hover:bg-[#581628] transition-all relative z-30 pointer-events-auto shadow-md flex items-center justify-center space-x-2"
+            >
+              <span>{activeQuestionIndex === activeQuestions.length - 1 ? "Submit & View Results" : "Next Question →"}</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
           </div>
 
         </div>
