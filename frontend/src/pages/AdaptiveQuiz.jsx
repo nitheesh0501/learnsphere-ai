@@ -729,6 +729,7 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
   const [userAnswers, setUserAnswers] = useState([]);
   const [score, setScore] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
+  const [validationError, setValidationError] = useState("");
   const [warningMessage, setWarningMessage] = useState("");
 
   useEffect(() => {
@@ -747,7 +748,8 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
 
   const handleSelectOption = (idx) => {
     setSelectedOption(idx);
-    setWarningMessage(""); // Clear warningMessage whenever student clicks any option button
+    setValidationError("");
+    setWarningMessage(""); // Clear warnings whenever student clicks any option button
     
     const isCorrect = idx === currentQ.correct;
     const safeUserAnswers = Array.isArray(userAnswers) ? userAnswers : [];
@@ -772,10 +774,12 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
 
   const forceNextQuestion = () => {
     if (selectedOption === null || selectedOption === undefined) {
+      setValidationError("Please select an option before proceeding!");
       setWarningMessage("Please select an option before proceeding!");
       return;
     }
 
+    setValidationError("");
     setWarningMessage("");
 
     const totalQuestions = activeQuestions?.length || 10;
@@ -797,6 +801,7 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
   const handleResetQuiz = () => {
     setActiveQuestionIndex(0);
     setSelectedOption(null);
+    setValidationError("");
     setWarningMessage("");
     setScore(0);
     setUserAnswers([]);
@@ -807,6 +812,7 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
     setSelectedSubject(subjectTitle);
     setActiveQuestionIndex(0);
     setSelectedOption(null);
+    setValidationError("");
     setWarningMessage("");
     setScore(0);
     setUserAnswers([]);
