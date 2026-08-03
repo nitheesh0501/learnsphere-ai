@@ -2,7 +2,7 @@ import React from 'react';
 import { Play, Clock, BookOpen } from 'lucide-react';
 
 export const RECOMMENDED_VIDEOS = [
-  // --- SUBJECT 1: DATA STRUCTURES & ALGORITHMS (2 Videos) ---
+  // --- SUBJECT 1: DATA STRUCTURES & ALGORITHMS ---
   {
     id: "1",
     title: "Introduction to Data Structures & Algorithms for Beginners",
@@ -11,8 +11,7 @@ export const RECOMMENDED_VIDEOS = [
     focusText: "Focus: Memory allocation, Arrays, Stacks & Queues",
     source: "Gate Smashers",
     duration: "18 mins",
-    thumbnail: "https://img.youtube.com/vi/aAInI-U4sX0/hqdefault.jpg",
-    fallbackThumbnail: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&auto=format&fit=crop&q=80",
+    thumbnail: "https://images.unsplash.com/photo-1516116211223-4c7141326c6c?w=800&auto=format&fit=crop&q=80",
     url: "https://www.youtube.com/watch?v=aAInI-U4sX0"
   },
   {
@@ -24,11 +23,10 @@ export const RECOMMENDED_VIDEOS = [
     source: "Abdul Bari",
     duration: "24 mins",
     thumbnail: "https://img.youtube.com/vi/gm8DUJJhmY4/hqdefault.jpg",
-    fallbackThumbnail: "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=800&auto=format&fit=crop&q=80",
     url: "https://www.youtube.com/watch?v=gm8DUJJhmY4"
   },
 
-  // --- SUBJECT 2: OPERATING SYSTEMS (2 Videos) ---
+  // --- SUBJECT 2: OPERATING SYSTEMS ---
   {
     id: "3",
     title: "Introduction to Operating System & Its Core Functions",
@@ -38,7 +36,6 @@ export const RECOMMENDED_VIDEOS = [
     source: "Gate Smashers",
     duration: "19 mins",
     thumbnail: "https://img.youtube.com/vi/WJ-UaAaumNA/hqdefault.jpg",
-    fallbackThumbnail: "https://images.unsplash.com/photo-1629654297299-c8506221ca97?w=800&auto=format&fit=crop&q=80",
     url: "https://www.youtube.com/watch?v=WJ-UaAaumNA"
   },
   {
@@ -49,12 +46,11 @@ export const RECOMMENDED_VIDEOS = [
     focusText: "Focus: Gantt charts, Waiting time & Context switching",
     source: "Neso Academy",
     duration: "21 mins",
-    thumbnail: "https://img.youtube.com/vi/ew9_p5i8vYk/hqdefault.jpg",
-    fallbackThumbnail: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=80",
+    thumbnail: "https://images.unsplash.com/photo-1629654297299-c8506221ca97?w=800&auto=format&fit=crop&q=80",
     url: "https://www.youtube.com/watch?v=ew9_p5i8vYk"
   },
 
-  // --- SUBJECT 3: DATABASE MANAGEMENT SYSTEMS (2 Videos) ---
+  // --- SUBJECT 3: DATABASE MANAGEMENT SYSTEMS ---
   {
     id: "5",
     title: "Introduction to DBMS & ER Diagrams Made Easy",
@@ -63,8 +59,7 @@ export const RECOMMENDED_VIDEOS = [
     focusText: "Focus: Entities, Attributes, Keys & Relationships",
     source: "Gate Smashers",
     duration: "16 mins",
-    thumbnail: "https://img.youtube.com/vi/c5HAwT4QU8w/hqdefault.jpg",
-    fallbackThumbnail: "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=800&auto=format&fit=crop&q=80",
+    thumbnail: "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=800&auto=format&fit=crop&q=80",
     url: "https://www.youtube.com/watch?v=c5HAwT4QU8w"
   },
   {
@@ -76,11 +71,10 @@ export const RECOMMENDED_VIDEOS = [
     source: "freeCodeCamp",
     duration: "35 mins",
     thumbnail: "https://img.youtube.com/vi/HXV3zeQKqGY/hqdefault.jpg",
-    fallbackThumbnail: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=800&auto=format&fit=crop&q=80",
     url: "https://www.youtube.com/watch?v=HXV3zeQKqGY"
   },
 
-  // --- SUBJECT 4: COMPUTER NETWORKS (2 Videos) ---
+  // --- SUBJECT 4: COMPUTER NETWORKS ---
   {
     id: "7",
     title: "OSI 7 Layer Model Explained with Real Life Examples",
@@ -90,7 +84,6 @@ export const RECOMMENDED_VIDEOS = [
     source: "Gate Smashers",
     duration: "22 mins",
     thumbnail: "https://img.youtube.com/vi/4D55Cmj2t-A/hqdefault.jpg",
-    fallbackThumbnail: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&auto=format&fit=crop&q=80",
     url: "https://www.youtube.com/watch?v=4D55Cmj2t-A"
   },
   {
@@ -101,12 +94,11 @@ export const RECOMMENDED_VIDEOS = [
     focusText: "Focus: IPv4 classes, Subnet masks & Network ID",
     source: "Neso Academy",
     duration: "20 mins",
-    thumbnail: "https://img.youtube.com/vi/vc2U35e1Lno/hqdefault.jpg",
-    fallbackThumbnail: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800&auto=format&fit=crop&q=80",
+    thumbnail: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&auto=format&fit=crop&q=80",
     url: "https://www.youtube.com/watch?v=vc2U35e1Lno"
   },
 
-  // --- SUBJECT 5: OBJECT-ORIENTED PROGRAMMING (2 Videos) ---
+  // --- SUBJECT 5: OBJECT-ORIENTED PROGRAMMING ---
   {
     id: "9",
     title: "Object-Oriented Programming (OOPs) Fundamentals",
@@ -116,7 +108,6 @@ export const RECOMMENDED_VIDEOS = [
     source: "freeCodeCamp",
     duration: "28 mins",
     thumbnail: "https://img.youtube.com/vi/pTB0EiLXUC8/hqdefault.jpg",
-    fallbackThumbnail: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&auto=format&fit=crop&q=80",
     url: "https://www.youtube.com/watch?v=pTB0EiLXUC8"
   },
   {
@@ -128,11 +119,10 @@ export const RECOMMENDED_VIDEOS = [
     source: "Gate Smashers",
     duration: "18 mins",
     thumbnail: "https://img.youtube.com/vi/Ht02t8vZ_Ww/hqdefault.jpg",
-    fallbackThumbnail: "https://images.unsplash.com/photo-1516116211223-4c7141326c6c?w=800&auto=format&fit=crop&q=80",
     url: "https://www.youtube.com/watch?v=Ht02t8vZ_Ww"
   },
 
-  // --- SUBJECT 6: THEORY OF COMPUTATION & COMPILER DESIGN (2 Videos) ---
+  // --- SUBJECT 6: THEORY OF COMPUTATION & COMPILER DESIGN ---
   {
     id: "11",
     title: "Introduction to Automata Theory & Finite Automata (DFA/NFA)",
@@ -141,8 +131,7 @@ export const RECOMMENDED_VIDEOS = [
     focusText: "Focus: Alphabet, Languages & State transitions",
     source: "Neso Academy",
     duration: "25 mins",
-    thumbnail: "https://img.youtube.com/vi/405j499EwJ0/hqdefault.jpg",
-    fallbackThumbnail: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=800&auto=format&fit=crop&q=80",
+    thumbnail: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=800&auto=format&fit=crop&q=80",
     url: "https://www.youtube.com/watch?v=405j499EwJ0"
   },
   {
@@ -154,11 +143,10 @@ export const RECOMMENDED_VIDEOS = [
     source: "Gate Smashers",
     duration: "17 mins",
     thumbnail: "https://img.youtube.com/vi/Qkwj65l_96I/hqdefault.jpg",
-    fallbackThumbnail: "https://images.unsplash.com/photo-1516116211223-4c7141326c6c?w=800&auto=format&fit=crop&q=80",
     url: "https://www.youtube.com/watch?v=Qkwj65l_96I"
   },
 
-  // --- SUBJECT 7: SOFTWARE ENGINEERING & SYSTEM DESIGN (2 Videos) ---
+  // --- SUBJECT 7: SOFTWARE ENGINEERING & SYSTEM DESIGN ---
   {
     id: "13",
     title: "Software Development Life Cycle (SDLC) & Agile Methodology",
@@ -167,8 +155,7 @@ export const RECOMMENDED_VIDEOS = [
     focusText: "Focus: Waterfall vs Agile, Scrum & Requirements",
     source: "Gate Smashers",
     duration: "19 mins",
-    thumbnail: "https://img.youtube.com/vi/7j_mI7T2Nq4/hqdefault.jpg",
-    fallbackThumbnail: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&auto=format&fit=crop&q=80",
+    thumbnail: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&auto=format&fit=crop&q=80",
     url: "https://www.youtube.com/watch?v=7j_mI7T2Nq4"
   },
   {
@@ -179,8 +166,7 @@ export const RECOMMENDED_VIDEOS = [
     focusText: "Focus: Load Balancers, API Gateways & Database scaling",
     source: "Gaurav Sen",
     duration: "26 mins",
-    thumbnail: "https://img.youtube.com/vi/xpDnVSmNfx0/hqdefault.jpg",
-    fallbackThumbnail: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&auto=format&fit=crop&q=80",
+    thumbnail: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&auto=format&fit=crop&q=80",
     url: "https://www.youtube.com/watch?v=xpDnVSmNfx0"
   }
 ];
@@ -206,9 +192,7 @@ export default function VideoRecommendationGrid({ videos = RECOMMENDED_VIDEOS })
                 alt={vid.title}
                 onError={(e) => {
                   const target = e.currentTarget;
-                  if (target.src !== vid.fallbackThumbnail) {
-                    target.src = vid.fallbackThumbnail;
-                  }
+                  target.src = "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&auto=format&fit=crop&q=80";
                 }}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-90 group-hover:opacity-100"
               />
