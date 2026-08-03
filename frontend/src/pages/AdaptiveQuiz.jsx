@@ -9,7 +9,7 @@ const CORE_CSE_SUBJECTS = [
   { code: '2321CSC305T', title: 'Operating Systems', mne: 'OS', dept: 'CSE' },
   { code: '2321CSC306T', title: 'Database Management Systems', mne: 'DBMS', dept: 'CSE' },
   { code: '2321CSC301T', title: 'Computer Networks', mne: 'CN', dept: 'CSE' },
-  { code: '2321CSC304R', title: 'Object Oriented Programming', mne: 'OOP', dept: 'CSE' },
+  { code: '2321CSC304R', title: 'Object-Oriented Programming', mne: 'OOP', dept: 'CSE' },
   { code: '2321CSC307T', title: 'Theory of Computation & Compiler Design', mne: 'TOC/CD', dept: 'CSE' },
   { code: '2321CSC308T', title: 'Software Engineering & System Design', mne: 'System Design', dept: 'CSE' },
   { code: '2321MAB301T', title: 'Discrete Mathematics', mne: 'DM', dept: 'Maths' }
@@ -928,6 +928,179 @@ const SUBJECT_CURRICULUM_MAP = {
   }
 };
 
+const QUIZ_QUESTION_BANK = {
+  "Data Structures & Algorithms": {
+    1: WEEK1_QUESTIONS,
+    2: WEEK2_QUESTIONS,
+    3: WEEK3_QUESTIONS,
+    4: WEEK4_QUESTIONS,
+    5: WEEK5_QUESTIONS,
+    6: WEEK6_QUESTIONS
+  },
+  "Operating Systems": {
+    1: [
+      { id: 201, code: '2321CSC305T', subject: 'Operating Systems', difficulty: 'Easy', question: 'Which mode of execution prevents user programs from directly altering hardware registers?', options: ['User Mode', 'Kernel Mode', 'Supervisor Mode', 'Real Mode'], correct: 0 },
+      { id: 202, code: '2321CSC305T', subject: 'Operating Systems', difficulty: 'Easy', question: 'What provides the interface between a running program and the operating system kernel?', options: ['System Call', 'API Hook', 'Shell Script', 'Interrupt Vector'], correct: 0 },
+      { id: 203, code: '2321CSC305T', subject: 'Operating Systems', difficulty: 'Easy', question: 'Which process state transition occurs when an I/O operation finishes execution?', options: ['Waiting -> Ready', 'Running -> Terminated', 'Ready -> Running', 'Running -> Waiting'], correct: 0 },
+      { id: 204, code: '2321CSC305T', subject: 'Operating Systems', difficulty: 'Easy', question: 'What data structure in the OS kernel maintains information for each active process?', options: ['Process Control Block (PCB)', 'File Allocation Table', 'Page Table', 'Thread Register'], correct: 0 },
+      { id: 205, code: '2321CSC305T', subject: 'Operating Systems', difficulty: 'Easy', question: 'Which component of the OS saves state and loads context during process context switching?', options: ['Dispatcher', 'Long-term Scheduler', 'Linker', 'Assembler'], correct: 0 }
+    ],
+    2: [
+      { id: 211, code: '2321CSC305T', subject: 'Operating Systems', difficulty: 'Easy', question: 'Which non-preemptive CPU scheduling algorithm executes processes strictly in arrival order?', options: ['First-Come First-Served (FCFS)', 'Shortest Job First (SJF)', 'Round Robin (RR)', 'Priority Scheduling'], correct: 0 },
+      { id: 212, code: '2321CSC305T', subject: 'Operating Systems', difficulty: 'Easy', question: 'Which CPU scheduling algorithm gives the minimum average waiting time for a given set of processes?', options: ['Shortest Job First (SJF)', 'FCFS', 'Round Robin', 'Priority'], correct: 0 },
+      { id: 213, code: '2321CSC305T', subject: 'Operating Systems', difficulty: 'Medium', question: 'In Round Robin scheduling, what happens if the time quantum selected is extremely large?', options: ['It degenerates into FCFS scheduling', 'It degenerates into SJF', 'Response time improves', 'Throughput reaches 100%'], correct: 0 }
+    ],
+    3: [
+      { id: 221, code: '2321CSC305T', subject: 'Operating Systems', difficulty: 'Easy', question: 'What integer variable is accessed only through wait() and signal() atomic operations for process synchronization?', options: ['Semaphore', 'Mutex Lock', 'Spinlock', 'Condition Variable'], correct: 0 },
+      { id: 222, code: '2321CSC305T', subject: 'Operating Systems', difficulty: 'Medium', question: 'Which of the following is NOT one of Coffman’s four necessary conditions for a deadlock to occur?', options: ['Preemption allowed', 'Mutual Exclusion', 'Hold and Wait', 'Circular Wait'], correct: 0 },
+      { id: 223, code: '2321CSC305T', subject: 'Operating Systems', difficulty: 'Medium', question: 'Which deadlock avoidance algorithm tests for safe states using resource allocation matrices?', options: ['Banker’s Algorithm', 'Peterson’s Solution', 'Bakery Algorithm', 'SJF Scheduler'], correct: 0 }
+    ],
+    4: [
+      { id: 231, code: '2321CSC305T', subject: 'Operating Systems', difficulty: 'Easy', question: 'What hardware component translates virtual page numbers to physical frame numbers using a page table?', options: ['Memory Management Unit (MMU)', 'ALU', 'Cache Controller', 'DMA Controller'], correct: 0 },
+      { id: 232, code: '2321CSC305T', subject: 'Operating Systems', difficulty: 'Medium', question: 'What memory management technique avoids external fragmentation by dividing physical memory into fixed-size blocks?', options: ['Paging', 'Contiguous Allocation', 'Segmentation', 'Fixed Partitioning'], correct: 0 }
+    ],
+    5: [
+      { id: 241, code: '2321CSC305T', subject: 'Operating Systems', difficulty: 'Medium', question: 'What hardware trap occurs when a process accesses a page that is marked invalid or not loaded in RAM?', options: ['Page Fault', 'Segmentation Fault', 'TLB Miss', 'Bus Error'], correct: 0 },
+      { id: 242, code: '2321CSC305T', subject: 'Operating Systems', difficulty: 'Hard', question: 'Belady’s Anomaly occurs in which page replacement algorithm where increasing page frames increases page faults?', options: ['FIFO Page Replacement', 'LRU Page Replacement', 'Optimal Page Replacement', 'LFU Page Replacement'], correct: 0 }
+    ],
+    6: [
+      { id: 251, code: '2321CSC305T', subject: 'Operating Systems', difficulty: 'Medium', question: 'Which disk scheduling algorithm services disk requests by moving head back and forth across tracks like an elevator?', options: ['SCAN / Elevator Algorithm', 'FCFS', 'SSTF', 'LOOK'], correct: 0 },
+      { id: 252, code: '2321CSC305T', subject: 'Operating Systems', difficulty: 'Hard', question: 'Which RAID configuration uses block-level striping with distributed parity across all drives?', options: ['RAID 5', 'RAID 0', 'RAID 1', 'RAID 10'], correct: 0 }
+    ]
+  },
+  "Database Management Systems": {
+    1: [
+      { id: 301, code: '2321CSC306T', subject: 'DBMS', difficulty: 'Easy', question: 'In an Entity-Relationship (ER) diagram, how are entity sets visually represented?', options: ['Rectangle', 'Ellipse', 'Diamond', 'Double Ellipse'], correct: 0 },
+      { id: 302, code: '2321CSC306T', subject: 'DBMS', difficulty: 'Easy', question: 'A minimal superkey chosen to uniquely identify each tuple in a relational table is called a:', options: ['Primary Key', 'Foreign Key', 'Candidate Key', 'Composite Key'], correct: 0 },
+      { id: 303, code: '2321CSC306T', subject: 'DBMS', difficulty: 'Easy', question: 'Which relational algebra operation selects rows that satisfy a specified predicate condition?', options: ['Selection (σ)', 'Projection (π)', 'Cartesian Product (×)', 'Union (∪)'], correct: 0 }
+    ],
+    2: [
+      { id: 311, code: '2321CSC306T', subject: 'DBMS', difficulty: 'Easy', question: 'Which SQL clause is used to filter records resulting from an aggregate GROUP BY query?', options: ['HAVING', 'WHERE', 'ORDER BY', 'LIMIT'], correct: 0 },
+      { id: 312, code: '2321CSC306T', subject: 'DBMS', difficulty: 'Medium', question: 'Which SQL join returns all rows from the left table and matched records from the right table?', options: ['LEFT OUTER JOIN', 'INNER JOIN', 'RIGHT OUTER JOIN', 'FULL OUTER JOIN'], correct: 0 }
+    ],
+    3: [
+      { id: 321, code: '2321CSC306T', subject: 'DBMS', difficulty: 'Easy', question: 'A relation table is in First Normal Form (1NF) if and only if all attribute values are:', options: ['Atomic / Indivisible', 'Derived', 'Multivalued', 'Transitive'], correct: 0 },
+      { id: 322, code: '2321CSC306T', subject: 'DBMS', difficulty: 'Medium', question: 'Which normal form eliminates transitive functional dependencies X -> Y -> Z?', options: ['Third Normal Form (3NF)', '2NF', '1NF', 'BCNF'], correct: 0 }
+    ],
+    4: [
+      { id: 331, code: '2321CSC306T', subject: 'DBMS', difficulty: 'Medium', question: 'In ACID properties of database transactions, what does the A (Atomicity) guarantee?', options: ['All operations complete successfully or none are applied (All-or-Nothing)', 'Data remains consistent', 'Transactions run isolated', 'Committed updates persist'], correct: 0 },
+      { id: 332, code: '2321CSC306T', subject: 'DBMS', difficulty: 'Medium', question: 'Which concurrency protocol guarantees conflict serializability using growing and shrinking lock phases?', options: ['Two-Phase Locking (2PL)', 'Strict Timestamp Ordering', 'Optimistic Concurrency', 'Shadow Paging'], correct: 0 }
+    ],
+    5: [
+      { id: 341, code: '2321CSC306T', subject: 'DBMS', difficulty: 'Medium', question: 'Why are B+ Trees preferred over B-Trees for disk-based database indexing?', options: ['All record pointers are in leaf nodes, allowing fast sequential range scans', 'B+ Trees store fewer keys', 'B+ Trees have lower height', 'B+ Trees avoid hash collisions'], correct: 0 },
+      { id: 342, code: '2321CSC306T', subject: 'DBMS', difficulty: 'Hard', question: 'Which query evaluation operator reads data blocks ahead into memory buffer pools using secondary B+ index pointers?', options: ['Index Scan / Bitmap Index Scan', 'Full Table Scan', 'Nested Loop Join', 'Hash Semi-Join'], correct: 0 }
+    ],
+    6: [
+      { id: 351, code: '2321CSC306T', subject: 'DBMS', difficulty: 'Medium', question: 'In distributed databases, horizontal partitioning of table rows across independent node clusters is called:', options: ['Sharding', 'Replication', 'Vertical Partitioning', 'Normalization'], correct: 0 },
+      { id: 352, code: '2321CSC306T', subject: 'DBMS', difficulty: 'Hard', question: 'According to Eric Brewer’s CAP Theorem, a distributed database system can provide at most how many guarantees simultaneously?', options: ['2 of 3 (Consistency, Availability, Partition Tolerance)', '1 of 3', 'All 3', 'None'], correct: 0 }
+    ]
+  },
+  "Computer Networks": {
+    1: [
+      { id: 401, code: '2321CSC301T', subject: 'Computer Networks', difficulty: 'Easy', question: 'Which layer of the OSI 7-layer reference model handles logical IP addressing and packet routing?', options: ['Network Layer (Layer 3)', 'Transport Layer (Layer 4)', 'Data Link Layer (Layer 2)', 'Physical Layer (Layer 1)'], correct: 0 },
+      { id: 402, code: '2321CSC301T', subject: 'Computer Networks', difficulty: 'Easy', question: 'What is the process of adding headers to data units as they pass down through protocol layers?', options: ['Encapsulation', 'Decapsulation', 'Multiplexing', 'Subnetting'], correct: 0 }
+    ],
+    2: [
+      { id: 411, code: '2321CSC301T', subject: 'Computer Networks', difficulty: 'Easy', question: 'Which media access control protocol listens to the carrier before transmitting and detects collisions in Ethernet?', options: ['CSMA/CD', 'ALOHA', 'Token Ring', 'CSMA/CA'], correct: 0 },
+      { id: 412, code: '2321CSC301T', subject: 'Computer Networks', difficulty: 'Medium', question: 'Polynomial division technique used at the Data Link Layer for detecting burst transmission errors is:', options: ['Cyclic Redundancy Check (CRC)', 'Checksum', 'Hamming Code', 'Parity Bit'], correct: 0 }
+    ],
+    3: [
+      { id: 421, code: '2321CSC301T', subject: 'Computer Networks', difficulty: 'Easy', question: 'What is the total address length in bits of an IPv4 address vs IPv6 address?', options: ['32 bits for IPv4, 128 bits for IPv6', '16 bits for IPv4, 64 bits for IPv6', '64 bits for IPv4, 128 bits for IPv6', '32 bits for IPv4, 64 bits for IPv6'], correct: 0 },
+      { id: 422, code: '2321CSC301T', subject: 'Computer Networks', difficulty: 'Medium', question: 'What is the subnet mask representation for a /24 CIDR prefix network?', options: ['255.255.255.0', '255.255.0.0', '255.0.0.0', '255.255.255.128'], correct: 0 }
+    ],
+    4: [
+      { id: 431, code: '2321CSC301T', subject: 'Computer Networks', difficulty: 'Medium', question: 'Which Distance Vector routing protocol uses Hop Count as its routing metric and caps maximum hops at 15?', options: ['Routing Information Protocol (RIP)', 'OSPF', 'BGP', 'EIGRP'], correct: 0 },
+      { id: 432, code: '2321CSC301T', subject: 'Computer Networks', difficulty: 'Medium', question: 'Which Link State routing protocol uses Dijkstra’s algorithm to calculate shortest paths inside an Autonomous System?', options: ['Open Shortest Path First (OSPF)', 'RIP', 'BGP', 'IS-IS'], correct: 0 }
+    ],
+    5: [
+      { id: 441, code: '2321CSC301T', subject: 'Computer Networks', difficulty: 'Medium', question: 'What sequence of flag packets establishes a reliable TCP transport connection between client and server?', options: ['SYN -> SYN-ACK -> ACK', 'SYN -> ACK -> FIN', 'CONNECT -> ACCEPT -> READY', 'PING -> PONG -> ACK'], correct: 0 },
+      { id: 442, code: '2321CSC301T', subject: 'Computer Networks', difficulty: 'Hard', question: 'Which TCP flow control mechanism prevents sender from overwhelming receiver by dynamically adjusting buffer size?', options: ['Sliding Window Protocol', 'Nagle’s Algorithm', 'Slow Start', 'Fast Retransmit'], correct: 0 }
+    ],
+    6: [
+      { id: 451, code: '2321CSC301T', subject: 'Computer Networks', difficulty: 'Medium', question: 'Which application protocol maps human-readable domain names (e.g. google.com) to numeric IP addresses?', options: ['Domain Name System (DNS)', 'HTTP', 'DHCP', 'SNMP'], correct: 0 },
+      { id: 452, code: '2321CSC301T', subject: 'Computer Networks', difficulty: 'Hard', question: 'HTTP/2 improves over HTTP/1.1 latency primarily by introducing:', options: ['Binary framing & Multiplexing streams over single TCP connection', 'UDP Transport', 'Plaintext Headers', 'Chunked Encoding'], correct: 0 }
+    ]
+  },
+  "Object-Oriented Programming": {
+    1: [
+      { id: 501, code: '2321CSC304R', subject: 'OOP', difficulty: 'Easy', question: 'Where are dynamic object instances created with the `new` keyword allocated in memory in Java/C++?', options: ['Heap Memory', 'Stack Memory', 'Code Segment', 'Data Segment'], correct: 0 },
+      { id: 502, code: '2321CSC304R', subject: 'OOP', difficulty: 'Easy', question: 'Which access modifier restricts field/method access exclusively within the declaring class itself?', options: ['private', 'protected', 'public', 'package-private'], correct: 0 }
+    ],
+    2: [
+      { id: 511, code: '2321CSC304R', subject: 'OOP', difficulty: 'Easy', question: 'Bundling data fields and methods together while restricting direct access to internal state is called:', options: ['Encapsulation', 'Polymorphism', 'Inheritance', 'Abstraction'], correct: 0 },
+      { id: 512, code: '2321CSC304R', subject: 'OOP', difficulty: 'Easy', question: 'A special member method that shares the exact class name and initializes new objects is called a:', options: ['Constructor', 'Destructor', 'Mutator', 'Accessor'], correct: 0 }
+    ],
+    3: [
+      { id: 521, code: '2321CSC304R', subject: 'OOP', difficulty: 'Easy', question: 'When a subclass provides a specific implementation of a method already declared in its parent class, this is called:', options: ['Method Overriding (Runtime Polymorphism)', 'Method Overloading', 'Method Hiding', 'Static Binding'], correct: 0 },
+      { id: 522, code: '2321CSC304R', subject: 'OOP', difficulty: 'Medium', question: 'Which feature allows multiple methods in the same class to share the same name but differ in parameter signatures?', options: ['Method Overloading (Compile-Time Polymorphism)', 'Method Overriding', 'Virtual Method', 'Operator Hiding'], correct: 0 }
+    ],
+    4: [
+      { id: 531, code: '2321CSC304R', subject: 'OOP', difficulty: 'Medium', question: 'In C++, a class that contains at least one pure virtual function (`virtual void draw() = 0;`) is classified as:', options: ['Abstract Class', 'Interface', 'Concrete Class', 'Singleton Class'], correct: 0 },
+      { id: 532, code: '2321CSC304R', subject: 'OOP', difficulty: 'Medium', question: 'In Java, a reference type containing only abstract method signatures and default methods is declared as an:', options: ['Interface', 'Abstract Class', 'Enum', 'Final Class'], correct: 0 }
+    ],
+    5: [
+      { id: 541, code: '2321CSC304R', subject: 'OOP', difficulty: 'Medium', question: 'Which block in Java exception handling is guaranteed to execute regardless of whether an exception was thrown?', options: ['finally block', 'try block', 'catch block', 'throws clause'], correct: 0 },
+      { id: 542, code: '2321CSC304R', subject: 'OOP', difficulty: 'Hard', question: 'In C++ STL / Java Collections, template containers like `ArrayList<T>` allow algorithms to operate on:', options: ['Generic data types', 'Primitive types only', 'Void pointers', 'Fixed bytes'], correct: 0 }
+    ],
+    6: [
+      { id: 551, code: '2321CSC304R', subject: 'OOP', difficulty: 'Medium', question: 'Which creational design pattern ensures that a class has only one instance and provides global access to it?', options: ['Singleton Pattern', 'Factory Pattern', 'Observer Pattern', 'Strategy Pattern'], correct: 0 },
+      { id: 552, code: '2321CSC304R', subject: 'OOP', difficulty: 'Hard', question: 'Which behavioral design pattern defines a 1-to-N dependency so that when one object changes state, all dependents are notified?', options: ['Observer Pattern', 'Factory Method', 'Decorator Pattern', 'Adapter Pattern'], correct: 0 }
+    ]
+  },
+  "Theory of Computation & Compiler Design": {
+    1: [
+      { id: 601, code: '2321CSC307T', subject: 'TOC/CD', difficulty: 'Easy', question: 'A Deterministic Finite Automaton (DFA) transitions from a given state on an input symbol to:', options: ['Exactly one next state', 'Multiple next states', 'Null state', 'Stack memory'], correct: 0 },
+      { id: 602, code: '2321CSC307T', subject: 'TOC/CD', difficulty: 'Easy', question: 'Can an NFA (Non-deterministic Finite Automaton) express any language that a DFA cannot?', options: ['No, DFA and NFA have equal language recognition power (Regular Languages)', 'Yes, NFA recognizes Context-Free languages', 'Yes, NFA recognizes Turing languages', 'No, DFA is more powerful'], correct: 0 }
+    ],
+    2: [
+      { id: 611, code: '2321CSC307T', subject: 'TOC/CD', difficulty: 'Easy', question: 'Which theorem is used to prove that a given formal language is NOT regular?', options: ['Pumping Lemma for Regular Languages', 'Rice Theorem', 'Cook-Levin Theorem', 'Halting Theorem'], correct: 0 },
+      { id: 612, code: '2321CSC307T', subject: 'TOC/CD', difficulty: 'Medium', question: 'Chomsky Hierarchy classifies Context-Free Grammars (CFGs) recognized by Pushdown Automata as:', options: ['Type 2 Grammar', 'Type 0 Grammar', 'Type 1 Grammar', 'Type 3 Grammar'], correct: 0 }
+    ],
+    3: [
+      { id: 621, code: '2321CSC307T', subject: 'TOC/CD', difficulty: 'Medium', question: 'What additional component distinguishes a Pushdown Automaton (PDA) from a Finite Automaton?', options: ['An infinite Stack memory', 'Two-way tape', 'Random Access Memory', 'Priority Queue'], correct: 0 },
+      { id: 622, code: '2321CSC307T', subject: 'TOC/CD', difficulty: 'Hard', question: 'The Turing Machine Halting Problem is classified as:', options: ['Undecidable', 'Decidable in O(N^2)', 'Context-Free', 'Regular'], correct: 0 }
+    ],
+    4: [
+      { id: 631, code: '2321CSC307T', subject: 'TOC/CD', difficulty: 'Medium', question: 'Which phase of a compiler reads source code characters and groups them into meaningful tokens?', options: ['Lexical Analyzer (Scanner)', 'Syntax Analyzer (Parser)', 'Semantic Analyzer', 'Code Optimizer'], correct: 0 },
+      { id: 632, code: '2321CSC307T', subject: 'TOC/CD', difficulty: 'Medium', question: 'Which top-down parsing algorithm constructs parse trees without back-tracking using a 1-token lookahead table?', options: ['LL(1) Parser', 'LR(0) Parser', 'SLR(1) Parser', 'LALR(1) Parser'], correct: 0 }
+    ],
+    5: [
+      { id: 641, code: '2321CSC307T', subject: 'TOC/CD', difficulty: 'Medium', question: 'Which intermediate code representation uses statements with at most three operands (e.g. `t1 = a + b`)?', options: ['Three-Address Code (TAC)', 'Abstract Syntax Tree', 'Post-fix Notation', 'Bytecode'], correct: 0 },
+      { id: 642, code: '2321CSC307T', subject: 'TOC/CD', difficulty: 'Hard', question: 'A tree representation of source code abstracting syntax details while preserving logical structure is called:', options: ['Abstract Syntax Tree (AST)', 'Parse Tree', 'Control Flow Graph', 'Dominator Tree'], correct: 0 }
+    ],
+    6: [
+      { id: 651, code: '2321CSC307T', subject: 'TOC/CD', difficulty: 'Hard', question: 'Which compiler optimization replaces expensive operations like multiplication by 2 with cheap bitwise left shifts?', options: ['Strength Reduction', 'Dead Code Elimination', 'Loop Unrolling', 'Constant Folding'], correct: 0 },
+      { id: 652, code: '2321CSC307T', subject: 'TOC/CD', difficulty: 'Hard', question: 'Graph Coloring algorithm in compiler backends is primarily used for:', options: ['Register Allocation', 'Instruction Scheduling', 'Peephole Optimization', 'Lexing'], correct: 0 }
+    ]
+  },
+  "Software Engineering & System Design": {
+    1: [
+      { id: 701, code: '2321CSC308T', subject: 'System Design', difficulty: 'Easy', question: 'Which software development methodology emphasizes iterative 2-4 week Sprints and continuous delivery?', options: ['Scrum / Agile Framework', 'Waterfall Model', 'V-Model', 'Big Bang Model'], correct: 0 },
+      { id: 702, code: '2321CSC308T', subject: 'System Design', difficulty: 'Easy', question: 'Which sequential SDLC model completes each phase (Requirements, Design, Coding, Testing) strictly before moving next?', options: ['Waterfall Model', 'Agile Kanban', 'XP Extreme Programming', 'Spiral Model'], correct: 0 }
+    ],
+    2: [
+      { id: 711, code: '2321CSC308T', subject: 'System Design', difficulty: 'Easy', question: 'Which Unified Modeling Language (UML) diagram models static system structure showing classes, attributes, and methods?', options: ['UML Class Diagram', 'Sequence Diagram', 'Use Case Diagram', 'State Machine Diagram'], correct: 0 },
+      { id: 712, code: '2321CSC308T', subject: 'System Design', difficulty: 'Medium', question: 'Which UML diagram illustrates object interactions arranged in chronological time sequence?', options: ['Sequence Diagram', 'Class Diagram', 'Component Diagram', 'Deployment Diagram'], correct: 0 }
+    ],
+    3: [
+      { id: 721, code: '2321CSC308T', subject: 'System Design', difficulty: 'Medium', question: 'Which architecture decomposes a system into independent, loosely-coupled microservices communicating via APIs?', options: ['Microservices Architecture', 'Monolithic Architecture', 'Layered Architecture', 'Peer-to-Peer'], correct: 0 },
+      { id: 722, code: '2321CSC308T', subject: 'System Design', difficulty: 'Medium', question: 'What is a drawback of monolithic application architectures when scaling large engineering teams?', options: ['Tightly-coupled deployment where a single bug can crash entire service', 'Network overhead', 'Complex API gateways', 'Database sharding complexity'], correct: 0 }
+    ],
+    4: [
+      { id: 731, code: '2321CSC308T', subject: 'System Design', difficulty: 'Easy', question: 'Testing individual software functions or methods in isolation from external dependencies is called:', options: ['Unit Testing', 'Integration Testing', 'System Testing', 'Acceptance Testing'], correct: 0 },
+      { id: 732, code: '2321CSC308T', subject: 'System Design', difficulty: 'Medium', question: 'Which testing technique evaluates application functionality without inspecting internal code structure or logic?', options: ['Black-Box Testing', 'White-Box Testing', 'Glass-Box Testing', 'Mutation Testing'], correct: 0 }
+    ],
+    5: [
+      { id: 741, code: '2321CSC308T', subject: 'System Design', difficulty: 'Medium', question: 'Which in-memory key-value store is commonly deployed as a caching layer to reduce SQL database load?', options: ['Redis', 'PostgreSQL', 'Elasticsearch', 'RabbitMQ'], correct: 0 },
+      { id: 742, code: '2321CSC308T', subject: 'System Design', difficulty: 'Hard', question: 'In System Design, an API Gateway acts as a single entry point providing which capabilities?', options: ['Reverse proxying, rate limiting, authentication & request routing', 'Database sharding', 'CPU thread scheduling', 'DNS resolution'], correct: 0 }
+    ],
+    6: [
+      { id: 751, code: '2321CSC308T', subject: 'System Design', difficulty: 'Hard', question: 'Partitioning a massive database table vertically or horizontally across multiple database servers is known as:', options: ['Database Sharding', 'Replication', 'Normalization', 'Indexing'], correct: 0 },
+      { id: 752, code: '2321CSC308T', subject: 'System Design', difficulty: 'Hard', question: 'How is 99.999% ("Five Nines") system availability defined in terms of maximum allowable annual downtime?', options: ['~5.26 minutes per year', '8.76 hours per year', '3.65 days per year', '52.6 minutes per year'], correct: 0 }
+    ]
+  }
+};
+
 export default function AdaptiveQuiz({ initialSubject, addToast }) {
   const [selectedSubject, setSelectedSubject] = useState(initialSubject || CORE_CSE_SUBJECTS[0].title);
   const [selectedWeek, setSelectedWeek] = useState(1);
@@ -941,16 +1114,14 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
   const WEEKLY_CURRICULUM = currentSubjectMeta.weeks;
   const activeLeetCodeSet = currentSubjectMeta.leetcode;
 
-  const getQuestionsForWeek = (weekNum, subjectTitle) => {
-    switch (Number(weekNum)) {
-      case 1: return WEEK1_QUESTIONS;
-      case 2: return WEEK2_QUESTIONS;
-      case 3: return WEEK3_QUESTIONS;
-      case 4: return WEEK4_QUESTIONS;
-      case 5: return WEEK5_QUESTIONS;
-      case 6: return WEEK6_QUESTIONS;
-      default: return WEEK1_QUESTIONS;
+  const getQuestionsForSubjectAndWeek = (subjectTitle, weekNum) => {
+    if (QUIZ_QUESTION_BANK[subjectTitle] && QUIZ_QUESTION_BANK[subjectTitle][weekNum]) {
+      return QUIZ_QUESTION_BANK[subjectTitle][weekNum];
     }
+    if (QUIZ_QUESTION_BANK["Data Structures & Algorithms"] && QUIZ_QUESTION_BANK["Data Structures & Algorithms"][weekNum]) {
+      return QUIZ_QUESTION_BANK["Data Structures & Algorithms"][weekNum];
+    }
+    return WEEK1_QUESTIONS;
   };
 
   useEffect(() => {
@@ -964,7 +1135,7 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
     }
   }, [initialSubject]);
 
-  const activeQuestions = getQuestionsForWeek(selectedWeek, selectedSubject);
+  const activeQuestions = getQuestionsForSubjectAndWeek(selectedSubject, selectedWeek);
   const currentQ = activeQuestions[activeQuestionIndex % activeQuestions.length];
 
   const handleSelectOption = (idx) => {
