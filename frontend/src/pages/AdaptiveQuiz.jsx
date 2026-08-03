@@ -729,7 +729,7 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
   const [userAnswers, setUserAnswers] = useState([]);
   const [score, setScore] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
-  const [validationError, setValidationError] = useState(null);
+  const [warningMessage, setWarningMessage] = useState("");
 
   useEffect(() => {
     if (initialSubject) {
@@ -747,7 +747,7 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
 
   const handleSelectOption = (idx) => {
     setSelectedOption(idx);
-    setValidationError(null); // Clear validation warning on option click
+    setWarningMessage(""); // Clear warningMessage whenever student clicks any option button
     
     const isCorrect = idx === currentQ.correct;
     const safeUserAnswers = Array.isArray(userAnswers) ? userAnswers : [];
@@ -771,33 +771,19 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
   };
 
   const forceNextQuestion = () => {
-    const safeUserAnswers = Array.isArray(userAnswers) ? userAnswers : [];
-
-    // Assign safe null value for unanswered question if no option selected
     if (selectedOption === null || selectedOption === undefined) {
-      const updatedAnswers = [...safeUserAnswers];
-      if (!updatedAnswers[activeQuestionIndex]) {
-        updatedAnswers[activeQuestionIndex] = {
-          questionId: currentQ?.id,
-          question: currentQ?.question,
-          userOption: null, // Safe null answer log
-          correctOption: currentQ?.correct,
-          isCorrect: false,
-          options: currentQ?.options || [],
-          difficulty: currentQ?.difficulty || 'Medium'
-        };
-        setUserAnswers(updatedAnswers);
-      }
+      setWarningMessage("Please select an option before proceeding!");
+      return;
     }
 
-    setValidationError(null);
+    setWarningMessage("");
 
     const totalQuestions = activeQuestions?.length || 10;
     if (activeQuestionIndex < totalQuestions - 1) {
       setActiveQuestionIndex((prev) => prev + 1);
-      setSelectedOption(null); // Reset choice for next question
+      setSelectedOption(null); // Reset selection for next question
     } else {
-      setIsFinished(true); // Open results screen
+      setIsFinished(true); // Complete quiz and show score summary
       if (currentQ && currentQ.code) {
         saveAssessmentScore(currentQ.code, score, totalQuestions);
       }
@@ -811,7 +797,7 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
   const handleResetQuiz = () => {
     setActiveQuestionIndex(0);
     setSelectedOption(null);
-    setValidationError(null);
+    setWarningMessage("");
     setScore(0);
     setUserAnswers([]);
     setIsFinished(false);
@@ -821,7 +807,7 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
     setSelectedSubject(subjectTitle);
     setActiveQuestionIndex(0);
     setSelectedOption(null);
-    setValidationError(null);
+    setWarningMessage("");
     setScore(0);
     setUserAnswers([]);
     setIsFinished(false);
@@ -997,22 +983,31 @@ export default function AdaptiveQuiz({ initialSubject, addToast }) {
           </div>
 
           {/* Action Footer */}
-          <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+          <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
             <span className="text-xs text-slate-500 font-semibold">
               Current Score: {score} / {activeQuestionIndex + 1}
             </span>
 
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                forceNextQuestion();
-              }}
-              className="bg-[#701C34] text-white px-6 py-3 rounded-xl font-semibold cursor-pointer hover:bg-[#581628] transition-all relative z-30 pointer-events-auto shadow-md flex items-center space-x-2"
-            >
-              <span>{activeQuestionIndex === activeQuestions.length - 1 ? "Submit & View Results" : "Next Question →"}</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              {warningMessage && (
+                <div className="p-2.5 bg-rose-100/80 border border-rose-300 text-[#701C34] rounded-xl text-xs font-black flex items-center space-x-2 animate-bounce shadow-2xs">
+                  <AlertCircle className="w-4 h-4 text-[#701C34] shrink-0" />
+                  <span>⚠️ {warningMessage}</span>
+                </div>
+              )}
+
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  forceNextQuestion();
+                }}
+                className="bg-[#701C34] text-white px-6 py-3 rounded-xl font-semibold cursor-pointer hover:bg-[#581628] transition-all relative z-30 pointer-events-auto shadow-md flex items-center justify-center space-x-2"
+              >
+                <span>{activeQuestionIndex === activeQuestions.length - 1 ? "Submit & View Results" : "Next Question →"}</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
         </div>
